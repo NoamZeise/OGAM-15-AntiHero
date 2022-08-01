@@ -1,4 +1,5 @@
 #include "render.h"
+#include "glm/ext/matrix_clip_space.hpp"
 #include "glm/geometric.hpp"
 #include "vulkan/vulkan_core.h"
 
@@ -189,30 +190,32 @@ void Render::_initFrameResources()
   ///set shader  descripor sets
 
   ///vertex descripor sets
-  
+  #ifndef ONLY_2D
   _VP3D.setBufferProps(frameCount, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &_VP3Dds);
   part::create::DescriptorSetLayout(_base.device, &_VP3Dds, {&_VP3D.binding}, VK_SHADER_STAGE_VERTEX_BIT);
+  #endif
 
   _VP2D.setBufferProps(frameCount, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &_VP2Dds);
   part::create::DescriptorSetLayout(_base.device, &_VP2Dds, {&_VP2D.binding}, VK_SHADER_STAGE_VERTEX_BIT);
 
+  #ifndef ONLY_2D
   _perInstance.setSingleStructArrayBufferProps(frameCount, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
                               &_perInstance3Dds, MAX_3D_INSTANCE);
   part::create::DescriptorSetLayout(_base.device, &_perInstance3Dds, {&_perInstance.binding}, VK_SHADER_STAGE_VERTEX_BIT);
-
+  
   _bones.setDynamicBufferProps(frameCount, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, &_bonesds, 1, MAX_ANIMATIONS_PER_FRAME);
   part::create::DescriptorSetLayout(_base.device, &_bonesds, { &_bones.binding }, VK_SHADER_STAGE_VERTEX_BIT);
-
+  #endif
 
   _per2Dvert.setSingleStructArrayBufferProps(frameCount, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
                             &_per2DVertds, MAX_2D_INSTANCE);
   part::create::DescriptorSetLayout(_base.device, &_per2DVertds, {&_per2Dvert.binding}, VK_SHADER_STAGE_VERTEX_BIT);
 
   // fragment descriptor sets
-  
+#ifndef ONLY_2D
   _lighting.setBufferProps(frameCount, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &_lightingds);
   part::create::DescriptorSetLayout(_base.device, &_lightingds, {&_lighting.binding}, VK_SHADER_STAGE_FRAGMENT_BIT);
-
+#endif
   _textureSampler.setSamplerBufferProps(frameCount, VK_DESCRIPTOR_TYPE_SAMPLER,
                                  &_texturesds, 1,
                                  _textureLoader->getSamplerP());
@@ -251,12 +254,14 @@ void Render::_initFrameResources()
 
   part::create::DescriptorPoolAndSet(_base.device, &_descPool,
                              {
+                             #ifndef ONLY_2D
                                &_VP3Dds,
-                               &_VP2Dds,
                                &_perInstance3Dds,
                                &_bonesds,
-                               &_per2DVertds,
                                &_lightingds,
+                             #endif
+                               &_VP2Dds,
+                               &_per2DVertds,
                                &_texturesds,
                                &_per2Dfragds,
                                &_offscreends
@@ -267,12 +272,14 @@ void Render::_initFrameResources()
   part::create::PrepareShaderBufferSets(
       _base,
       {
+      #ifndef ONLY_2D
         &_VP3D.binding,
-        &_VP2D.binding,
         &_perInstance.binding,
         &_bones.binding,
-        &_per2Dvert.binding,
         &_lighting.binding,
+      #endif
+        &_VP2D.binding,
+        &_per2Dvert.binding,
         &_textureSampler.binding,
         &_textureViews.binding,
         &_per2Dfrag.binding,
@@ -283,7 +290,7 @@ void Render::_initFrameResources()
   );
 
   // create pipeline for each shader set -> 3D, animated 3D, 2D, and final
-  
+  #ifndef ONLY_2D
   part::create::GraphicsPipeline(
       _base.device, &_pipeline3D, _swapchain, _renderPass,
       {&_VP3Dds, &_perInstance3Dds, &_texturesds, &_lightingds},{
@@ -303,6 +310,7 @@ void Render::_initFrameResources()
     true, settings::MULTISAMPLING, true, _swapchain.offscreenExtent, VK_CULL_MODE_BACK_BIT,
     VertexAnim3D::attributeDescriptions(), VertexAnim3D::bindingDescriptions()
   );
+  #endif
 
   part::create::GraphicsPipeline(
       _base.device, &_pipeline2D, _swapchain, _renderPass,
@@ -324,11 +332,13 @@ void Render::_initFrameResources()
   _updateViewProjectionMatrix();
 
   //set initial data
-  _VP2D.data[0].view = glm::mat4(1.0f);
+  #ifndef ONLY_2D
   for (size_t i = 0; i < MAX_3D_INSTANCE; i++) {
     _perInstance.data[i].model = glm::mat4(1.0f);
     _perInstance.data[i].normalMat = glm::mat4(1.0f);
   }
+  #endif
+  _VP2D.data[0].view = glm::mat4(1.0f);
   for (size_t i = 0; i < MAX_2D_INSTANCE; i++) {
     _per2Dvert.data[i] = glm::mat4(1.0f);
     _per2Dfrag.data[i].colour = glm::vec4(1.0f);
@@ -342,13 +352,14 @@ void Render::_destroyFrameResources() {
   vkFreeMemory(_base.device, _shaderMemory, nullptr);
 
   vkDestroySampler(_base.device, _offscreenTextureSampler, nullptr);
-
+#ifndef ONLY_2D
   _VP3Dds.destroySet(_base.device);
-  _VP2Dds.destroySet(_base.device);
   _perInstance3Dds.destroySet(_base.device);
-  _per2DVertds.destroySet(_base.device);
   _bonesds.destroySet(_base.device);
   _lightingds.destroySet(_base.device);
+#endif
+  _VP2Dds.destroySet(_base.device);
+  _per2DVertds.destroySet(_base.device);
   _texturesds.destroySet(_base.device);
   _per2Dfragds.destroySet(_base.device);
   _offscreends.destroySet(_base.device);
@@ -360,8 +371,10 @@ void Render::_destroyFrameResources() {
                          nullptr);
     vkDestroyFramebuffer(_base.device, _swapchain.frameData[i].offscreenFramebuffer, nullptr);
   }
+  #ifndef ONLY_2D
   _pipeline3D.destroy(_base.device);
   _pipelineAnim3D.destroy(_base.device);
+  #endif
   _pipeline2D.destroy(_base.device);
   _pipelineFinal.destroy(_base.device);
   vkDestroyRenderPass(_base.device, _renderPass, nullptr);
@@ -389,16 +402,27 @@ Resource::Font Render::LoadFont(std::string filepath) {
 
 Resource::Model Render::LoadAnimatedModel(std::string filepath, std::vector<Resource::ModelAnimation> *pGetAnimations)
 {
+  #ifndef ONLY_2D
    if (_finishedLoadingResources)
     throw std::runtime_error("resource loading has finished already");
   return _modelLoader->loadModel(filepath, _textureLoader, pGetAnimations);
+  #else
+  std::cout << "failed to load animed model, ONLY_2D model enabled\n";
+  return Resource::Model();
+  #endif
 }
 
 Resource::Model Render::LoadModel(std::string filepath)
 {
+  #ifndef ONLY_2D
   if (_finishedLoadingResources)
     throw std::runtime_error("resource loading has finished already");
   return _modelLoader->loadModel(filepath, _textureLoader);
+  #else
+
+  std::cout << "ONLY 2d mode defined\n";
+  return Resource::Model();
+  #endif
 }
 
 void Render::EndResourceLoad()
@@ -502,6 +526,7 @@ void Render::_startDraw()
 
 void Render::Begin3DDraw()
 {
+  #ifndef ONLY_2D
   if (!_begunDraw)
     _startDraw();
   if (_modelRuns > 0)
@@ -515,10 +540,14 @@ void Render::Begin3DDraw()
   _lighting.storeData(_frameI);
 
   _pipeline3D.begin(_swapchain.frameData[_frameI].commandBuffer, _frameI);
+  #else
+  std::cout << "failed to begin 3D draw, ONLY_2D defined\n";
+  #endif
 }
 
 void Render::DrawModel(Resource::Model model, glm::mat4 modelMatrix, glm::mat4 normalMat)
 {
+  #ifndef ONLY_2D
   if (_current3DInstanceIndex >= MAX_3D_INSTANCE) {
     std::cout << "WARNING: ran out of 3D instances!\n";
     return;
@@ -534,10 +563,15 @@ void Render::DrawModel(Resource::Model model, glm::mat4 modelMatrix, glm::mat4 n
 
   if (_current3DInstanceIndex + _modelRuns == MAX_3D_INSTANCE)
     _drawBatch();
+
+  #else
+  std::cout << "failed to draw model ONLY_2D defined\n";
+  #endif
 }
 
 void Render::BeginAnim3DDraw()
 {
+  #ifndef ONLY_2D
   if (!_begunDraw)
     _startDraw();
   if (_modelRuns > 0)
@@ -550,10 +584,14 @@ void Render::BeginAnim3DDraw()
   _lighting.data[0].direction = _lightDirection;
   _lighting.storeData(_frameI);
   _pipelineAnim3D.begin(_swapchain.frameData[_frameI].commandBuffer, _frameI);
+  #else
+  std::cout << "failed to start animated draw, ONLY_2D defined\n";
+  #endif
 }
 
 void Render::DrawAnimModel(Resource::Model model, glm::mat4 modelMatrix, glm::mat4 normalMat, Resource::ModelAnimation *animation)
 {
+  #ifndef ONLY_2D
    if (_current3DInstanceIndex >= MAX_3D_INSTANCE) {
      std::cout << "WARNING: Ran out of 3D Anim Instance models!\n";
      return;
@@ -581,6 +619,12 @@ void Render::DrawAnimModel(Resource::Model model, glm::mat4 modelMatrix, glm::ma
   uint32_t offset = static_cast<uint32_t>((_bones.currentDynamicOffsetIndex-1) * _bones.binding.bufferSize * _bones.binding.setCount);
   _pipelineAnim3D.bindDynamicDS(_swapchain.frameData[_frameI].commandBuffer, &_bonesds, _frameI,  offset);
    _drawBatch();
+
+   #else
+
+   std::cout << "failed to draw animed model ONLY_2D defined\n";
+
+#endif
 }
 
 void Render::Begin2DDraw()
@@ -704,11 +748,11 @@ void Render::EndDraw(std::atomic<bool> &submit) {
         _drawBatch();
       break;
   }
-
+#ifndef ONLY_2D
   for (size_t i = 0; i < _current3DInstanceIndex; i++)
     _perInstance.storeData(_frameI, 0, i);
   _current3DInstanceIndex = 0;
-
+#endif
 
   for (size_t i = 0; i < _current2DInstanceIndex; i++)
   {
@@ -812,20 +856,23 @@ void Render::EndDraw(std::atomic<bool> &submit) {
 }
 
 void Render::_updateViewProjectionMatrix() {
+  #ifndef ONLY_2D
   _VP3D.data[0].proj =
-      glm::perspective(glm::radians(_projectionFov),
-                       ((float)_swapchain.offscreenExtent.width) /
-                           ((float)_swapchain.offscreenExtent.height),
-                       0.1f, 500.0f);
-  _VP3D.data[0].proj[1][1] *=
-      -1; // opengl has inversed y axis, so need to correct
+         glm::perspective(glm::radians(_projectionFov),
+                     ((float)_swapchain.offscreenExtent.width) /
+                         ((float)_swapchain.offscreenExtent.height),
+                         0.1f, 500.0f);
+  _VP3D.data[0].proj[1][1] *= -1; // opengl has inversed y axis, so need to correct
+  #endif
 }
 
 void Render::set3DViewMatrixAndFov(glm::mat4 view, float fov, glm::vec4 camPos) {
+  #ifndef ONLY_2D
   _VP3D.data[0].view = view;
   _projectionFov = fov;
   _lighting.data[0].camPos = camPos;
   _updateViewProjectionMatrix();
+  #endif
 }
 
 void Render::set2DViewMatrixAndScale(glm::mat4 view, float scale)

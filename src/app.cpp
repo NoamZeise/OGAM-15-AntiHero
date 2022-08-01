@@ -46,9 +46,6 @@ App::App() {
     glfwSetWindowAspectRatio(mWindow, width, height);
 
   loadAssets();
-
-  fpcam = Camera::FirstPerson(glm::vec3(3.0f, 0.0f, 2.0f));
-  audioManager.Play("audio/test.wav", true, 0.5f);
   finishedDrawSubmit = true;
 }
 
@@ -60,7 +57,6 @@ App::~App() {
 }
 
 void App::loadAssets() {
-  testModel = mRender->LoadModel("models/coloured_cube_test.fbx");
   testTex = mRender->LoadTexture("textures/error.png");
   testFont = mRender->LoadFont("textures/Roboto-Black.ttf");
   mRender->EndResourceLoad();
@@ -104,10 +100,6 @@ void App::update() {
     glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
   }
 
-  mRender->setLightDirection(lightDir);
-  
-  fpcam.update(input, previousInput, timer);
-
   postUpdate();
 #ifdef TIME_APP_DRAW_UPDATE
   auto stop = std::chrono::high_resolution_clock::now();
@@ -123,7 +115,6 @@ void App::postUpdate() {
   previousInput = input;
   input.offset = 0;
   timer.Update();
-  mRender->set3DViewMatrixAndFov(fpcam.getViewMatrix(), fpcam.getZoom(), glm::vec4(fpcam.getPos(), 1.0f));
 }
 
 void App::draw() {
@@ -139,22 +130,6 @@ void App::draw() {
 
     if(submitDraw.joinable())
       submitDraw.join();
-
-    mRender->Begin3DDraw();
-
-    auto model = glm::translate(
-       glm::scale(
-         glm::rotate(
-                     glm::rotate(glm::mat4(1.0f),
-                                 0.0f, glm::vec3(0, 0, 1)),
-                                 glm::radians(270.0f), glm::vec3(-1.0f, 0.0f, 0.0f)),
-         glm::vec3(0.01f)),
-       glm::vec3(0, 0, 0));
- 
-   mRender->DrawModel(
-     testModel,
-     model,
-     glm::inverseTranspose(model));
 
    
     mRender->Begin2DDraw();

@@ -4,6 +4,7 @@
 
 //#define NDEBUG
 //#define NO_ASSIMP
+#define ONLY_2D
 
 namespace settings
 {
@@ -23,7 +24,7 @@ const int INITIAL_WINDOW_WIDTH = 1600;
 const int INITIAL_WINDOW_HEIGHT = 900;
 
 #ifndef NDEBUG
-const bool ERROR_ONLY = true;
+const bool ERROR_ONLY = false;
 #endif
 }
 

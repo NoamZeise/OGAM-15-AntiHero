@@ -3,7 +3,7 @@
 
 # building from source
 
-### windows
+## windows
 
 If using vulkan build:
 * download the [vulkan sdk](https://vulkan.lunarg.com/), run installer and put the necessary files in your lib and include directories
@@ -32,7 +32,13 @@ set(Include "Path/to/include")
 
 * If you have cmake and ninja installed, and a C/C++ compiler you can use the included windows build scripts under "resources/buildscripts/windows/" to build the debug or release versions of the project and automatically launch it. You must include the assimp .dll with the project.
 
-### linux with apt
+to build from project root:
+```
+mkdir build
+"./resource/buildscripts/windows/debugVulkan.bat"
+```
+
+## linux with apt
 
 If using Vulkan:
 
@@ -54,3 +60,16 @@ additional libraries
 ```
 $ sudo apt-get install libglfw3-dev libglm-dev libfreetype-dev libassimp-dev libsndfile1-dev libasound-dev portaudio19-dev
 ```
+
+Make sure you have cmake and ninja installed otherwise do
+```
+sudo apt install cmake ninja-build
+```
+
+then to build, go to the project root and do
+```
+mkdir build
+chmod +x resources/buildscripts/linux/debugVulkan.sh
+./resources/buildscrips/linux/debugVulkan.sh
+```
+in the future just type the last line to build the project

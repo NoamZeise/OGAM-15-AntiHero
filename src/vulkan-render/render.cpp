@@ -201,6 +201,7 @@ void Render::_initFrameResources()
   #ifndef ONLY_2D
   _perInstance.setSingleStructArrayBufferProps(frameCount, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
                               &_perInstance3Dds, MAX_3D_INSTANCE);
+
   part::create::DescriptorSetLayout(_base.device, &_perInstance3Dds, {&_perInstance.binding}, VK_SHADER_STAGE_VERTEX_BIT);
   
   _bones.setDynamicBufferProps(frameCount, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, &_bonesds, 1, MAX_ANIMATIONS_PER_FRAME);
@@ -652,7 +653,6 @@ void Render::Begin2DDraw()
   _VP2D.data[0].proj = glm::ortho(
       0.0f, (float)_swapchain.offscreenExtent.width*_scale2D / correction, 0.0f,
       (float)_swapchain.offscreenExtent.height*_scale2D / correction, -10.0f, 10.0f);
-  _VP2D.data[0].view = glm::mat4(1.0f);
 
   _VP2D.storeData(_frameI);
 

@@ -23,7 +23,7 @@
 namespace Camera
 {
 
-const unsigned int CAM2D_FLOAT = 500;
+const unsigned int CAM2D_FLOAT = 200;
 	class RoomFollow2D
 	{
 	public:

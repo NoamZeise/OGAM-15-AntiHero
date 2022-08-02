@@ -33,14 +33,15 @@ public:
     ModelInfo::Model LoadModel(std::string path);
 
 private:
-
+#ifndef NO_ASSIMP
     Assimp::Importer importer;
 
     void processNode(ModelInfo::Model* model, aiNode* node, const aiScene* scene, aiMatrix4x4 parentTransform, int parentNode);
     void processMesh(ModelInfo::Model* model, aiMesh* aimesh, const aiScene* scene, aiMatrix4x4 transform);
     void buildAnimation(ModelInfo::Model* model, aiAnimation* aiAnim);
+#endif
 };
-
+#ifndef NO_ASSIMP
 namespace
 {
     const auto IMPORT_PROPS =
@@ -88,7 +89,6 @@ namespace
         return aiMat;
     }
 }
-
+#endif
 }
-
 #endif

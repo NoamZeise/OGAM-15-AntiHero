@@ -9,9 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#ifndef NO_ASSIMP
 #include "model_loader.h"
-#endif
 #include <vector>
 #include <array>
 #include <string>

@@ -23,7 +23,9 @@ App::App() {
     glfwTerminate();
     throw std::runtime_error("failed to create glfw window!");
   }
-
+  GLFWimage winIcon[1];
+  winIcon[0].pixels = stbi_load("textures/icon.png", &winIcon[0].width, &winIcon[0].height, 0, 4); //rgba channels
+  glfwSetWindowIcon(mWindow, 1, winIcon);
   glfwSetWindowUserPointer(mWindow, this);
   glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
   glfwSetCursorPosCallback(mWindow, mouse_callback);
@@ -60,6 +62,14 @@ App::~App() {
 void App::loadAssets() {
   testTex = mRender->LoadTexture("textures/error.png");
   testFont = mRender->LoadFont("textures/Roboto-Black.ttf");
+  auto loadedMap = tiled::Map("maps/test.tmx");
+  testMap = Map::Visual(loadedMap, mRender, testFont);
+
+  cam2d.setCameraMapRect(glm::vec4(
+				   0,
+				   0,
+				   loadedMap.width * loadedMap.tileWidth,
+				   loadedMap.height * loadedMap.tileHeight));
   mRender->EndResourceLoad();
 }
 
@@ -118,6 +128,9 @@ void App::update() {
   cam2d.setScale(camScale);
   cam2d.Target(camTarget, timer);
 
+  std::vector<glm::vec4> colliders;
+  testMap.Update(cam2d.getCameraArea(), timer, &colliders);
+  
   postUpdate();
 #ifdef TIME_APP_DRAW_UPDATE
   auto stop = std::chrono::high_resolution_clock::now();
@@ -150,20 +163,12 @@ void App::draw() {
     if(submitDraw.joinable())
       submitDraw.join();
 
-   
     mRender->Begin2DDraw();
 
-    mRender->DrawString(testFont, "test", glm::vec2(400, 100), 100, -0.5,
-    										glm::vec4(1), 90.0f);
 
-    mRender->DrawQuad(testTex,
-    								 glmhelper::getModelMatrix(glm::vec4(400, 100, 100, 100), 0, -1),
-    								 glm::vec4(1), glm::vec4(0, 0, 1, 1));
+    testMap.Draw(mRender);
 
-    mRender->DrawQuad(testTex,
-    									glmhelper::getModelMatrix(glm::vec4(0, 0, 100, 100), 0, 0),
-    									glm::vec4(1, 0, 1, 0.3), glm::vec4(0, 0, 1, 1));
-   
+    
 #ifdef GFX_ENV_VULKAN
   submitDraw =
       std::thread(&Render::EndDraw, mRender, std::ref(finishedDrawSubmit));

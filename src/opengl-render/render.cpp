@@ -103,6 +103,12 @@ void Render::set3DViewMatrixAndFov(glm::mat4 view, float fov, glm::vec4 camPos)
   lighting.camPos = camPos;
 }
 
+void Render::set2DViewMatrixAndScale(glm::mat4 view, float scale)
+{
+  view2D = view;
+  scale2D = scale;
+}
+
 Render::Draw2D::Draw2D(Resource::Texture tex, glm::mat4 model, glm::vec4 colour, glm::vec4 texOffset)
 {
   this->tex = tex;
@@ -122,6 +128,22 @@ Render::Draw3D::Draw3D(Resource::Model model, glm::mat4 modelMatrix, glm::mat4 n
 void Render::Begin2DDraw()
 {
   current2DDraw = 0;
+
+    float deviceRatio = (float)width /
+                  (float)height;
+  float virtualRatio = targetResolution.x / targetResolution.y;
+  float xCorrection = width / targetResolution.x;
+  float yCorrection = height / targetResolution.y;
+
+  float correction;
+  if (virtualRatio < deviceRatio) {
+    correction = yCorrection;
+  } else {
+    correction = xCorrection;
+  }
+  proj2D = glm::ortho(
+      0.0f, (float)width*scale2D / correction, (float)height*scale2D / correction, 0.0f, -10.0f, 10.0f);
+  
 }
 
 void Render::Begin3DDraw()
@@ -277,21 +299,6 @@ void Render::FramebufferResize()
 {
   glfwGetWindowSize(window, &this->width, &this->height);
   glViewport(0, 0, width, height);
-
-  float deviceRatio = (float)width /
-                  (float)height;
-  float virtualRatio = targetResolution.x / targetResolution.y;
-  float xCorrection = width / targetResolution.x;
-  float yCorrection = height / targetResolution.y;
-
-  float correction;
-  if (virtualRatio < deviceRatio) {
-    correction = yCorrection;
-  } else {
-    correction = xCorrection;
-  }
-  proj2D = glm::ortho(
-      0.0f, (float)width / correction, (float)height / correction, 0.0f, -10.0f, 10.0f);
 
   set3DViewMatrixAndFov(view3D, fov, lighting.camPos);
 }

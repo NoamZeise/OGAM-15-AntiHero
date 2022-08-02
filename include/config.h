@@ -3,14 +3,14 @@
 
 
 //#define NDEBUG
-//#define NO_ASSIMP
+#define NO_ASSIMP
 #define ONLY_2D
 
 namespace settings
 {
 const bool SRGB = false;
 const bool MIP_MAPPING = true;
-const bool PIXELATED = true;
+const bool PIXELATED = false;
 const bool VSYNC = true;
 const bool MULTISAMPLING = true;
 const bool SAMPLE_SHADING = true;

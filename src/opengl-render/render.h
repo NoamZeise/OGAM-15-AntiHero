@@ -26,8 +26,8 @@
 const int MAX_2D_DRAWS = 10000;
 const int MAX_3D_DRAWS = 10000;
 
-const int MAX_2D_BATCH = 10000;
-const int MAX_3D_BATCH = 10000;
+const int MAX_2D_BATCH = 2000;
+const int MAX_3D_BATCH = 2000;
 
 class Render
 {
@@ -41,6 +41,7 @@ public:
   	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   }
   void set3DViewMatrixAndFov(glm::mat4 view, float fov, glm::vec4 camPos);
+  void set2DViewMatrixAndScale(glm::mat4 view, float scale);
   void setLightDirection(glm::vec4 lightDir) {
     lighting.direction = lightDir;
   }
@@ -115,7 +116,8 @@ private:
 
   glm::mat4 proj2D;
   glm::mat4 view2D;
-
+  float scale2D = 1.0f;
+  
   glm::mat4 proj3D;
   glm::mat4 view3D;
 	float fov;

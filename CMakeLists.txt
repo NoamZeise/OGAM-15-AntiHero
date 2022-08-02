@@ -32,26 +32,32 @@ if (UNIX)
 endif()
 
 #add executables
-file(GLOB SOURCES src/*)
+file(GLOB SOURCES src/*
+	  	  src/game/*
+		  src/game/map/*
+		  )
 list(FILTER SOURCES EXCLUDE REGEX ".*#+")
 if(GFX_ENV_VULKAN)
   file(GLOB GRAPHICS-RENDER src/vulkan-render/*
                             src/vulkan-render/resources/*
                             src/vulkan-render/resources/model/*
-                            src/vulkan-render/parts/*)
-  list(FILTER GRAPHICS-RENDER EXCLUDE REGEX ".*#+")
-  add_executable(${ProjectName} ${SOURCES}
-                              ${GRAPHICS-RENDER}
-                              ${PROJ_INCLUDE})
+                            src/vulkan-render/parts/*
+			    )
                     
 elseif(GFX_ENV_OPENGL)
-  file(GLOB OGL_RENDER src/opengl-render/*)
-  file(GLOB OGL_RENDER_RESOURCES src/opengl-render/resources/*)
-  add_executable(${ProjectName}   ${SOURCES}
-                                ${OGL_RENDER}
-                                ${OGL_RENDER_RESOURCES}
-                                ${PROJ_INCLUDE})
+  file(GLOB GRAPHICS-RENDER src/opengl-render/*
+  	    		    src/opengl-render/resources/*
+			    )
 endif()
+
+list(FILTER GRAPHICS-RENDER EXCLUDE REGEX ".*#+")
+list(FILTER SOURCES EXCLUDE REGEX ".*#+")
+list(FILTER PROJ_INCLUDE EXCLUDE REGEX ".*#+")
+add_executable(${ProjectName}   ${SOURCES}
+                                ${GRAPHICS-RENDER}
+                                ${PROJ_INCLUDE}
+				"resources/resource/resource.o")
+				
 #link
 target_include_directories(${ProjectName} PUBLIC include/)
 if(UNIX)

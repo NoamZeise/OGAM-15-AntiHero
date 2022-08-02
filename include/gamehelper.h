@@ -21,43 +21,43 @@ namespace gh
       a.y < b.y + b.w &&
       a.y + a.w > b.y;
   }
-  
-  inline static bool aInB(glm::vec4 a, glm::vec4 b)
-  {
-    return a.x > b.x && a.x < b.x + b.z &&
-      a.y > b.y && a.y < b.y + b.z;
-  }
-  
-  inline static bool contains(glm::vec2 p, glm::vec4 r)
-  {
-    return r.x < p.x && p.x < r.x + r.z  && r.y < p.y && p.y < r.y + r.w;
-  }
-  
-  inline static bool exists (const std::string& name) {
-    if (FILE *file = fopen(name.c_str(), "r")) {
-      fclose(file);
-      return true;
-    } else {
-      return false;
-    }
-  }
-  
-  inline float max(float a, float b)
-  {
-    return a > b ? a : b;
-  }
-  
-  inline float min(float a, float b)
-  {
-    return a < b ? a : b;
-  }
+
+inline static bool aInB(glm::vec4 a, glm::vec4 b)
+{
+return a.x > b.x && a.x < b.x + b.z &&
+  a.y > b.y && a.y < b.y + b.z;
+}
+
+inline static bool contains(glm::vec2 p, glm::vec4 r)
+{
+return r.x < p.x && p.x < r.x + r.z  && r.y < p.y && p.y < r.y + r.w;
+}
+
+inline static bool exists (const std::string& name) {
+if (FILE *file = fopen(name.c_str(), "r")) {
+fclose(file);
+return true;
+} else {
+return false;
+}
+}
+
+inline float max(float a, float b)
+{
+return a > b ? a : b;
+}
+
+inline float min(float a, float b)
+{
+return a < b ? a : b;
+}
 
 class Random
 {
 public:
-	Random()
-	{
-		randomGen = std::mt19937(time(0));
+Random()
+{
+randomGen = std::mt19937((unsigned int)time(0));
 		posReal = std::uniform_real_distribution<float>(0, 1);
 		real = std::uniform_real_distribution<float>(-1, 1);
 	}

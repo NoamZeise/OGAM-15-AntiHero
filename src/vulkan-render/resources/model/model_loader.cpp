@@ -1,10 +1,4 @@
 #include "model_loader.h"
-#include "assimp/anim.h"
-#include "assimp/material.h"
-#include "assimp/matrix4x4.h"
-#include "assimp/scene.h"
-#include "assimp/types.h"
-#include "glm/fwd.hpp"
 
 namespace Resource
 {
@@ -16,6 +10,7 @@ ModelLoader::ModelLoader()
 
 ModelInfo::Model ModelLoader::LoadModel(std::string path)
 {
+  #ifndef NO_ASSIMP
     auto model = ModelInfo::Model{};
 
     const aiScene *scene = importer.ReadFile(path, IMPORT_PROPS);
@@ -44,9 +39,13 @@ ModelInfo::Model ModelLoader::LoadModel(std::string path)
 
     importer.FreeScene();
 
-    return model;            
-}
+    return model;
 
+    #else
+    return Resources::Model();
+    #endif
+}
+#ifndef NO_ASSIMP
 void ModelLoader::processNode(ModelInfo::Model* model, aiNode* node, const aiScene* scene, aiMatrix4x4 parentTransform, int parentNode)
 {
     //std::cout << "processing node: " << node->mName.C_Str() << std::endl;
@@ -223,5 +222,6 @@ void ModelLoader::buildAnimation(ModelInfo::Model* model, aiAnimation* aiAnim)
         }
     }
 }
+  #endif
 
 }

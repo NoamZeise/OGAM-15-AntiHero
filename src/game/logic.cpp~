@@ -1,0 +1,31 @@
+#include "logic.h"
+
+GameLogic::GameLogic(Render *render)
+{
+  Resource::Font mapFont = render->LoadFont("textures/Roboto-Black.ttf"); 
+  levels.push_back(
+		   Level(render, "maps/test.tmx", mapFont)
+		   );
+  currentLevel = levels[0];
+  player = Player(
+		  Sprite(glm::vec2(0, 0), render->LoadTexture("textures/player.png"))
+		  );
+}
+
+void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input)
+{
+  std::vector<glm::vec4> frameColliders;
+  currentLevel.Update(camRect, timer, &frameColliders);
+  player.Update(camRect, timer, input);
+}
+
+void GameLogic::Draw(Render *render)
+{
+  currentLevel.Draw(render);
+  player.Draw(render);
+}
+
+glm::vec2 GameLogic::getTarget()
+{
+  return this->player.getPos();
+}

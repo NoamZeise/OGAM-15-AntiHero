@@ -1,0 +1,25 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
+#include "sprite.h"
+#include <timer.h>
+#include <input.h>
+
+class Player
+{
+ public:
+  Player() {}
+  Player(Sprite sprite);
+  void Update(glm::vec4 cameraRect, Timer &timer, Input &input);
+  void Draw(Render *render);
+
+ private:
+  glm::vec2 movementUpdate(Input &input);
+  
+  Sprite sprite;
+  float speed = 0.5f;
+};
+
+
+
+#endif

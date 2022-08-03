@@ -24,25 +24,33 @@ Properties fillPropStruct(rapidxml::xml_node<> *propertiesNode)
 			else
 				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
 		}
-		else if(name == "playerSpawn")
+		else if(name == "hero")
 		{
 			if(value == "true")
-				props.playerSpawn = true;
+				props.hero = true;
 			else if(value == "false")
-				props.playerSpawn = false;
+				props.hero = false;
 			else
 					std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
 		}
-		else if(name == "enemySpawn")
+		else if(name == "enemy")
 		{
 			if(value == "true")
-				props.enemySpawn = true;
+				props.enemy = true;
 			else if(value == "false")
-				props.enemySpawn = false;
+				props.enemy = false;
 			else
 				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
 		}
-		//INSERT CUSTOM PROEPRTIES HERE
+		else if(name == "room")
+		{
+			if(value == "true")
+				props.room = true;
+			else if(value == "false")
+				props.room = false;
+			else
+				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
+		}
 
 		else
 		{
@@ -53,6 +61,7 @@ Properties fillPropStruct(rapidxml::xml_node<> *propertiesNode)
 	return props;
 }
 
+  
 Tileset::Tileset(std::string filename)
 {
 	if(filename.length() < 4)
@@ -81,7 +90,7 @@ Tileset::Tileset(std::string filename)
 		this->spacing  = std::atoi(tilesetInfo->first_attribute("spacing")->value());
 	if(tilesetInfo->first_attribute("margin"))
 		this->margin  = std::atoi(tilesetInfo->first_attribute("margin")->value());
-		
+
 	auto imageInfo = tilesetInfo->first_node("image");
 	if(imageInfo == nullptr)
 		throw std::runtime_error("tileset at " + filename + " has no image node");
@@ -188,13 +197,18 @@ Map::Map(std::string filename)
 		for(auto objectInfo = objGroupInfo->first_node("object"); objectInfo; objectInfo = objectInfo->next_sibling("object"))
 		{
 			auto objTextNode =  objectInfo->first_node("text");
+			auto objPolygonNode = objectInfo->first_node("polygon");
+			auto objPolylineNode = objectInfo->first_node("polyline");
 			Object* fillObj = nullptr;
 			if(objTextNode != nullptr)
 			{
 				texts.push_back(Text());
-				texts.back().pixelSize = std::atoi(objTextNode->first_attribute("pixelsize")->value());
+				if(objTextNode->first_attribute("pixelsize") != nullptr)
+					texts.back().pixelSize = std::atoi(objTextNode->first_attribute("pixelsize")->value());
 				texts.back().text = objTextNode->value();
+
 				std::string colour = objTextNode->first_attribute("color") != nullptr ? objTextNode->first_attribute("color")->value() : "";
+
 				if(colour != "")
 				{
 					texts.back().colour.r =  std::stoi(colour.substr(1, 2), nullptr, 16);
@@ -208,6 +222,44 @@ Map::Map(std::string filename)
 				}
 				fillObj = &texts.back().obj;
 			}
+			else if(objPolygonNode != nullptr || objPolylineNode !=  nullptr)
+			{
+			 	objectGroups.back().polys.push_back(PolygonObject());
+				if(objPolylineNode != nullptr)
+				{
+					objectGroups.back().polys.back().closed = false;
+					objPolygonNode = objPolylineNode;
+				}
+				std::string points = objPolygonNode->first_attribute("points")->value();
+				int startIndex = 0;
+				int p1 = 0;
+				for(int i = 0; i < points.size();  i++)
+				{
+					if(points[i] == ',')
+					{
+						p1 = std::stoi(points.substr(startIndex, i - startIndex));
+						startIndex = i+1;
+					}
+					if(points[i] == ' ')
+					{
+						objectGroups.back().polys.back().points.push_back(
+							Point(
+								(double)p1,
+								(double)std::stoi(points.substr(startIndex, i - startIndex))
+							)
+						);
+						startIndex = i+1;
+					}
+				}
+				objectGroups.back().polys.back().points.push_back(
+					Point(
+						(double)p1,
+						(double)std::stoi(points.substr(startIndex, points.size() - startIndex))
+					)
+				);
+
+				fillObj = &objectGroups.back().polys.back().obj;
+			}
 			else
 			{
 				objectGroups.back().objs.push_back(Object());
@@ -220,8 +272,6 @@ Map::Map(std::string filename)
 			else
 				fillObj->props = Properties();
 
-
-
 			auto x = objectInfo->first_attribute("x");
 			auto y = objectInfo->first_attribute("y");
 			if(x != nullptr && y != nullptr)
@@ -233,15 +283,15 @@ Map::Map(std::string filename)
 				std::cout << "WARNING: object without coords" << std::endl;
 
 			auto w = objectInfo->first_attribute("width");
-			auto h = objectInfo->first_attribute("height");
-			if(w != nullptr && h != nullptr)
-			{
+			if(w != nullptr)
 				fillObj->w = std::atof(w->value());
+			auto h = objectInfo->first_attribute("height");
+			if(h != nullptr)
 				fillObj->h = std::atof(h->value());
-			}
 
 		}
 	}
+
 
 	for(auto imgLayerInfo = mapInfo->first_node("imagelayer"); imgLayerInfo; imgLayerInfo = imgLayerInfo->next_sibling("imagelayer"))
 	{

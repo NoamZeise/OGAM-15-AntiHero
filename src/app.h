@@ -40,9 +40,7 @@
 #include <config.h>
 
 #include "camera.h"
-
-#include "game/map/visual.h"
-#include "game/map/tiled.h"
+#include "game/logic.h"
 
 //#define TIME_APP_DRAW_UPDATE
 //#define MULTI_UPDATE_ON_SLOW_DRAW
@@ -83,13 +81,10 @@ private:
   std::thread submitDraw;
   std::atomic<bool> finishedDrawSubmit;
   
-  Resource::Texture testTex;
-  Resource::Font testFont;
-
   glm::vec2 camTarget = glm::vec2((float)settings::TARGET_WIDTH/2.0f  , (float)settings::TARGET_HEIGHT/2.0f);
   float camScale = 1.0f;
 
-  Map::Visual testMap;
+  GameLogic gameLogic;
 };
 
 #endif

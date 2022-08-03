@@ -23,9 +23,11 @@ const std::string TILED_IMAGE_LOCATION = "textures/tiledimage";
 //some example properties -> match what you set in tiled (do not need to be boolean, but you need to change the fillPropStruct to match those cases)
 struct Properties
 {
-	bool collidable = false;
-	bool playerSpawn = false;
-	bool enemySpawn = false;
+  bool collidable = false;
+  bool hero = false;
+  bool obstacle = false;
+  bool enemy = false;
+  bool room  = false;
 };
 
 //change this function defined in tiled.cpp to match the properties you added
@@ -48,11 +50,27 @@ struct Object
 	double h = 0;
 };
 
+struct Point
+{
+	Point(double x, double y) { this->x = x; this->y = y; }
+	double x;
+	double y;
+};
+
+struct PolygonObject //obj coords is an offset for each of the points
+{
+	bool closed  = true;
+	Object obj;
+	std::vector<Point> points;
+};
+
 struct ObjectGroup
 {
 	Properties props;
 	std::vector<Object> objs;
+	std::vector<PolygonObject>  polys;
 };
+
 
 struct ImageLayer
 {
@@ -76,8 +94,8 @@ struct Tileset
 	unsigned int margin = 0;
 	unsigned int spacing = 0;
 
-	std::string imageSource;
-	unsigned int imageWidth;
+        std::string imageSource;
+        unsigned int imageWidth;
 	unsigned int imageHeight;
 };
 

@@ -1,0 +1,30 @@
+#ifndef GAME_LOGIC_H
+#define GAME_LOGIC_H
+
+#include <timer.h>
+#include <input.h>
+#include <gamehelper.h>
+
+#include "player.h"
+#include "../renderer_include.h"
+#include "map/map.h"
+
+#include <vector>
+#include <iostream>
+
+class GameLogic
+{
+ public:
+  GameLogic() {}
+  GameLogic(Render *render);
+  void Update(glm::vec4 camRect, Timer &timer, Input &input);
+  void Draw(Render *render);
+  glm::vec2 getTarget();
+ private:
+  std::vector<Level> levels;
+  int currentLevelIndex = 0;
+  Level currentLevel;
+  Player player;
+};
+
+#endif

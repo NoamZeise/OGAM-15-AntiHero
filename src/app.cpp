@@ -1,5 +1,6 @@
 #include "app.h"
 #include "GLFW/glfw3.h"
+#include <cmath>
 
 App::App() {
 
@@ -60,16 +61,7 @@ App::~App() {
 }
 
 void App::loadAssets() {
-  testTex = mRender->LoadTexture("textures/error.png");
-  testFont = mRender->LoadFont("textures/Roboto-Black.ttf");
-  auto loadedMap = tiled::Map("maps/test.tmx");
-  testMap = Map::Visual(loadedMap, mRender, testFont);
-
-  cam2d.setCameraMapRect(glm::vec4(
-				   0,
-				   0,
-				   loadedMap.width * loadedMap.tileWidth,
-				   loadedMap.height * loadedMap.tileHeight));
+  gameLogic = GameLogic(mRender, &cam2d);
   mRender->EndResourceLoad();
 }
 
@@ -126,10 +118,9 @@ void App::update() {
     camScale +=  0.001f * timer.FrameElapsed();
 
   cam2d.setScale(camScale);
-  cam2d.Target(camTarget, timer);
+  cam2d.Target(gameLogic.getTarget(), timer);
 
-  std::vector<glm::vec4> colliders;
-  testMap.Update(cam2d.getCameraArea(), timer, &colliders);
+  gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d);
   
   postUpdate();
 #ifdef TIME_APP_DRAW_UPDATE
@@ -165,10 +156,8 @@ void App::draw() {
 
     mRender->Begin2DDraw();
 
-
-    testMap.Draw(mRender);
-
-    
+    gameLogic.Draw(mRender);
+        
 #ifdef GFX_ENV_VULKAN
   submitDraw =
       std::thread(&Render::EndDraw, mRender, std::ref(finishedDrawSubmit));

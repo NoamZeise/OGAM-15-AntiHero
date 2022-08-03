@@ -1,0 +1,37 @@
+#ifndef GAME_MAP_H
+#define GAME_MAP_H
+
+#include "visual.h"
+#include "tiled.h"
+
+#include <string>
+
+
+class Level
+{
+ public:
+  Level() {}
+  Level(Render *render, std::string file, Resource::Font mapFont)
+  {
+    this->tiledMap = tiled::Map(file);
+    this->visualMap = Map::Visual(tiledMap, render, mapFont);
+  }
+
+  void Update(glm::vec4 camRect, Timer &timer, std::vector<glm::vec4> *activeColliders)
+  {
+    visualMap.Update(camRect, timer, activeColliders);
+  }
+
+  void Draw(Render* render)
+  {
+    visualMap.Draw(render);
+  }
+   
+
+ private:
+  Map::Visual visualMap;
+  tiled::Map tiledMap;
+};
+
+
+#endif

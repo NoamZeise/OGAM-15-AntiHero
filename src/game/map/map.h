@@ -34,15 +34,15 @@ class Level
 
   void getObjLists(
 		   std::vector<glm::vec4> *roomRects,
-		   //enemy paths
-		   std::vector<glm::vec2> *heroPath
+		   std::vector<glm::vec2> *heroPath,
+		   std::vector<std::vector<glm::vec2>> *enemyPaths
       )
   {
     for(auto& objGroup : tiledMap.objectGroups)
     {
       for(auto& obj: objGroup.objs)
       {
-	if(obj.props.room)
+	if(obj.props.room || objGroup.props.room)
 	{
 	  roomRects->push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
         }
@@ -50,16 +50,21 @@ class Level
       for(auto& obj: objGroup.polys)
       {
 	std::vector<glm::vec2> *pointsList = nullptr;
-	if(obj.obj.props.hero)
+	if(obj.obj.props.hero || objGroup.props.hero)
 	{
 	    pointsList = heroPath;
+	}
+	if(obj.obj.props.enemy || objGroup.props.enemy)
+	{
+	  enemyPaths->push_back({});
+	  pointsList = &enemyPaths->at(enemyPaths->size() - 1);
 	}
 	  
 	if(pointsList != nullptr)
 	{
 	  for(auto &p: obj.points)
 	  {
-	    pointsList->push_back(glm::vec2(p.x, p.y));
+	    pointsList->push_back(glm::vec2(p.x + obj.obj.x, p.y + obj.obj.y));
 	  }
 	}
       }

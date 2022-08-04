@@ -67,6 +67,7 @@ private:
   void postUpdate();
   void draw();
 
+    glm::vec2 appToScreen(glm::vec2 pos);
   glm::vec2 correctedPos(glm::vec2 pos);
   glm::vec2 correctedMouse();
 
@@ -82,7 +83,7 @@ private:
   std::atomic<bool> finishedDrawSubmit;
   
   glm::vec2 camTarget = glm::vec2((float)settings::TARGET_WIDTH/2.0f  , (float)settings::TARGET_HEIGHT/2.0f);
-  float camScale = 1.0f;
+  float camScale = 0.35f;
 
   GameLogic gameLogic;
 };

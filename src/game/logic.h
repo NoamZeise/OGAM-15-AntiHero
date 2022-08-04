@@ -9,6 +9,10 @@
 #include "../renderer_include.h"
 #include "../camera.h"
 #include "map/map.h"
+#include "characters/hero.h"
+#include "characters/enemy.h"
+
+#include "god/stone.h"
 
 #include <vector>
 #include <iostream>
@@ -29,6 +33,15 @@ class GameLogic
   int currentLevelIndex = 0;
   Level currentLevel;
   Player player;
+  Hero hero;
+  Enemy enemy;
+  std::vector<Enemy> enemies;
+  god::Stone stone;
+  std::vector<god::Stone> stones;
+
+    Input prevInput;
+
+    Sprite cursor;
 };
 
 #endif

@@ -33,7 +33,7 @@ App::App() {
   glfwSetScrollCallback(mWindow, scroll_callback);
   glfwSetKeyCallback(mWindow, key_callback);
   glfwSetMouseButtonCallback(mWindow, mouse_button_callback);
-  glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   glfwSetInputMode(mWindow, GLFW_RAW_MOUSE_MOTION, glfwRawMouseMotionSupported());
 
   int width = mWindowWidth;
@@ -120,6 +120,9 @@ void App::update() {
   cam2d.setScale(camScale);
   cam2d.Target(gameLogic.getTarget(), timer);
 
+  glm::vec2 corrected = correctedMouse();
+  input.X = corrected.x;
+  input.Y = corrected.y;
   gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d);
   
   postUpdate();
@@ -181,10 +184,25 @@ glm::vec2 App::correctedPos(glm::vec2 pos)
 {
   if (settings::USE_TARGET_RESOLUTION)
     return glm::vec2(
-        pos.x * ((float)settings::TARGET_WIDTH / (float)mWindowWidth),
-        pos.y * ((float)settings::TARGET_HEIGHT / (float)mWindowHeight));
+        pos.x * ((float)settings::TARGET_WIDTH*camScale / (float)mWindowWidth),
+        pos.y * ((float)settings::TARGET_HEIGHT*camScale / (float)mWindowHeight));
 
   return glm::vec2(pos.x, pos.y);
+}
+
+glm::vec2 App::appToScreen(glm::vec2 pos)
+{
+  #ifdef OGL_RENDER_H
+  //std::cout << (float)mWindowWidth / (float)mWindowHeight << std::endl;
+  //wRatio = wRatio > 1.0f ? 1.0f : wRatio;
+  float ratio = (float)mWindowWidth  / (float)mWindowHeight;
+  float proper = (float)settings::TARGET_WIDTH / (float)settings::TARGET_HEIGHT;
+  float diff = ratio/proper;
+	return glm::vec2((pos.x / scale) * ((float)mWindowWidth / (float)settings::TARGET_WIDTH) / diff,
+    mWindowHeight  - ((pos.y / scale) * ((float)mWindowHeight / (float)settings::TARGET_HEIGHT)));
+  #else
+	return glm::vec2(pos.x / camScale, pos.y / camScale );
+  #endif
 }
 
 glm::vec2 App::correctedMouse()

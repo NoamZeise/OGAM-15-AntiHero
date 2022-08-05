@@ -22,7 +22,7 @@ class GameLogic
  public:
   GameLogic() {}
   GameLogic(Render *render, Camera::RoomFollow2D *cam2D);
-  void Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D);
+    void Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos);
   void Draw(Render *render);
   glm::vec2 getTarget();
 
@@ -40,8 +40,6 @@ class GameLogic
   std::vector<god::Stone> stones;
 
     Input prevInput;
-
-    Sprite cursor;
 };
 
 #endif

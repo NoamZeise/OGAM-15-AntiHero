@@ -15,24 +15,15 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D)
 		   );
   enemy = Enemy(Sprite(glm::vec2(0, 0), render->LoadTexture("textures/enemy.png")));
   stone = god::Stone(Sprite(glm::vec2(0, 0), render->LoadTexture("textures/stone.png")));
-
-  cursor = Sprite(glm::vec2(0, 0), render->LoadTexture("textures/enemy.png"));
-  cursor.rect.z *= 0.3f;
-  cursor.rect.w *= 0.3f;
-  cursor.depth = 4.0f;
+  
   LoadMap(cam2D);
 }
 
-void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D)
+void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)
 {
   std::vector<glm::vec4> frameColliders;
   currentLevel.Update(camRect, timer, &frameColliders);
   hero.Update(camRect, timer);
-  cursor.rect.x = glm::vec2(input.X*cam2D->getScale() + cam2D->getCameraOffset().x,
-			    input.Y*cam2D->getScale() + cam2D->getCameraOffset().y).x;
-  cursor.rect.y = glm::vec2(input.X*cam2D->getScale() + cam2D->getCameraOffset().x,
-			    input.Y*cam2D->getScale() + cam2D->getCameraOffset().y).y;
-  cursor.UpdateMatrix(camRect);
   for(auto& e: enemies)
     e.Update(camRect, timer);
   for(int stoneI = 0; stoneI < stones.size(); stoneI++)
@@ -50,8 +41,8 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
   if(input.Keys[GLFW_KEY_H] && !prevInput.Keys[GLFW_KEY_H])
   {
       god::Stone s = stone;
-      s.setPos(glm::vec2(input.X + cam2D->getCameraOffset().x,
-			 input.Y + cam2D->getCameraOffset().y));
+      s.setPos(glm::vec2(mousePos.x + cam2D->getCameraOffset().x,
+			 mousePos.y + cam2D->getCameraOffset().y));
       stones.push_back(s);
   }
 
@@ -66,8 +57,6 @@ void GameLogic::Draw(Render *render)
     e.Draw(render);
   for(auto& s: stones)
     s.Draw(render);
-
-  cursor.Draw(render);
 }
 
 glm::vec2 GameLogic::getTarget()

@@ -2,15 +2,16 @@
 #include "GLFW/glfw3.h"
 #include <cmath>
 
-App::App() {
-
-  mWindowWidth = settings::INITIAL_WINDOW_WIDTH;
-  mWindowHeight = settings::INITIAL_WINDOW_HEIGHT;
-
+App::App()
+{
   glfwSetErrorCallback(error_callback);
   if (!glfwInit())
     throw std::runtime_error("failed to initialise glfw!");
 
+  const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+  mWindowWidth = videoMode->width*0.95;
+  mWindowHeight = videoMode->height*0.95;
+  
   Render::SetGLFWWindowHints();
 
   #ifdef GFX_ENV_VULKAN
@@ -120,10 +121,7 @@ void App::update() {
   cam2d.setScale(camScale);
   cam2d.Target(gameLogic.getTarget(), timer);
 
-  glm::vec2 corrected = correctedMouse();
-  input.X = corrected.x;
-  input.Y = corrected.y;
-  gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d);
+  gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d, correctedMouse());
   
   postUpdate();
 #ifdef TIME_APP_DRAW_UPDATE
@@ -198,8 +196,8 @@ glm::vec2 App::appToScreen(glm::vec2 pos)
   float ratio = (float)mWindowWidth  / (float)mWindowHeight;
   float proper = (float)settings::TARGET_WIDTH / (float)settings::TARGET_HEIGHT;
   float diff = ratio/proper;
-	return glm::vec2((pos.x / scale) * ((float)mWindowWidth / (float)settings::TARGET_WIDTH) / diff,
-    mWindowHeight  - ((pos.y / scale) * ((float)mWindowHeight / (float)settings::TARGET_HEIGHT)));
+	return glm::vec2((pos.x / camScale) * ((float)mWindowWidth / (float)settings::TARGET_WIDTH) / diff,
+    mWindowHeight  - ((pos.y / camScale) * ((float)mWindowHeight / (float)settings::TARGET_HEIGHT)));
   #else
 	return glm::vec2(pos.x / camScale, pos.y / camScale );
   #endif

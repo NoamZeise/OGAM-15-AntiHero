@@ -104,15 +104,7 @@ void App::update() {
     glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
   }
 
-    float camspeed = 1.0f * camScale;
-  if(input.Keys[GLFW_KEY_UP])
-    camTarget.y -= camspeed * timer.FrameElapsed();
-  if(input.Keys[GLFW_KEY_DOWN])
-    camTarget.y += camspeed * timer.FrameElapsed();
-  if(input.Keys[GLFW_KEY_LEFT])
-    camTarget.x -= camspeed * timer.FrameElapsed();
-  if(input.Keys[GLFW_KEY_RIGHT])
-    camTarget.x += camspeed * timer.FrameElapsed();
+
   if(input.Keys[GLFW_KEY_EQUAL])
     camScale -=  0.001f * timer.FrameElapsed();
   if(input.Keys[GLFW_KEY_MINUS])

@@ -51,6 +51,25 @@ Properties fillPropStruct(rapidxml::xml_node<> *propertiesNode)
 			else
 				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
 		}
+		else if(name == "obstacle")
+		{
+			if(value == "true")
+				props.obstacle = true;
+			else if(value == "false")
+				props.obstacle = false;
+			else
+				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
+		}
+		else if(name == "checkpoint")
+		{
+			if(value == "true")
+				props.checkpoint = true;
+			else if(value == "false")
+				props.checkpoint = false;
+			else
+				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
+		}
+
 
 		else
 		{

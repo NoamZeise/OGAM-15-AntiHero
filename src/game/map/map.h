@@ -32,32 +32,46 @@ class Level
     return glm::vec4(0, 0, tiledMap.width * tiledMap.tileWidth, tiledMap.height * tiledMap.tileHeight);
   }
 
-  void getObjLists(
-		   std::vector<glm::vec4> *roomRects,
-		   std::vector<glm::vec2> *heroPath,
-		   std::vector<std::vector<glm::vec2>> *enemyPaths
-      )
+  struct MapGameplayObjects
   {
+      std::vector<glm::vec4> roomRects;
+      std::vector<glm::vec2> heroPath;
+      std::vector<std::vector<glm::vec2>> enemyPaths;
+      std::vector<glm::vec4> obstacles;
+      std::vector<glm::vec4> checkpoints;
+  };
+
+  MapGameplayObjects getObjLists()
+  {
+      MapGameplayObjects mapObjs;
     for(auto& objGroup : tiledMap.objectGroups)
     {
       for(auto& obj: objGroup.objs)
       {
 	if(obj.props.room || objGroup.props.room)
 	{
-	  roomRects->push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
+	    mapObjs.roomRects.push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
         }
+	if(obj.props.obstacle || objGroup.props.obstacle)
+	{
+	    mapObjs.obstacles.push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
+	}
+	if(obj.props.checkpoint || objGroup.props.checkpoint)
+	{
+	    mapObjs.checkpoints.push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
+	}
       }
       for(auto& obj: objGroup.polys)
       {
 	std::vector<glm::vec2> *pointsList = nullptr;
 	if(obj.obj.props.hero || objGroup.props.hero)
 	{
-	    pointsList = heroPath;
+	    pointsList = &mapObjs.heroPath;
 	}
 	if(obj.obj.props.enemy || objGroup.props.enemy)
 	{
-	  enemyPaths->push_back({});
-	  pointsList = &enemyPaths->at(enemyPaths->size() - 1);
+	  mapObjs.enemyPaths.push_back({});
+	  pointsList = &mapObjs.enemyPaths.at(mapObjs.enemyPaths.size() - 1);
 	}
 	  
 	if(pointsList != nullptr)
@@ -69,6 +83,7 @@ class Level
 	}
       }
     }
+    return mapObjs;
   }
   
  private:

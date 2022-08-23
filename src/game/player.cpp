@@ -7,7 +7,7 @@ Player::Player(Sprite sprite)
   this->sprite = sprite;
   this->sprite.rect.z *= 0.25f;
   this->sprite.rect.w *= 0.25f;
-  this->sprite.depth = 0.15f;
+  this->sprite.depth = 0.05f;
   this->hitbox = this->sprite.rect;
 }
 

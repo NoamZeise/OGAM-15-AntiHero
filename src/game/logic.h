@@ -11,6 +11,7 @@
 #include "map/map.h"
 #include "characters/hero.h"
 #include "characters/enemy.h"
+#include "characters/obstacle.h"
 
 #include "god/stone.h"
 
@@ -28,7 +29,9 @@ class GameLogic
 
  private:
   void LoadMap(Camera::RoomFollow2D *cam2D);
-  
+    void playerDeath(Camera::RoomFollow2D *cam2D);
+    void spellUpdate(glm::vec4 camRect, Timer &timer);
+    
   std::vector<Level> levels;
   int currentLevelIndex = 0;
   Level currentLevel;
@@ -36,9 +39,16 @@ class GameLogic
   Hero hero;
   Enemy enemy;
   std::vector<Enemy> enemies;
+    Obstacle obstacle;
+    std::vector<Obstacle> obstacles;
   god::Stone stone;
   std::vector<god::Stone> stones;
 
+    Sprite checkpoint;
+    std::vector<Sprite> checkpoints;
+    Sprite* lastCheckpoint;
+    int checkpointTargetIndex;
+    
     Input prevInput;
 };
 

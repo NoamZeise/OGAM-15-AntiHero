@@ -28,7 +28,8 @@ struct Properties
   bool obstacle = false;
   bool enemy = false;
   bool room  = false;
-};
+    bool checkpoint = false;
+  };
 
 //change this function defined in tiled.cpp to match the properties you added
 Properties fillPropStruct(rapidxml::xml_node<> *propertiesNode);

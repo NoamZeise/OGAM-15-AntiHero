@@ -47,6 +47,12 @@ return false;
 }
 }
 
+    inline glm::vec2 centre(glm::vec4 rect)
+    {
+
+	return glm::vec2(rect.x + rect.z/2, rect.y + rect.w/2);
+    }
+
 inline float max(float a, float b)
 {
 return a > b ? a : b;

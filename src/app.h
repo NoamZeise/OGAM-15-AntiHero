@@ -82,7 +82,6 @@ private:
   std::thread submitDraw;
   std::atomic<bool> finishedDrawSubmit;
   
-  glm::vec2 camTarget = glm::vec2((float)settings::TARGET_WIDTH/2.0f  , (float)settings::TARGET_HEIGHT/2.0f);
   float camScale = 0.35f;
 
   GameLogic gameLogic;

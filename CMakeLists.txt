@@ -35,6 +35,8 @@ endif()
 file(GLOB SOURCES src/*
 	  	  src/game/*
 		  src/game/map/*
+		  src/game/controls/*
+		  src/game/controls/card/*
 		  )
 list(FILTER SOURCES EXCLUDE REGEX ".*#+")
 if(GFX_ENV_VULKAN)

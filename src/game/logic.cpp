@@ -12,19 +12,30 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D)
 		  
 		  );
   hero = Hero(
-		   Sprite(glm::vec2(0, 0), render->LoadTexture("textures/player.png"))
+		   Sprite(glm::vec2(0, 0), render->LoadTexture("textures/characters/player.png"))
 		   );
-  enemy = Enemy(Sprite(glm::vec2(0, 0), render->LoadTexture("textures/enemy.png")));
+  enemy = Enemy(Sprite(glm::vec2(0, 0), render->LoadTexture("textures/characters/enemy.png")));
   obstacle = Obstacle(Sprite(glm::vec2(0, 0), render->LoadTexture("textures/obstacle.png")));
-  stone = god::Stone(Sprite(glm::vec2(0, 0), render->LoadTexture("textures/stone.png")));
+  stone = god::Stone(Sprite(glm::vec2(0, 0), render->LoadTexture("textures/spells/stone.png")));
   checkpoint = Sprite(glm::vec2(0, 0), render->LoadTexture("textures/checkpoint.png"));
   checkpoint.depth = 0.05f;
   LoadMap(cam2D);
+
+  spellControls = SpellControls(render);
+
+  spellControls.setCards(
+			 {
+			     Spells::Stone, Spells::Stone, Spells::Stone, Spells::Stone
+			     , Spells::Stone, Spells::Stone
+			 }
+			 );
 }
 
 void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)
 {
   std::vector<glm::vec4> frameColliders;
+  spellControls.Update(camRect, timer, input, mousePos);
+  spellCast(spellControls.spellCast().first, spellControls.spellCast().second);
   currentLevel.Update(camRect, timer, &frameColliders);
   hero.Update(camRect, timer);
   if(hero.isFinished())
@@ -51,16 +62,10 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
       {
         lastCheckpoint = &checkpoints[i];
 	checkpointTargetIndex = hero.getTargetIndex();
+	checkpointSpells = spellControls.getSpells();
       }
   }
   spellUpdate(camRect, timer);
-  if(input.Keys[GLFW_KEY_H] && !prevInput.Keys[GLFW_KEY_H])
-  {
-      god::Stone s = stone;
-      s.setPos(glm::vec2(mousePos.x + cam2D->getCameraOffset().x,
-			 mousePos.y + cam2D->getCameraOffset().y));
-      stones.push_back(s);
-  }
 
   prevInput = input;
 }
@@ -77,6 +82,7 @@ void GameLogic::Draw(Render *render)
       o.Draw(render);
   for(auto& c: checkpoints)
       c.Draw(render);
+  spellControls.Draw(render);
 }
 
 glm::vec2 GameLogic::getTarget()
@@ -121,9 +127,9 @@ void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
     LoadMap(cam2D);
     if(cp != glm::vec4(0))
     {
-	std::cout << "checkpoint set\n";
 	hero.setCheckpoint(glm::vec2(cp.x, cp.y), checkpointTargetIndex);
     }
+    spellControls.setCards(checkpointSpells);
 }
 
 
@@ -146,4 +152,18 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 	  stones.erase(stones.begin() + stoneI--);
       }
   }
+}
+
+void GameLogic::spellCast(Spells spell, glm::vec2 pos)
+{
+    switch (spell)
+  {
+      case Spells::Stone:
+	  god::Stone s = stone;
+	  s.setPos(glm::vec2(pos));
+	  stones.push_back(s);
+	  break;
+
+  }
+
 }

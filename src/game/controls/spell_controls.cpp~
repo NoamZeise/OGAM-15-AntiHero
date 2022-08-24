@@ -1,0 +1,35 @@
+#include "spell_controls.h"
+
+SpellControls::SpellControls(Render *render)
+{
+    const glm::vec2 START_CARDS = glm::vec2(50, 250);
+    const glm::vec2 CARD_SIZE = glm::vec2(80, 120);
+    spellTemplates.
+	insert(
+	 std::pair<Spells, SpellCard>(
+	   Spells::Stone,
+	   SpellCard(
+	       Sprite(
+		     glm::vec2(100, 100),
+		     render->LoadTexture("textures/UI/spells/Stone.png")
+	       ),
+	       Spells::Stone
+      	   )
+	 )
+    );
+
+    cards.push_back(spellTemplates[Spells::Stone]);
+    cards.back().setInitialRect(glm::vec4(START_CARDS.x, START_CARDS.y, CARD_SIZE.x, CARD_SIZE.y));
+}
+
+void SpellControls::Update(glm::vec4 camRect, Timer &timer, Input &input, glm::vec2 mousePos)
+{
+    for(auto& c: cards)
+	c.Update(camRect, timer, input, mousePos);
+}
+
+void SpellControls::Draw(Render *render)
+{
+    for(auto& c: cards)
+	c.Draw(render);
+}

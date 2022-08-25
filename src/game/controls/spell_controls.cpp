@@ -11,6 +11,7 @@ SpellControls::SpellControls(Render *render)
     insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Stone.png")), Spells::Stone);
     insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Wait.png")), Spells::Wait);
     insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Wind.png")), Spells::Wind);
+    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Restart.png")), Spells::Restart);
     insertSpellCard(Sprite(Resource::Texture()), Spells::None);
 }
 
@@ -89,7 +90,11 @@ void SpellControls::recentreCards(bool smooth)
 	if(smooth)
 	    cards[i].setTarget(glm::vec2(initialRect.x, initialRect.y));
 	else
+	{
 	    cards[i].setInitialRect(initialRect);
+	    cards[i].setInitialPos(glm::vec2(initialRect.x, initialRect.y + CARD_SIZE.y));
+	    cards[i].setTarget(glm::vec2(initialRect.x, initialRect.y));
+	}
     }
 
 }

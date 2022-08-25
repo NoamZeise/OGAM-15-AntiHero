@@ -33,7 +33,7 @@ class GameLogic
  private:
   void LoadMap(Camera::RoomFollow2D *cam2D);
     void playerDeath(Camera::RoomFollow2D *cam2D);
-    void spellCast(Spells spell, glm::vec2 pos);
+    void spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam2D);
     void spellUpdate(glm::vec4 camRect, Timer &timer);
     
   std::vector<Level> levels;
@@ -53,6 +53,7 @@ class GameLogic
     Sprite* lastCheckpoint;
     int checkpointTargetIndex;
     std::vector<Spells> checkpointSpells;
+    std::vector<Obstacle> checkpointObstacles;
     
     Input prevInput;
 

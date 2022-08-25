@@ -42,6 +42,8 @@ class Level
 		spells.push_back(Spells::Wait);
 	    else if(card == "wind")
 		spells.push_back(Spells::Wind);
+	    else if(card == "restart")
+		spells.push_back(Spells::Restart);
 	    else
 		std::cout << "warning : card name not recognized!\n";
 	}

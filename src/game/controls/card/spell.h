@@ -12,6 +12,7 @@ enum class Spells
   None,
   Stone,
   Wait,
+  Restart,
   Wind,
 };
 

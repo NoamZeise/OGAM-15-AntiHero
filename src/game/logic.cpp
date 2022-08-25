@@ -43,7 +43,7 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 
     std::vector<glm::vec4> frameColliders;
     spellControls.Update(camRect, timer, input, mousePos);
-    spellCast(spellControls.spellCast().first, spellControls.spellCast().second);
+    spellCast(spellControls.spellCast().first, spellControls.spellCast().second, cam2D);
     currentLevel.Update(camRect, timer, &frameColliders);
   hero.Update(camRect, timer);
   if(hero.isFinished())
@@ -72,6 +72,9 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 	      lastCheckpoint = &checkpoints[i];
 	      checkpointTargetIndex = hero.getTargetIndex();
 	      checkpointSpells = spellControls.getSpells();
+	      checkpointObstacles.clear();
+	      for(int o = 0; o < obstacles.size(); o++)
+		  checkpointObstacles.push_back(obstacles[o]);
 	  }
   }
   spellUpdate(camRect, timer);
@@ -159,6 +162,9 @@ void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
     {
 	hero.setCheckpoint(glm::vec2(cp.x, cp.y), checkpointTargetIndex);
 	    spellControls.setCards(checkpointSpells);
+	    obstacles.clear();
+	    for(int o = 0; o < checkpointObstacles.size(); o++)
+		obstacles.push_back(obstacles[0]);
     }
 }
 
@@ -184,7 +190,7 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
   }
 }
 
-void GameLogic::spellCast(Spells spell, glm::vec2 pos)
+void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam2D)
 {
     	  god::Stone s = stone;
     switch (spell)
@@ -196,6 +202,9 @@ void GameLogic::spellCast(Spells spell, glm::vec2 pos)
       case Spells::Wait:
 	  hero.Wait();
 	  break;
+      case Spells::Restart:
+            LoadMap(cam2D);
+      break;
   }
 
 }

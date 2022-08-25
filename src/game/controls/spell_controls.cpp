@@ -1,6 +1,11 @@
 #include "spell_controls.h"
 #include "config.h"
 
+    const glm::vec2 CARD_SIZE = glm::vec2(160, 240);
+    const glm::vec2 START_CARDS = glm::vec2(0, settings::TARGET_HEIGHT - CARD_SIZE.y*0.85f);
+    const float CARD_GAP = 1.05f;
+
+
 SpellControls::SpellControls(Render *render)
 {
     insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Stone.png")), Spells::Stone);
@@ -39,6 +44,12 @@ void SpellControls::Update(glm::vec4 camRect, Timer &timer, Input &input, glm::v
 		cards.erase(cards.begin() + i--);
 		recentreCards(true);
 	    }
+	    else
+	    {
+		auto t = cards[i].getOriginTarget();
+		cards[i].setInitialPos(glm::vec2(t.x, t.y + CARD_SIZE.y));
+		cards[i].setTarget(t);
+	    }
 	}
     }
 }
@@ -69,10 +80,6 @@ std::vector<Spells> SpellControls::getSpells()
 
 void SpellControls::recentreCards(bool smooth)
 {
-    const glm::vec2 CARD_SIZE = glm::vec2(160, 240);
-    const glm::vec2 START_CARDS = glm::vec2(0, settings::TARGET_HEIGHT - CARD_SIZE.y*0.85f);
-    const float CARD_GAP = 1.05f;
-
     float width = CARD_SIZE.x* CARD_GAP * cards.size();
     float xOff = (settings::TARGET_WIDTH - width) / 2.0f;
     

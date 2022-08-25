@@ -19,18 +19,18 @@ namespace{
 const float RAISE_CARD_DIST = 30.0f;
 const float CARD_FLOATINESS = 100.0f;
 const float CARD_TRANSPARENCY_RANGE = 300.0f;
- const float CARD_ACTIATION_THREASHOLD = 0.5f;
+const float CARD_ACTIATION_THREASHOLD = 0.5f;
 } // namespace
 
 class SpellCard : public Button
 {
  public:
-  SpellCard() {}
- SpellCard(Sprite card, Spells spell) : Button(card, true)
-  {
-    this->spell = spell;
-    this->sprite.depth = 2.0f;
-  }
+    SpellCard() {}
+    SpellCard(Sprite card, Spells spell) : Button(card, true)
+    {
+	this->spell = spell;
+	this->sprite.depth = 2.0f;
+    }
 
   void Update(glm::vec4 camRect, Timer &timer, Input &input, glm::vec2 mousePos)
   {
@@ -103,9 +103,14 @@ class SpellCard : public Button
       return spellTarget;
     }
 
+    glm::vec2 getOriginTarget()
+    {
+	return originTarget;
+    }
+
     bool isSelected()
     {
-	return selected && prevDist < CARD_ACTIATION_THREASHOLD;
+	return selected && prevDist < CARD_ACTIATION_THREASHOLD && spell != Spells::Wait;
     }
 
   Spells getSpell() { return spell; }
@@ -113,6 +118,13 @@ class SpellCard : public Button
   void setInitialRect(glm::vec4 rect) override
   {
     initialRect = rect;
+    target = glm::vec2(initialRect.x, initialRect.y);
+  }
+
+    void setInitialPos(glm::vec2 pos)
+  {
+    initialRect.x = pos.x;
+    initialRect.y = pos.y;
     target = glm::vec2(initialRect.x, initialRect.y);
   }
 

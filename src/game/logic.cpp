@@ -27,7 +27,7 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
   hero = Hero(
 		   Sprite(render->LoadTexture("textures/characters/player.png"))
 		   );
-  enemy = Enemy(Sprite(render->LoadTexture("textures/characters/enemy.png")));
+  enemy = Enemy(Sprite(render->LoadTexture("textures/characters/enemy.png")),Sprite(render->LoadTexture("textures/UI/distracted.png")));
   obstacle = Obstacle(Sprite(render->LoadTexture("textures/obstacle.png")));
   stone = god::Stone(Sprite(render->LoadTexture("textures/spells/stone.png")));
   checkpoint = Sprite(render->LoadTexture("textures/checkpoint.png"));

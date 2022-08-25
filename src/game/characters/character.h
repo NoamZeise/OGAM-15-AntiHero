@@ -9,6 +9,8 @@
 #include <iostream>
 #include <vector>
 
+const float CHARACTER_DEPTH = 0.05f;
+
 class Character
 {
  public:
@@ -19,7 +21,7 @@ class Character
     this->sprite = sprite;
     this->sprite.rect.z *= 0.2f;
     this->sprite.rect.w *= 0.2f;
-    this->sprite.depth = 0.05f;
+    this->sprite.depth = CHARACTER_DEPTH;
     currentTargetIndex = 0;
   }
    
@@ -40,7 +42,7 @@ class Character
     this->sprite.UpdateMatrix(camRect);
   }
 
-  void Draw(Render *render)
+  virtual void Draw(Render *render)
   {
     sprite.Draw(render);
   }

@@ -35,6 +35,7 @@ class SpellCard : public Button
   void Update(glm::vec4 camRect, Timer &timer, Input &input, glm::vec2 mousePos)
   {
     Button::Update(camRect, input, mousePos);
+    cast = false;
     glm::vec2 toTarget = target - glm::vec2(initialRect.x, initialRect.y);
     toTarget /= CARD_FLOATINESS;
     toTarget *= timer.FrameElapsed();
@@ -49,11 +50,10 @@ class SpellCard : public Button
 	    {
 	      cast = true;
 	    }
-	  else {
 	   
 	  target.x = originTarget.x;
 	  target.y = originTarget.y;
-	  }
+	  
 	  }
 	else
 	  {
@@ -81,12 +81,13 @@ class SpellCard : public Button
 	      {
 		wasOnSprite = true;
 		target.y -= RAISE_CARD_DIST;
+		sprite.depth += 0.1f;
 	      }
 	    else if(!onSprite && wasOnSprite)
 	      {
 		wasOnSprite = false;
 		target.y += RAISE_CARD_DIST;
-
+		sprite.depth -= 0.1f;
 	      }
 	}
       }

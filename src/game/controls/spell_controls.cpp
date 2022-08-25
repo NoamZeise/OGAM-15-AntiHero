@@ -34,8 +34,11 @@ void SpellControls::Update(glm::vec4 camRect, Timer &timer, Input &input, glm::v
 	if(cards[i].wasCast())
 	{
 	    spell = std::pair<Spells, glm::vec2>(cards[i].getSpell(), cards[i].getTarget());
-	    cards.erase(cards.begin() + i--);
-	    recentreCards(true);
+	    if(cards[i].getSpell() != Spells::Wait)
+	    {
+		cards.erase(cards.begin() + i--);
+		recentreCards(true);
+	    }
 	}
     }
 }

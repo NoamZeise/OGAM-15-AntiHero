@@ -3,6 +3,8 @@
 
 #include "character.h"
 
+const float WAIT_TIME = 1200.0f;
+
 class Hero : public Character
 {
  public:
@@ -21,6 +23,13 @@ class Hero : public Character
       Character::setPath(path);
   }
 
+    void Update(glm::vec4 camRect, Timer &timer) override
+    {
+	waitTimer += timer.FrameElapsed();
+	if(waitTimer > waitDelay)
+	    Character::Update(camRect, timer);
+    }
+
     void setCheckpoint(glm::vec2 pos, int targetIndex)
     {
 	this->sprite.rect.x = pos.x;
@@ -30,6 +39,11 @@ class Hero : public Character
     }
 
     int getTargetIndex() { return currentTargetIndex; }
+
+    void Wait()
+    {
+	waitTimer = 0.0f;
+    }
 
 protected:
    void nextPoint() override
@@ -45,6 +59,8 @@ protected:
   }
 private:
     bool finishedLevel = false;
+    float waitTimer = WAIT_TIME;
+    float waitDelay = WAIT_TIME;
 };
 
 #endif

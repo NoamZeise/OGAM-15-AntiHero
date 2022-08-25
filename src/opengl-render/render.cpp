@@ -172,6 +172,7 @@ void Render::EndDraw(std::atomic<bool>& submit)
   {
     if((currentTexture.ID != draw2DCalls[i].tex.ID || currentColour != draw2DCalls[i].colour) && drawCount > 0)
     {
+	//std::cout << "batch\n";
       draw2DBatch(drawCount, currentTexture, currentColour);
       drawCount = 0;
     }

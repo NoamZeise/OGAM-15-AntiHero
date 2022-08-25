@@ -9,8 +9,8 @@ App::App()
     throw std::runtime_error("failed to initialise glfw!");
 
   const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-  mWindowWidth = (int)((float)videoMode->width*0.95f);
-  mWindowHeight = (int)((float)videoMode->height*0.95f);
+  mWindowWidth = (int)((float)videoMode->width*0.6f);
+  mWindowHeight = (int)((float)videoMode->height*0.6f);
   
   Render::SetGLFWWindowHints();
 
@@ -51,6 +51,7 @@ App::App()
     glfwSetWindowAspectRatio(mWindow, width, height);
 
   loadAssets();
+
   finishedDrawSubmit = true;
 }
 

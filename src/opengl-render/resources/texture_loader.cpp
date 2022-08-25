@@ -5,9 +5,9 @@ namespace Resource
 
 	TextureLoader::LoadedTex::LoadedTex(std::string path)
 	{
-#ifndef NDEBUG
+	    #ifndef NDEBUG
 		std::cout << "loading texture: " << path << std::endl;
-#endif
+		#endif
 		ID = 0;
 		width = 0;
 		height = 0;

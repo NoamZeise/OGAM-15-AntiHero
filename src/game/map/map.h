@@ -5,6 +5,8 @@
 #include "tiled.h"
 
 #include <string>
+#include <fstream>
+#include "../controls/card/spell.h"
 
 
 class Level
@@ -13,8 +15,37 @@ class Level
   Level() {}
   Level(Render *render, std::string file, Resource::Font mapFont)
   {
-    this->tiledMap = tiled::Map(file);
+    this->tiledMap = tiled::Map(file + ".tmx");
     this->visualMap = Map::Visual(tiledMap, render, mapFont);
+    std::ifstream in(file + ".cards");
+    for(std::string line; std::getline(in, line);)
+    {
+	std::string card;
+	std::string count;
+	bool getCount = false;
+	for(auto& c :line)
+	{
+	    if(c == ' ')
+		getCount = true;
+	    else if(getCount)
+		count.push_back(c);
+	    else
+		card.push_back(c);
+	}
+	int cardCount = std::stoi(count);
+	std::cout << cardCount << std::endl;
+	for(int i = 0; i < cardCount; i++)
+	{
+	    if(card == "stone")
+		spells.push_back(Spells::Stone);
+	    else if(card == "wait")
+		spells.push_back(Spells::Wait);
+	    else if(card == "wind")
+		spells.push_back(Spells::Wind);
+	    else
+		std::cout << "warning : card name not recognized!\n";
+	}
+    }
   }
 
   void Update(glm::vec4 camRect, Timer &timer, std::vector<glm::vec4> *activeColliders)
@@ -85,10 +116,13 @@ class Level
     }
     return mapObjs;
   }
+
+    std::vector<Spells> getSpells() { return spells; }
   
  private:
   Map::Visual visualMap;
   tiled::Map tiledMap;
+    std::vector<Spells> spells;
 };
 
 

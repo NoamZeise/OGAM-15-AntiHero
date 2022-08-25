@@ -15,9 +15,10 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      targetCursor.rect.z *= 0.3f;
      targetCursor.rect.w *= 0.3f;
      
-  Resource::Font mapFont = render->LoadFont("textures/Roboto-Black.ttf"); 
+  Resource::Font mapFont = render->LoadFont("textures/Roboto-Black.ttf");
+
   levels.push_back(
-		   Level(render, "maps/testNewTiles.tmx", mapFont)
+		   Level(render, "maps/testNewTiles", mapFont)
 		   );
   currentLevel = levels[0];
   player = Player(
@@ -31,17 +32,9 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
   stone = god::Stone(Sprite(render->LoadTexture("textures/spells/stone.png")));
   checkpoint = Sprite(render->LoadTexture("textures/checkpoint.png"));
   checkpoint.depth = 0.05f;
-  LoadMap(cam2D);
-
   spellControls = SpellControls(render);
-
-  spellControls.setCards(
-			 {
-			     Spells::Wait,
-			     Spells::Stone, Spells::Stone, Spells::Stone, Spells::Stone
-			     , Spells::Stone, Spells::Stone
-			 }
-			 );
+  
+  LoadMap(cam2D);
 }
 
 void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)
@@ -154,6 +147,8 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
       cp.rect = c;
       checkpoints.push_back(cp);
   }
+
+  spellControls.setCards(currentLevel.getSpells());
 }
 
 void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
@@ -191,14 +186,16 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 
 void GameLogic::spellCast(Spells spell, glm::vec2 pos)
 {
+    	  god::Stone s = stone;
     switch (spell)
   {
       case Spells::Stone:
-	  god::Stone s = stone;
 	  s.setPos(glm::vec2(pos));
 	  stones.push_back(s);
 	  break;
-
+      case Spells::Wait:
+	  hero.Wait();
+	  break;
   }
 
 }

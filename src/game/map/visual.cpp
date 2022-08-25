@@ -90,7 +90,7 @@ void Visual::Draw(Render *render)
 	}
 	for(unsigned int i = 0; i < toDraw.size(); i++)
 	{
-		render->DrawQuad(toDraw[i].tex, toDraw[i].tileMat, glm::vec4(1.0f), toDraw[i].texOffset);
+	    render->DrawQuad(toDraw[i].tex, toDraw[i].tileMat, glm::vec4(1.0f), toDraw[i].texOffset);
 	}
 }
 

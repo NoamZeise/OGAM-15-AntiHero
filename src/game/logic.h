@@ -4,6 +4,7 @@
 #include <timer.h>
 #include <input.h>
 #include <gamehelper.h>
+#include <audio.h>
 
 #include "player.h"
 #include "../renderer_include.h"
@@ -24,7 +25,7 @@ class GameLogic
 {
  public:
   GameLogic() {}
-  GameLogic(Render *render, Camera::RoomFollow2D *cam2D);
+    GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager* audioManager);
     void Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos);
   void Draw(Render *render);
   glm::vec2 getTarget();
@@ -56,6 +57,13 @@ class GameLogic
     Input prevInput;
 
     SpellControls spellControls;
+    Audio::Manager* audio;
+
+    float lastScale = 1.0f;
+
+    Sprite* currentCursor;
+    Sprite defaultCursor;
+    Sprite targetCursor;
 };
 
 #endif

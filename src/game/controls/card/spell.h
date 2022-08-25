@@ -2,6 +2,7 @@
 #define GAME_SPELL_CARD
 
 #include "../button.h"
+#include "config.h"
 #include "glm/geometric.hpp"
 #include <timer.h>
 #include <input.h>
@@ -17,7 +18,8 @@ enum class Spells
 namespace{
 const float RAISE_CARD_DIST = 30.0f;
 const float CARD_FLOATINESS = 100.0f;
-const float CARD_TRANSPARENCY_RANGE = 200.0f;
+const float CARD_TRANSPARENCY_RANGE = 300.0f;
+ const float CARD_ACTIATION_THREASHOLD = 0.5f;
 } // namespace
 
 class SpellCard : public Button
@@ -43,7 +45,7 @@ class SpellCard : public Button
 	if(!clicked)
 	  {
 	  selected = false;
-	  if(prevDist < 0.8f)
+	  if(prevDist < CARD_ACTIATION_THREASHOLD)
 	    {
 	      cast = true;
 	    }
@@ -56,13 +58,14 @@ class SpellCard : public Button
 	else
 	  {
 	    sprite.spriteColour = SELECT_COLOUR;
-	    float dist = glm::distance(originTarget, glm::vec2(initialRect.x, initialRect.y));
+	    float dist = originTarget.y - target.y;
 	    sprite.spriteColour.w = 1 - (dist / CARD_TRANSPARENCY_RANGE);
 	    prevDist = sprite.spriteColour.w;
-
+	    if(sprite.spriteColour.w < 0.1f) { sprite.spriteColour.w = 0.1f; }
 	    spellTarget = glm::vec2(mousePos.x + camRect.x, mousePos.y + camRect.y);
-	    target.x = mousePos.x - initialRect.z/2.0f;
-	    target.y = mousePos.y - initialRect.w/2.0f;
+	    float scale = settings::TARGET_WIDTH / camRect.z;
+	    target.x = mousePos.x*scale - initialRect.z/2.0f;
+	    target.y = mousePos.y*scale - initialRect.w/2.0f;
 	  }
       }
     else
@@ -99,6 +102,11 @@ class SpellCard : public Button
       return spellTarget;
     }
 
+    bool isSelected()
+    {
+	return selected && prevDist < CARD_ACTIATION_THREASHOLD;
+    }
+
   Spells getSpell() { return spell; }
 
   void setInitialRect(glm::vec4 rect) override
@@ -107,13 +115,18 @@ class SpellCard : public Button
     target = glm::vec2(initialRect.x, initialRect.y);
   }
 
+  void setTarget(glm::vec2 target)
+  {
+      this->target = target;
+  }
+
  private:
   bool selected = false;
   bool cast = false;
   bool wasOnSprite = false;
   glm::vec2 originTarget;
   Spells spell;
-  float prevDist = 0.0f;
+  float prevDist = 1.0f;
   glm::vec2 target;
   glm::vec2 spellTarget;
 };

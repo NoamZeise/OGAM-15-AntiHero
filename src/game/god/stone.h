@@ -5,7 +5,7 @@
 #include "gamehelper.h"
 #include "glm/geometric.hpp"
 
-const int STONE_SPEED = 500.0f;
+const float STONE_SPEED = 500.0f;
 
 namespace god
 {

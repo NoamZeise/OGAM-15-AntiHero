@@ -3,6 +3,7 @@
 
 #include "../sprite.h"
 #include "GLFW/glfw3.h"
+#include "config.h"
 
 #include <input.h>
 
@@ -15,9 +16,18 @@ public:
   Button(Sprite sprite, bool isStatic) { this->sprite = sprite; this->initialRect = sprite.rect; this->isStatic = isStatic; }
   virtual void Update(glm::vec4 camRect, Input &input, glm::vec2 mousePos)
 {
+    if(isStatic)
+  {
+      float scale = camRect.z / settings::TARGET_WIDTH;
+      sprite.rect = glm::vec4((initialRect.x*scale + camRect.x), (initialRect.y*scale + camRect.y), initialRect.z*scale, initialRect.w*scale);
+           mousePos.x += camRect.x;
+      mousePos.y += camRect.y;
+  }
+  sprite.UpdateMatrix(camRect);
+  
   prevClicked = clicked;
   clicked = input.Buttons[GLFW_MOUSE_BUTTON_LEFT];
-  if(gh::contains(mousePos, initialRect))
+  if(gh::contains(mousePos, sprite.rect))
   {
     onSprite = true;
     sprite.spriteColour = SELECT_COLOUR;
@@ -27,11 +37,6 @@ public:
     onSprite = false;
     sprite.spriteColour = glm::vec4(1.0f);
   }
-
-  if(isStatic)
-    sprite.rect = glm::vec4(initialRect.x + camRect.x, initialRect.y + camRect.y, initialRect.z, initialRect.w);
-
-  sprite.UpdateMatrix(camRect);
 }
 
   virtual void Draw(Render *render) { sprite.Draw(render); }

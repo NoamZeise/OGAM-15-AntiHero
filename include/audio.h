@@ -10,6 +10,9 @@
 #include <map>
 #include <cstring>
 
+
+#define MUTE_MUSIC
+
 namespace Audio
 {
 
@@ -177,6 +180,9 @@ public:
 
 	void Play(std::string filename, bool loop, float volume)
 	{
+	    #ifdef MUTE_MUSIC
+	    volume = 0.0f;
+	    #endif
 		if(loaded.count(filename) == 0)
 			this->LoadAudioFile(filename);
 		activeAudio.push_back(new Instance(loaded[filename], loop, volume));

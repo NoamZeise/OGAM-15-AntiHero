@@ -21,7 +21,7 @@ namespace Camera
 
 	void RoomFollow2D::Target(glm::vec2 focus, Timer &timer)
 		{
-
+		  
 		  int correctedWidth = settings::TARGET_WIDTH*scale;
 			int correctedHeight = settings::TARGET_HEIGHT*scale;
 			glm::vec2 transform = glm::vec2(0);

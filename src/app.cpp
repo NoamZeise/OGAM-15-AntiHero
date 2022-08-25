@@ -9,8 +9,8 @@ App::App()
     throw std::runtime_error("failed to initialise glfw!");
 
   const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-  mWindowWidth = videoMode->width*0.95;
-  mWindowHeight = videoMode->height*0.95;
+  mWindowWidth = (int)((float)videoMode->width*0.95f);
+  mWindowHeight = (int)((float)videoMode->height*0.95f);
   
   Render::SetGLFWWindowHints();
 
@@ -34,7 +34,7 @@ App::App()
   glfwSetScrollCallback(mWindow, scroll_callback);
   glfwSetKeyCallback(mWindow, key_callback);
   glfwSetMouseButtonCallback(mWindow, mouse_button_callback);
-  glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
   glfwSetInputMode(mWindow, GLFW_RAW_MOUSE_MOTION, glfwRawMouseMotionSupported());
 
   int width = mWindowWidth;
@@ -62,7 +62,7 @@ App::~App() {
 }
 
 void App::loadAssets() {
-  gameLogic = GameLogic(mRender, &cam2d);
+    gameLogic = GameLogic(mRender, &cam2d, &audioManager);
   mRender->EndResourceLoad();
 }
 

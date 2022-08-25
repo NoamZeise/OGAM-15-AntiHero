@@ -10,6 +10,9 @@ namespace
     const float INVESTIGATION_INITIATION_PROXIMITY = 10.0f;
     const float INVESTIGATION_DURATION = 2200.0f;
     const float PLAYER_CHASE_RADIUS = 100.0f;
+    const float ENEMY_PATROL_SPEED = 0.025f;
+    const float ENEMY_INVESTIGATE_SPEED = 0.03f;
+    const float ENEMY_CHASE_SPEED = 0.08f;
 } // namespace
 
 class Enemy : public Character
@@ -18,16 +21,16 @@ class Enemy : public Character
   Enemy() {}
   Enemy(Sprite sprite) : Character(sprite)
   {
-    
+      speed = ENEMY_PATROL_SPEED;
   }
     void setRectToPrev() override
     {
-	this->dir *= -1.0f;
+	this->dir *= -1;
 	this->currentTargetIndex += this->dir;
 	if(currentTargetIndex < 0)
 	    currentTargetIndex = 0;
 	if(currentTargetIndex >= this->path.size())
-	    currentTargetIndex = this->path.size() - 1;
+	    currentTargetIndex = (int)this->path.size() - 1;
 	sprite.rect = prevRect;
     }
 
@@ -36,10 +39,12 @@ class Enemy : public Character
 	prevRect = sprite.rect;
 	if(currentState == EnemyState::Patrol)
 	{
+	    speed = ENEMY_PATROL_SPEED;
 	    Character::Update(camRect, timer);
 	}
 	else if(currentState == EnemyState::Investigate)
-	{	   
+	{
+	    speed = ENEMY_INVESTIGATE_SPEED;
 	    glm::vec2 toTarget = investigationTarget - gh::centre(sprite.rect);
 	    float length = glm::length(toTarget);
 	    moveToTarget(toTarget, timer);
@@ -53,6 +58,7 @@ class Enemy : public Character
 	}
 	else if(currentState == EnemyState::Chase)
 	{
+	    speed = ENEMY_CHASE_SPEED;
 	    glm::vec2 toTarget = playerPos - gh::centre(sprite.rect);
 	    moveToTarget(toTarget, timer);
 	    sprite.UpdateMatrix(camRect);
@@ -86,6 +92,7 @@ private:
 	    Patrol,
 	    Investigate,
 	    Chase,
+	    Dead,
 	};
 
     EnemyState currentState = EnemyState::Patrol;

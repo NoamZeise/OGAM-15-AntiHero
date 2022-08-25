@@ -34,6 +34,12 @@ struct Sprite
     this->texture = texture;
   }
 
+  Sprite(Resource::Texture texture)
+  {
+    rect = glm::vec4(0, 0, texture.dim.x, texture.dim.y);
+    this->texture = texture;
+  }
+
   void UpdateMatrix(glm::vec4 cameraRect)
   {
     toDraw = gh::colliding(cameraRect, rect);

@@ -6,10 +6,11 @@
 
 namespace
 {    
-    const float DISTRACTION_RANGE = 150.0f;
+    const float DISTRACTION_RANGE = 200.0f;
     const float INVESTIGATION_INITIATION_PROXIMITY = 10.0f;
     const float INVESTIGATION_DURATION = 4200.0f;
-    const float PLAYER_CHASE_RADIUS = 150.0f;
+    const float PLAYER_CHASE_RADIUS = 180.0f;
+    const float PLAYER_CHASE_OUT_OF_VIEW_RADIUS = 80.0f;
     const float ENEMY_PATROL_SPEED = 0.025f;
     const float ENEMY_INVESTIGATE_SPEED = 0.03f;
     const float ENEMY_CHASE_SPEED = 0.12f;
@@ -19,7 +20,7 @@ class Enemy : public Character
 {
  public:
   Enemy() {}
-    Enemy(Sprite sprite, Sprite distracted, Sprite circle, Sprite search) : Character(sprite)
+    Enemy(Sprite sprite, Sprite distracted, Sprite circle, Sprite search) : Character(sprite, circle)
   {
       speed = ENEMY_PATROL_SPEED;
       distracted.rect.z *= 0.1f;
@@ -34,6 +35,9 @@ class Enemy : public Character
       this->search = search;
       this->circle = circle;
       this->distracted = distracted;
+      circle.rect.z = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
+      circle.rect.w = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
+      this->outOfview = circle;
   }
     void setRectToPrev() override
     {
@@ -48,6 +52,7 @@ class Enemy : public Character
 
     void Update(glm::vec4 camRect, Timer &timer, glm::vec2 playerPos)
     {
+	time += timer.FrameElapsed();
 	prevRect = sprite.rect;
 	currentSpeed += acceleration * timer.FrameElapsed();
 	if(currentSpeed > speed) { currentSpeed = speed; }
@@ -62,8 +67,13 @@ class Enemy : public Character
 	    speed = ENEMY_INVESTIGATE_SPEED;
 	    glm::vec2 toTarget = investigationTarget - gh::centre(sprite.rect);
 	    direction = glm::normalize(toTarget);
-	    //float length = glm::length(toTarget);
-	    moveToTarget(toTarget, timer);
+	    float length = glm::length(toTarget);
+	    if(length > INVESTIGATION_INITIATION_PROXIMITY)
+		moveToTarget(toTarget, timer);
+	    else
+	    {
+		//wobble search
+	    }
 	    //if(length < INVESTIGATION_INITIATION_PROXIMITY)
 		investigationTimer += timer.FrameElapsed();
 	    if(investigationTimer > investigationDuration)
@@ -84,22 +94,31 @@ class Enemy : public Character
 	distracted.rect.x = sprite.rect.x + (sprite.rect.z - distracted.rect.z)/2.0f;
 	distracted.rect.y = sprite.rect.y - distracted.rect.w;
 	distracted.UpdateMatrix(camRect);
+	
 	circle.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - circle.rect.z/2.0f;
 	circle.rect.y = (sprite.rect.y + sprite.rect.w/2.0f) - circle.rect.w/2.0f;
 	circle.spriteColour = glm::vec4(0.9f, 0.9f, 0.2f, 0.2f);
 	circle.UpdateMatrix(camRect);
+	
 	search.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - search.rect.z/2.0f;
 	search.rect.y = (sprite.rect.y + sprite.rect.w/2.0f) - search.rect.w/2.0f;
 	search.spriteColour = glm::vec4(0.9f, 0.2f, 0.2f, 0.2f);
-	search.rotate = atan2(direction.y, direction.x)*180.0/3.14159265 + 90.0f; // do math (direction)?
+	search.rotate = atan2(direction.y, direction.x)*180.0/3.14159265 + 90.0f
+	    + sin(time*0.001f)*25.0f;
 	search.UpdateMatrix(camRect);
+	
+	outOfview.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - outOfview.rect.z/2.0f;
+	outOfview.rect.y = (sprite.rect.y + sprite.rect.w/2.0f) - outOfview.rect.w/2.0f;
+	outOfview.spriteColour = glm::vec4(0.9f, 0.2f, 0.2f, 0.2f);
+	outOfview.UpdateMatrix(camRect);
 
-	 if(glm::distance(gh::centre(sprite.rect), playerPos) < PLAYER_CHASE_RADIUS)
+	float distToPlayer = glm::distance(gh::centre(sprite.rect), playerPos);
+	 if(distToPlayer < PLAYER_CHASE_RADIUS)
 	{
 	    glm::vec2 toPlayer = glm::vec2(playerPos) - glm::vec2(sprite.rect.x, sprite.rect.y);
 	    toPlayer = glm::normalize(toPlayer);
 	    float angle = atan2(toPlayer.y, toPlayer.x)*180.0/3.14159265 + 90.0f;
-	    if(abs(angle - search.rotate) < 22.5f)
+	    if(abs(angle - search.rotate) < 22.5f || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS)
 		currentState = EnemyState::Chase;
 	}
     }
@@ -124,8 +143,9 @@ class Enemy : public Character
 	Character::Draw(render);
 	if(currentState == EnemyState::Investigate)
 	    distracted.Draw(render);
-	circle.Draw(render);
+	//circle.Draw(render);
 	search.Draw(render);
+	outOfview.Draw(render);
     }
 
 private:
@@ -140,12 +160,14 @@ private:
 
     Sprite distracted;
     Sprite circle;
+    Sprite outOfview;
     Sprite search;
     EnemyState currentState = EnemyState::Patrol;
     glm::vec2 investigationTarget = glm::vec2(0);
     float investigationTimer = 0.0f;
     float investigationDuration = INVESTIGATION_DURATION;
     glm::vec2 direction = glm::vec2(1.0f, 0.0f);
+    double time = 0.0f;
 };
 
 #endif

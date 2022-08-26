@@ -8,7 +8,7 @@ class Obstacle : public Character
 {
 public:
  Obstacle() {}
- Obstacle(Sprite sprite) : Character(sprite) {}
+    Obstacle(Sprite sprite) : Character(sprite, sprite) {}
 
  void Update(glm::vec4 camRect, Timer &timer) override
  {

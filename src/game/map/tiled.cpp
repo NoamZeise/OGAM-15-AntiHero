@@ -69,7 +69,28 @@ Properties fillPropStruct(rapidxml::xml_node<> *propertiesNode)
 			else
 				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
 		}
-
+		else if(name == "pickup")
+		{
+			if(value == "true")
+				props.pickup = true;
+			else if(value == "false")
+				props.pickup = false;
+			else
+				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
+		}
+		else if(name == "stone")
+		{
+		    props.stone = std::stoi(value);
+		}
+		else if(name == "gold")
+		{
+			if(value == "true")
+				props.gold = true;
+			else if(value == "false")
+				props.gold = false;
+			else
+				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
+		}
 
 		else
 		{

@@ -8,6 +8,11 @@
 #include <fstream>
 #include "../controls/card/spell.h"
 
+struct Pickup
+{
+    std::vector<std::pair<Spells, int>> spells;
+    glm::vec4 rect;
+};
 
 class Level
 {
@@ -17,7 +22,7 @@ class Level
   {
     this->tiledMap = tiled::Map(file + ".tmx");
     this->visualMap = Map::Visual(tiledMap, render, mapFont);
-    std::ifstream in(file + ".cards");
+    /*std::ifstream in(file + ".cards");
     for(std::string line; std::getline(in, line);)
     {
 	std::string card;
@@ -47,7 +52,7 @@ class Level
 	    else
 		std::cout << "warning : card name not recognized!\n";
 	}
-    }
+	}*/
   }
 
   void Update(glm::vec4 camRect, Timer &timer, std::vector<glm::vec4> *activeColliders)
@@ -72,6 +77,8 @@ class Level
       std::vector<std::vector<glm::vec2>> enemyPaths;
       std::vector<glm::vec4> obstacles;
       std::vector<glm::vec4> checkpoints;
+      std::vector<Pickup> pickups;
+      glm::vec4 gold;
   };
 
   MapGameplayObjects getObjLists()
@@ -93,6 +100,15 @@ class Level
 	{
 	    mapObjs.checkpoints.push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
 	}
+	if(objGroup.props.pickup)
+	{
+	    Pickup pu;
+	    pu.spells.push_back(std::pair<Spells, int>(Spells::Stone, obj.props.stone));
+	    pu.rect = glm::vec4(obj.x, obj.y, obj.w, obj.h);
+	    mapObjs.pickups.push_back(pu);
+	}
+	if(obj.props.gold || objGroup.props.gold)
+	    mapObjs.gold = glm::vec4(obj.x, obj.y, obj.w, obj.h);
       }
       for(auto& obj: objGroup.polys)
       {
@@ -119,12 +135,12 @@ class Level
     return mapObjs;
   }
 
-    std::vector<Spells> getSpells() { return spells; }
+    //   std::vector<Spells> getSpells() { return spells; }
   
  private:
   Map::Visual visualMap;
   tiled::Map tiledMap;
-    std::vector<Spells> spells;
+    // std::vector<Spells> spells;
 };
 
 

@@ -40,7 +40,8 @@ class GameLogic
 
     
   std::vector<Level> levels;
-  int currentLevelIndex = 1;
+    Button restartBtn;
+  int currentLevelIndex = 0;
   Level currentLevel;
   Player player;
   Hero hero;
@@ -50,6 +51,9 @@ class GameLogic
     std::vector<Obstacle> obstacles;
   god::Stone stone;
   std::vector<god::Stone> stones;
+    Sprite pickupSprite;
+    std::vector<std::pair<Pickup, Sprite>> pickups;
+    Sprite gold;
 
     Sprite checkpoint;
     std::vector<Sprite> checkpoints;
@@ -58,6 +62,7 @@ class GameLogic
     std::vector<Spells> checkpointSpells;
     std::vector<Obstacle> checkpointObstacles;
     std::vector<Enemy> checkpointEnemies;
+    bool checkpointGotGold = false;
     
     Input prevInput;
 
@@ -69,6 +74,8 @@ class GameLogic
     Sprite* currentCursor;
     Sprite defaultCursor;
     Sprite targetCursor;
+
+    bool gotGold = false;
 };
 
 #endif

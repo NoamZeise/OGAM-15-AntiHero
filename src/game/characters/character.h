@@ -16,13 +16,18 @@ class Character
  public:
   Character() {}
 
-  Character(Sprite sprite)
+    Character(Sprite sprite, Sprite circle)
   {
     this->sprite = sprite;
     this->sprite.rect.z *= 0.2f;
     this->sprite.rect.w *= 0.2f;
     this->sprite.depth = CHARACTER_DEPTH;
     currentTargetIndex = 0;
+    this->circle = circle;
+    this->circle.rect.z = 10.0f;
+    this->circle.rect.w = 10.0f;
+    this->circle.depth = CHARACTER_DEPTH - 0.01f;
+    this->circle.spriteColour = glm::vec4(0.5f, 0.1f, 0.14f, 0.4f);
   }
    
   virtual void Update(glm::vec4 camRect, Timer &timer)
@@ -43,11 +48,15 @@ class Character
 	    nextPoint();
     }
     this->sprite.UpdateMatrix(camRect);
+    for(auto& c: pathOutline)
+	c.UpdateMatrix(camRect);
   }
 
   virtual void Draw(Render *render)
   {
     sprite.Draw(render);
+    for(auto& c: pathOutline)
+	c.Draw(render);
   }
 
   virtual void setPath(std::vector<glm::vec2> path)
@@ -57,8 +66,26 @@ class Character
     if(path.size() != 0)
     {
       currentTargetIndex = 0;
-      this->sprite.rect.x = this->path[0].x;
-      this->sprite.rect.y = this->path[0].y;
+      this->sprite.rect.x = this->path[0].x;// - sprite.rect.z/2.0f;
+      this->sprite.rect.y = this->path[0].y;// - sprite.rect.w/2.0f;
+      float takeaway = 0.0f;
+      for(int p = 1; p < path.size(); p++)
+      {
+	   float dist = glm::distance(path[p-1], path[p]);
+	   glm::vec2 dir = glm::normalize(path[p] - path[p-1]);
+	  float nowDist = 0.0f + takeaway;
+	  while(nowDist < dist)
+	  {
+	      glm::vec2 pos = path[p-1] + dir*nowDist;
+	      circle.rect = glm::vec4(
+	      			      pos.x - circle.rect.z/2.0f,
+				      pos.y + sprite.rect.w/2.0f - circle.rect.w/2.0f,
+				      circle.rect.z, circle.rect.w);
+	      pathOutline.push_back(circle);
+	      nowDist += 100.0f;
+	  }
+	  takeaway = nowDist - dist;
+      }
     }
   }
 
@@ -118,6 +145,8 @@ class Character
     float currentSpeed = 0.0f;
     float acceleration = 0.0001f;
   int dir = 1;
+    Sprite circle;
+    std::vector<Sprite> pathOutline;
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "logic.h"
 #include "config.h"
+#include "gamehelper.h"
 
 GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager* audioManager)
 {
@@ -18,9 +19,6 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      Resource::Font mapFont = render->LoadFont("textures/Roboto-Black.ttf");
      
      levels.push_back(
-		      Level(render, "maps/testNewTiles", mapFont)
-		      );
-     levels.push_back(
 		      Level(render, "maps/level1", mapFont)
 		      );
      currentLevel = levels[currentLevelIndex];
@@ -28,7 +26,8 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
 		     
 		     );
      hero = Hero(
-		 Sprite(render->LoadTexture("textures/characters/player.png"))
+		 Sprite(render->LoadTexture("textures/characters/player.png")),
+		 Sprite(render->LoadTexture("textures/UI/circle.png"))
 		   );
      enemy = Enemy(
 		   Sprite(render->LoadTexture("textures/characters/enemy.png")),
@@ -40,14 +39,25 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      checkpoint = Sprite(render->LoadTexture("textures/checkpoint.png"));
      checkpoint.depth = 0.05f;
      spellControls = SpellControls(render);
-     
+
+     pickupSprite = Sprite(render->LoadTexture("textures/spells/pickup.png"));
+     pickupSprite.depth = CHARACTER_DEPTH + 0.01f;
+
+     Sprite restartBtnSprite = Sprite(glm::vec2(10.0f, 10.0f),render->LoadTexture("textures/UI/restart.png"));
+     restartBtnSprite.depth = 2.0f;
+     restartBtnSprite.rect.z *= 0.4f;
+     restartBtnSprite.rect.w *= 0.4f;
+     restartBtn = Button(restartBtnSprite, true);
+
+     gold = Sprite(render->LoadTexture("textures/gold.png"));
+     gold.depth = CHARACTER_DEPTH;
+				
      LoadMap(cam2D);
 }
 
 void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)
 {
     lastScale = camRect.z / settings::TARGET_WIDTH;
-
     std::vector<glm::vec4> frameColliders;
     spellControls.Update(camRect, timer, input, mousePos);
     spellCast(spellControls.spellCast().first, spellControls.spellCast().second, cam2D);
@@ -70,6 +80,28 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 	  if(gh::colliding(o.getHitBox(), e.getHitBox()))
 	      e.setRectToPrev();
     }
+    for(int i = 0; i < pickups.size(); i++)
+    {
+	pickups[i].second.UpdateMatrix(camRect);        ;
+	if(gh::colliding(pickups[i].first.rect, hero.getHitBox()))
+	{
+	    std::vector<Spells> toAdd;
+
+	    for(int s = 0; s < pickups[i].first.spells.size(); s++)
+	    {
+		for(int k = 0; k < pickups[i].first.spells[s].second; k++)
+		    toAdd.push_back(pickups[i].first.spells[s].first);
+	    }
+	    spellControls.addCards(toAdd);
+	    pickups.erase(pickups.begin() + i--);
+	}
+    }
+    if(!gotGold)
+    {
+        gold.UpdateMatrix(camRect);
+	if(gh::colliding(hero.getHitBox(), gold.rect))
+	    gotGold = true;
+    }
     for(int i = 0; i < checkpoints.size(); i++)
     {
 	checkpoints[i].UpdateMatrix(camRect);
@@ -85,6 +117,7 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 		checkpointEnemies.clear();
 		for(int c = 0; c < enemies.size(); c++)
 		    checkpointEnemies.push_back(enemies[c]);
+		checkpointGotGold = gotGold;
 	    }
     }
     spellUpdate(camRect, timer);
@@ -103,7 +136,9 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
       defaultCursor.UpdateMatrix(camRect);
       currentCursor = &defaultCursor;
   }
-    
+    restartBtn.Update(camRect, input, mousePos);
+    if(restartBtn.Clicked())
+	LoadMap(cam2D);
     prevInput = input;
 }
 
@@ -115,12 +150,17 @@ void GameLogic::Draw(Render *render)
     s.Draw(render);
   for(auto& o: obstacles)
       o.Draw(render);
+  for(auto& pu: pickups)
+      pu.second.Draw(render);
+  if(!gotGold)
+      gold.Draw(render);
   for(auto& c: checkpoints)
       c.Draw(render);
   for(auto& e: enemies)
       e.Draw(render);
   spellControls.Draw(render);
   currentCursor->Draw(render);
+  restartBtn.Draw(render);
 }
 
 glm::vec2 GameLogic::getTarget()
@@ -128,7 +168,7 @@ glm::vec2 GameLogic::getTarget()
     auto target = hero.getPos();
     const float CARD_OFFSET = 200.0f;
     target.y += CARD_OFFSET * lastScale;
-  return target;
+    return target;
 }
 
 void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
@@ -144,7 +184,7 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
     Enemy e = enemy;
     e.setPath(p);
     enemies.push_back(e);
-  }
+    }
   obstacles.clear();
   for(auto& o: mapObjs.obstacles)
   {
@@ -160,8 +200,16 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
       cp.rect = c;
       checkpoints.push_back(cp);
   }
-
-  spellControls.setCards(currentLevel.getSpells());
+  
+  spellControls.setCards({Spells::Restart, Spells::Wait});
+  pickups.clear();
+  for(auto &pu: mapObjs.pickups)
+  {
+      Sprite puS = pickupSprite;
+      puS.rect = pu.rect;
+      pickups.push_back(std::pair<Pickup, Sprite>(pu, puS));
+  }
+  gold.rect = mapObjs.gold;
 }
 
 void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
@@ -178,6 +226,7 @@ void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
 	enemies.clear();
 	for(int c = 0; c < checkpointEnemies.size(); c++)
 	    enemies.push_back(checkpointEnemies[c]);
+	gotGold = checkpointGotGold;
     }
 }
 
@@ -225,8 +274,11 @@ void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam
     case Spells::Wait:
 	hero.Wait();
 	break;
+    case Spells::Go:
+	hero.Go();
+	break;
     case Spells::Restart:
-	LoadMap(cam2D);
+	playerDeath(cam2D);
 	break;
   }
 

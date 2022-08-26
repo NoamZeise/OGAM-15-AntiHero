@@ -9,7 +9,7 @@ class Hero : public Character
 {
  public:
     Hero() {}
-    Hero(Sprite sprite) : Character(sprite)
+    Hero(Sprite sprite, Sprite circle) : Character(sprite, circle)
     {
 	this->sprite.rect.z *= 2.0f;
 	this->sprite.rect.w *= 2.0f;
@@ -19,16 +19,17 @@ class Hero : public Character
 
   void setPath(std::vector<glm::vec2> path) override
   {
-      waitTimer = waitDelay;
+      waiting = false;
       currentSpeed = 0.0f;
       finishedLevel = false;
+      circle.spriteColour = glm::vec4(0.2f, 0.54f, 0.3f, 0.2f);
       Character::setPath(path);
   }
 
     void Update(glm::vec4 camRect, Timer &timer) override
     {
-	waitTimer += timer.FrameElapsed();
-	if(waitTimer > waitDelay)
+	//waitTimer += timer.FrameElapsed();
+	if(!waiting)
 	    Character::Update(camRect, timer);
     }
 
@@ -44,8 +45,13 @@ class Hero : public Character
 
     void Wait()
     {
+	waiting = true;
 	currentSpeed = 0.0f;
-	waitTimer = 0.0f;
+    }
+
+    void Go()
+    {
+	waiting = false;
     }
 
 protected:
@@ -62,8 +68,7 @@ protected:
   }
 private:
     bool finishedLevel = false;
-    float waitTimer = WAIT_TIME;
-    float waitDelay = WAIT_TIME;
+    bool waiting = false;
 };
 
 #endif

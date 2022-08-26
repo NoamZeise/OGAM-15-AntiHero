@@ -18,9 +18,9 @@ public:
 {
     if(isStatic)
   {
-      float scale = camRect.z / settings::TARGET_WIDTH;
-      sprite.rect = glm::vec4((initialRect.x*scale + camRect.x), (initialRect.y*scale + camRect.y), initialRect.z*scale, initialRect.w*scale);
-           mousePos.x += camRect.x;
+      float scale = camRect.z / (float)settings::TARGET_WIDTH;
+      sprite.rect = glm::vec4((int)(initialRect.x*scale + camRect.x), (int)(initialRect.y*scale + camRect.y),(int)( initialRect.z*scale), (int)(initialRect.w*scale));
+      mousePos.x += camRect.x;
       mousePos.y += camRect.y;
   }
   sprite.UpdateMatrix(camRect);

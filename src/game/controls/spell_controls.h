@@ -18,6 +18,7 @@ class SpellControls
     void Update(glm::vec4 camRect, Timer &timer, Input &input, glm::vec2 mousePos);
   void Draw(Render *render);
     void setCards(std::vector<Spells> spells);
+    void addCards(std::vector<Spells> spells);
   std::vector<Spells> getSpells();
   std::pair<Spells, glm::vec2> spellCast() { return spell; }
     bool isTargeting() { return targeting; }

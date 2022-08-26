@@ -7,11 +7,11 @@
 #include <timer.h>
 #include <input.h>
 
-enum class Spells
-{
+enum class Spells {
   None,
   Stone,
   Wait,
+  Go,
   Restart,
   Wind,
 };
@@ -114,6 +114,8 @@ class SpellCard : public Button
 	return selected && prevDist < CARD_ACTIATION_THREASHOLD && spell != Spells::Wait;
     }
 
+    void setWasOnSprite(bool state) { wasOnSprite = state; }
+
   Spells getSpell() { return spell; }
 
   void setInitialRect(glm::vec4 rect) override
@@ -133,6 +135,16 @@ class SpellCard : public Button
   {
       this->target = target;
   }
+
+    void unselect()
+    {
+	if(selected)
+	{
+	  selected = false;
+	  target.x = originTarget.x;
+	  target.y = originTarget.y;
+	}
+    }
 
  private:
   bool selected = false;

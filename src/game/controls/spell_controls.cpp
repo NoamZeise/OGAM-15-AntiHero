@@ -12,6 +12,7 @@ SpellControls::SpellControls(Render *render)
     insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Wait.png")), Spells::Wait);
     insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Wind.png")), Spells::Wind);
     insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Restart.png")), Spells::Restart);
+    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Go.png")), Spells::Go);
     insertSpellCard(Sprite(Resource::Texture()), Spells::None);
 }
 
@@ -40,7 +41,7 @@ void SpellControls::Update(glm::vec4 camRect, Timer &timer, Input &input, glm::v
 	if(cards[i].wasCast())
 	{
 	    spell = std::pair<Spells, glm::vec2>(cards[i].getSpell(), cards[i].getTarget());
-	    if(cards[i].getSpell() != Spells::Wait)
+	    if(cards[i].getSpell() != Spells::Wait && cards[i].getSpell() != Spells::Go)
 	    {
 		cards.erase(cards.begin() + i--);
 		recentreCards(true);
@@ -48,8 +49,13 @@ void SpellControls::Update(glm::vec4 camRect, Timer &timer, Input &input, glm::v
 	    else
 	    {
 		auto t = cards[i].getOriginTarget();
-		cards[i].setInitialPos(glm::vec2(t.x, t.y + CARD_SIZE.y));
+		if(cards[i].getSpell() == Spells::Wait)
+		    cards[i] = spellTemplates[Spells::Go];
+		else
+		    cards[i] = spellTemplates[Spells::Wait];
+		cards[i].setInitialRect(glm::vec4(t.x, t.y + CARD_SIZE.y, CARD_SIZE.x, CARD_SIZE.y));
 		cards[i].setTarget(t);
+		cards[i].setWasOnSprite(true);
 	    }
 	}
     }
@@ -66,6 +72,13 @@ void SpellControls::setCards(std::vector<Spells> spells)
     cards.clear();
     for(int i = 0; i < spells.size(); i++)
 	    cards.push_back(spellTemplates[spells[i]]);
+    recentreCards(false);
+}
+
+void SpellControls::addCards(std::vector<Spells> spells)
+{
+    for(auto &s: spells)
+	cards.push_back(spellTemplates[s]);
     recentreCards(false);
 }
 
@@ -91,6 +104,8 @@ void SpellControls::recentreCards(bool smooth)
 	    cards[i].setTarget(glm::vec2(initialRect.x, initialRect.y));
 	else
 	{
+	    cards[i].setWasOnSprite(false);
+	    cards[i].unselect();
 	    cards[i].setInitialRect(initialRect);
 	    cards[i].setInitialPos(glm::vec2(initialRect.x, initialRect.y + CARD_SIZE.y));
 	    cards[i].setTarget(glm::vec2(initialRect.x, initialRect.y));

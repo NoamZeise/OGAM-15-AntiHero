@@ -28,7 +28,10 @@ struct Properties
   bool obstacle = false;
   bool enemy = false;
   bool room  = false;
-    bool checkpoint = false;
+  bool checkpoint = false;
+    bool pickup = false;
+    int stone = 0;
+    bool gold = false;
   };
 
 //change this function defined in tiled.cpp to match the properties you added

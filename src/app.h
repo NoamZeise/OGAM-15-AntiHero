@@ -82,7 +82,7 @@ private:
   std::thread submitDraw;
   std::atomic<bool> finishedDrawSubmit;
   
-  float camScale = 0.45f;
+  float camScale = 0.50f;
 
   GameLogic gameLogic;
 };

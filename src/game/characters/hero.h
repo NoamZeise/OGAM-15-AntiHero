@@ -19,6 +19,8 @@ class Hero : public Character
 
   void setPath(std::vector<glm::vec2> path) override
   {
+      waitTimer = waitDelay;
+      currentSpeed = 0.0f;
       finishedLevel = false;
       Character::setPath(path);
   }
@@ -42,6 +44,7 @@ class Hero : public Character
 
     void Wait()
     {
+	currentSpeed = 0.0f;
 	waitTimer = 0.0f;
     }
 

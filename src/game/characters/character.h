@@ -31,14 +31,17 @@ class Character
     if(path.size() > currentTargetIndex)
     {
 	prevRect = sprite.rect;
-      glm::vec2 pos = glm::vec2(sprite.rect.x + sprite.rect.z/2, sprite.rect.y + sprite.rect.w/2);
-      
-      glm::vec2 toTarget = path[currentTargetIndex] - pos;
-      float length = glm::length(toTarget);
-      moveToTarget(toTarget, timer);
-      if(length < 10.0f)
-	nextPoint();
-      }
+	glm::vec2 pos = glm::vec2(sprite.rect.x + sprite.rect.z/2, sprite.rect.y + sprite.rect.w/2);
+	
+	glm::vec2 toTarget = path[currentTargetIndex] - pos;
+	lastToTarget = toTarget;
+	float length = glm::length(toTarget);
+	currentSpeed += acceleration * timer.FrameElapsed();
+	if(currentSpeed > speed) { currentSpeed = speed; }
+	moveToTarget(toTarget, timer);
+	if(length < 10.0f)
+	    nextPoint();
+    }
     this->sprite.UpdateMatrix(camRect);
   }
 
@@ -79,6 +82,7 @@ class Character
 
     virtual void setRectToPrev()
     {
+	currentSpeed = 0.0f;
 	sprite.rect = prevRect;
     }
 
@@ -86,28 +90,33 @@ class Character
 
   virtual void nextPoint()
   {
-    dir =
-      currentTargetIndex <= 0 ?
-              1 :
-              currentTargetIndex >= path.size() - 1 ?
-                 -1 : dir;
-    currentTargetIndex += dir;
+      int lastDir = dir;
+      dir =
+	  currentTargetIndex <= 0 ?
+	  1 :
+	  currentTargetIndex >= path.size() - 1 ?
+	  -1 : dir;
+      if(lastDir != dir)
+	  currentSpeed = 0.0f;
+      currentTargetIndex += dir;
   }
 
     void moveToTarget(glm::vec2 vecToTarget, Timer &timer)
     {
-      float movement = speed * timer.FrameElapsed();
+      float movement = currentSpeed * timer.FrameElapsed();
       vecToTarget = glm::normalize(vecToTarget);
       vecToTarget.x *= movement;
       vecToTarget.y *= movement;
       gh::addVec2ToRect(vecToTarget , &sprite.rect);
     }
-
-    glm::vec4 prevRect;
+    glm::vec2 lastToTarget;
+  glm::vec4 prevRect;
   Sprite sprite;
   std::vector<glm::vec2> path;
   int currentTargetIndex;
   float speed = 0.1f;
+    float currentSpeed = 0.0f;
+    float acceleration = 0.0001f;
   int dir = 1;
 };
 

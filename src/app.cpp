@@ -9,8 +9,8 @@ App::App()
     throw std::runtime_error("failed to initialise glfw!");
 
   const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-  mWindowWidth = (int)((float)videoMode->width*0.6f);
-  mWindowHeight = (int)((float)videoMode->height*0.6f);
+  mWindowWidth = (int)((float)videoMode->width);
+  mWindowHeight = (int)((float)videoMode->height);
   
   Render::SetGLFWWindowHints();
 
@@ -36,7 +36,7 @@ App::App()
   glfwSetMouseButtonCallback(mWindow, mouse_button_callback);
   glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
   glfwSetInputMode(mWindow, GLFW_RAW_MOUSE_MOTION, glfwRawMouseMotionSupported());
-
+  glfwSetWindowPos(mWindow, 0, 0);
   int width = mWindowWidth;
   int height = mWindowHeight;
   if (settings::USE_TARGET_RESOLUTION)

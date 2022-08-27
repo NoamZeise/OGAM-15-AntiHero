@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-const float CHARACTER_DEPTH = 0.05f;
+const float CHARACTER_DEPTH = 0.15f;
 
 class Character
 {
@@ -40,6 +40,11 @@ class Character
 	
 	glm::vec2 toTarget = path[currentTargetIndex] - pos;
 	lastToTarget = toTarget;
+	float rot = atan2(toTarget.y, toTarget.x);
+	if(rot > -3.1415/2.0)
+	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
+	else
+	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
 	float length = glm::length(toTarget);
 	currentSpeed += acceleration * timer.FrameElapsed();
 	if(currentSpeed > speed) { currentSpeed = speed; }
@@ -55,6 +60,7 @@ class Character
   virtual void Draw(Render *render)
   {
     sprite.Draw(render);
+    //render->DrawQuad(Resource::Texture(), glmhelper::getModelMatrix(getHitBox(), 0.0f, 4.0f));
     for(auto& c: pathOutline)
 	c.Draw(render);
   }
@@ -68,23 +74,26 @@ class Character
       currentTargetIndex = 0;
       this->sprite.rect.x = this->path[0].x;// - sprite.rect.z/2.0f;
       this->sprite.rect.y = this->path[0].y;// - sprite.rect.w/2.0f;
-      float takeaway = 0.0f;
-      for(int p = 1; p < path.size(); p++)
+      if(displayPath)
       {
-	   float dist = glm::distance(path[p-1], path[p]);
-	   glm::vec2 dir = glm::normalize(path[p] - path[p-1]);
-	  float nowDist = 0.0f + takeaway;
-	  while(nowDist < dist)
+	  float takeaway = 0.0f;
+	  for(int p = 1; p < path.size(); p++)
 	  {
-	      glm::vec2 pos = path[p-1] + dir*nowDist;
-	      circle.rect = glm::vec4(
-	      			      pos.x - circle.rect.z/2.0f,
-				      pos.y + sprite.rect.w/2.0f - circle.rect.w/2.0f,
-				      circle.rect.z, circle.rect.w);
-	      pathOutline.push_back(circle);
-	      nowDist += 100.0f;
+	      float dist = glm::distance(path[p-1], path[p]);
+	      glm::vec2 dir = glm::normalize(path[p] - path[p-1]);
+	      float nowDist = 0.0f + takeaway;
+	      while(nowDist < dist)
+	      {
+		  glm::vec2 pos = path[p-1] + dir*nowDist;
+		  circle.rect = glm::vec4(
+					  pos.x - circle.rect.z/2.0f,
+					  pos.y + sprite.rect.w/2.0f - circle.rect.w/2.0f,
+					  circle.rect.z, circle.rect.w);
+		  pathOutline.push_back(circle);
+		  nowDist += 100.0f;
+	      }
+	      takeaway = nowDist - dist;
 	  }
-	  takeaway = nowDist - dist;
       }
     }
   }
@@ -100,7 +109,7 @@ class Character
 
     virtual glm::vec4 getHitBox()
     {
-	const float HITBOX_SCALE = 0.4f;
+	const float HITBOX_SCALE = 0.6f;
 	float xOff = sprite.rect.z * HITBOX_SCALE;
 	float yOff = sprite.rect.w * HITBOX_SCALE;
 	auto rect = glm::vec4(sprite.rect.x + xOff/2.0f, sprite.rect.y + yOff/2.0f, sprite.rect.z - xOff, sprite.rect.w - yOff);
@@ -111,6 +120,7 @@ class Character
     {
 	currentSpeed = 0.0f;
 	sprite.rect = prevRect;
+	collided = true;
     }
 
  protected:
@@ -147,6 +157,9 @@ class Character
   int dir = 1;
     Sprite circle;
     std::vector<Sprite> pathOutline;
+
+    bool  displayPath = false;
+    bool collided = false;
 };
 
 #endif

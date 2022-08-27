@@ -9,10 +9,10 @@
 namespace settings
 {
 const bool SRGB = false;
-const bool MIP_MAPPING = true;
+const bool MIP_MAPPING = false;
 const bool PIXELATED = true;
 const bool VSYNC = true;
-const bool MULTISAMPLING = false;
+const bool MULTISAMPLING = true;
 const bool SAMPLE_SHADING = true;
 
 const bool FIXED_RATIO = true;

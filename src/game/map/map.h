@@ -104,6 +104,7 @@ class Level
 	{
 	    Pickup pu;
 	    pu.spells.push_back(std::pair<Spells, int>(Spells::Stone, obj.props.stone));
+	    pu.spells.push_back(std::pair<Spells, int>(Spells::Smoke, obj.props.smoke));
 	    pu.rect = glm::vec4(obj.x, obj.y, obj.w, obj.h);
 	    mapObjs.pickups.push_back(pu);
 	}

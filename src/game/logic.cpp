@@ -26,7 +26,7 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
 		     
 		     );
      hero = Hero(
-		 Sprite(render->LoadTexture("textures/characters/player.png")),
+		 Sprite(render->LoadTexture("textures/characters/Robyn.png")),
 		 Sprite(render->LoadTexture("textures/UI/circle.png"))
 		   );
      enemy = Enemy(
@@ -36,8 +36,9 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
 		   Sprite(render->LoadTexture("textures/UI/search.png")));
      obstacle = Obstacle(Sprite(render->LoadTexture("textures/obstacle.png")));
      stone = god::Stone(Sprite(render->LoadTexture("textures/spells/stone.png")));
+     smoke = god::Smoke(Sprite(render->LoadTexture("textures/spells/smoke.png")));
      checkpoint = Sprite(render->LoadTexture("textures/checkpoint.png"));
-     checkpoint.depth = 0.05f;
+     checkpoint.depth = CHARACTER_DEPTH;
      spellControls = SpellControls(render);
 
      pickupSprite = Sprite(render->LoadTexture("textures/spells/pickup.png"));
@@ -117,6 +118,9 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 		checkpointEnemies.clear();
 		for(int c = 0; c < enemies.size(); c++)
 		    checkpointEnemies.push_back(enemies[c]);
+		checkpointPickups.clear();
+		for(int p = 0; p < pickups.size(); p++)
+		    checkpointPickups.push_back(pickups[p]);
 		checkpointGotGold = gotGold;
 	    }
     }
@@ -158,6 +162,8 @@ void GameLogic::Draw(Render *render)
       c.Draw(render);
   for(auto& e: enemies)
       e.Draw(render);
+  for(auto& s: smokes)
+      s.Draw(render);
   spellControls.Draw(render);
   currentCursor->Draw(render);
   restartBtn.Draw(render);
@@ -178,6 +184,8 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
   Level::MapGameplayObjects mapObjs = currentLevel.getObjLists();
   cam2D->setCameraRects(mapObjs.roomRects);
   hero.setPath(mapObjs.heroPath);
+  stones.clear();
+  smokes.clear();
   enemies.clear();
   for(auto& p: mapObjs.enemyPaths)
   {
@@ -226,6 +234,9 @@ void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
 	enemies.clear();
 	for(int c = 0; c < checkpointEnemies.size(); c++)
 	    enemies.push_back(checkpointEnemies[c]);
+	pickups.clear();
+	for(int p = 0; p < checkpointPickups.size(); p++)
+	    pickups.push_back(checkpointPickups[p]);
 	gotGold = checkpointGotGold;
     }
 }
@@ -260,11 +271,20 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 	  stones.erase(stones.begin() + stoneI--);
       }
   }
+    for(int i = 0; i < smokes.size(); i++)
+    {
+	smokes[i].Update(camRect, timer);
+	for(int j = 0; j < enemies.size(); j++)
+	    enemies[j].smokeEvent(smokes[i].getHitBox());
+	if(smokes[i].isFinished())
+	    smokes.erase(smokes.begin() + i--);
+    }
 }
 
 void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam2D)
 {
     god::Stone s = stone;
+    god::Smoke smk = smoke;
     switch (spell)
     {
     case Spells::Stone:
@@ -279,6 +299,10 @@ void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam
 	break;
     case Spells::Restart:
 	playerDeath(cam2D);
+	break;
+    case Spells::Smoke:
+	smk.setPos(glm::vec2(pos));
+	smokes.push_back(smk);
 	break;
   }
 

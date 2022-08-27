@@ -27,7 +27,7 @@ class SpellControls
   std::map<Spells, SpellCard> spellTemplates;
   std::pair<Spells, glm::vec2> spell = std::pair<Spells, glm::vec2>(Spells::None, glm::vec2(0));
   void recentreCards(bool smooth);
-    void insertSpellCard(Sprite sprite, Spells spell);
+    void insertSpellCard(Sprite sprite, Sprite active,  Spells spell);
     bool targeting = false;
 };
 

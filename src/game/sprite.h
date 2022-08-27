@@ -13,6 +13,7 @@ struct Sprite
   glm::vec4 rect;
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   glm::vec4 spriteColour = glm::vec4(1.0f);
+  glm::vec4 texOffset = glm::vec4(0, 0, 1, 1);
   float rotate = 0.0f;
   float depth = 0.0f;
   bool toDraw = true;
@@ -50,7 +51,7 @@ struct Sprite
   void Draw(Render* render)
   {
     if(toDraw)
-      render->DrawQuad(texture, modelMatrix, spriteColour);
+      render->DrawQuad(texture, modelMatrix, spriteColour, texOffset);
   }
   
 };

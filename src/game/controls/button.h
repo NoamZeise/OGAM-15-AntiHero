@@ -13,33 +13,39 @@ class Button
 {
 public:
   Button() {}
-  Button(Sprite sprite, bool isStatic) { this->sprite = sprite; this->initialRect = sprite.rect; this->isStatic = isStatic; }
+    Button(Sprite sprite, bool isStatic) { this->sprite = sprite; this->activeSprite = sprite; this->activeSprite.spriteColour = SELECT_COLOUR; this->initialRect = sprite.rect; this->isStatic = isStatic; }
+    Button(Sprite sprite, Sprite activeSprite, bool isStatic)
+    {
+	this->sprite = sprite;
+	this->activeSprite = activeSprite;
+	this->isStatic = isStatic;
+    }
   virtual void Update(glm::vec4 camRect, Input &input, glm::vec2 mousePos)
 {
     if(isStatic)
   {
       float scale = camRect.z / (float)settings::TARGET_WIDTH;
       sprite.rect = glm::vec4((int)(initialRect.x*scale + camRect.x), (int)(initialRect.y*scale + camRect.y),(int)( initialRect.z*scale), (int)(initialRect.w*scale));
+      activeSprite.rect = sprite.rect;
       mousePos.x += camRect.x;
       mousePos.y += camRect.y;
   }
   sprite.UpdateMatrix(camRect);
+  activeSprite.UpdateMatrix(camRect);
   
   prevClicked = clicked;
   clicked = input.Buttons[GLFW_MOUSE_BUTTON_LEFT];
-  if(gh::contains(mousePos, sprite.rect))
+  if(gh::contains(mousePos, glm::vec4(sprite.rect.x + horizontalHitboxOffset/2.0f, sprite.rect.y, sprite.rect.z - horizontalHitboxOffset, sprite.rect.w)))
   {
     onSprite = true;
-    sprite.spriteColour = SELECT_COLOUR;
   }
   else
   {
     onSprite = false;
-    sprite.spriteColour = glm::vec4(1.0f);
   }
 }
 
-  virtual void Draw(Render *render) { sprite.Draw(render); }
+    virtual void Draw(Render *render) { if(!onSprite) sprite.Draw(render); else activeSprite.Draw(render); }
   bool Clicked()  { return !prevClicked && clicked && onSprite; }
   virtual void setInitialRect(glm::vec4 rect) 
   {
@@ -48,11 +54,13 @@ public:
 
 protected:
   Sprite sprite;
+    Sprite activeSprite;
   bool prevClicked = true;
   bool clicked = false;
   bool onSprite = false;
   bool isStatic;
   glm::vec4 initialRect;
+    float horizontalHitboxOffset = 0.0f;
 };
 
 #endif

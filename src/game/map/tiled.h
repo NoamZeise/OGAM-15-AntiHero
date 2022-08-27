@@ -31,6 +31,7 @@ struct Properties
   bool checkpoint = false;
     bool pickup = false;
     int stone = 0;
+    int smoke = 0;
     bool gold = false;
   };
 

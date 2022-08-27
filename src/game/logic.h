@@ -51,6 +51,8 @@ class GameLogic
     std::vector<Obstacle> obstacles;
   god::Stone stone;
   std::vector<god::Stone> stones;
+    god::Smoke smoke;
+    std::vector<god::Smoke> smokes;
     Sprite pickupSprite;
     std::vector<std::pair<Pickup, Sprite>> pickups;
     Sprite gold;
@@ -62,6 +64,7 @@ class GameLogic
     std::vector<Spells> checkpointSpells;
     std::vector<Obstacle> checkpointObstacles;
     std::vector<Enemy> checkpointEnemies;
+    std::vector<std::pair<Pickup, Sprite>> checkpointPickups;
     bool checkpointGotGold = false;
     
     Input prevInput;

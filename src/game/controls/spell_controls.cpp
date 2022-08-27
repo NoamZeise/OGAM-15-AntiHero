@@ -1,28 +1,39 @@
 #include "spell_controls.h"
 #include "config.h"
 
-    const glm::vec2 CARD_SIZE = glm::vec2(160, 240);
-    const glm::vec2 START_CARDS = glm::vec2(0, settings::TARGET_HEIGHT - CARD_SIZE.y*0.85f);
-    const float CARD_GAP = 1.05f;
-
-
 SpellControls::SpellControls(Render *render)
 {
-    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Stone.png")), Spells::Stone);
-    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Wait.png")), Spells::Wait);
-    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Wind.png")), Spells::Wind);
-    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Restart.png")), Spells::Restart);
-    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Go.png")), Spells::Go);
-    insertSpellCard(Sprite(Resource::Texture()), Spells::None);
+    insertSpellCard(Sprite(
+			   render->LoadTexture("textures/UI/spells/Stone_Spell.png")),
+		    Sprite(
+			   render->LoadTexture("textures/UI/spells/Stone_Spell_active.png")),
+		    Spells::Stone);
+    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Wait_Spell.png")),
+		    Sprite(
+			   render->LoadTexture("textures/UI/spells/Wait_Spell_active.png")),
+		    Spells::Wait);
+    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Gust_Spell.png")),
+		    Sprite(
+			   render->LoadTexture("textures/UI/spells/Gust_Spell_active.png")), Spells::Wind);
+    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Restart_Spell.png")),
+		    Sprite(
+			   render->LoadTexture("textures/UI/spells/Restart_Spell_active.png")), Spells::Restart);
+    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Go_Spell.png")),
+		    Sprite(
+			   render->LoadTexture("textures/UI/spells/Go_Spell_active.png")), Spells::Go);
+    insertSpellCard(Sprite(render->LoadTexture("textures/UI/spells/Smoke_Spell.png")),
+		    Sprite(
+			   render->LoadTexture("textures/UI/spells/Smoke_Spell_active.png")), Spells::Smoke);
+    insertSpellCard(Sprite(Resource::Texture()), Sprite(Resource::Texture()), Spells::None);
 }
 
-void SpellControls::insertSpellCard(Sprite sprite, Spells spell)
+void SpellControls::insertSpellCard(Sprite sprite, Sprite active, Spells spell)
 {
  spellTemplates.
 	insert(
 	 std::pair<Spells, SpellCard>(
 				      spell,
-	   SpellCard(sprite,
+				      SpellCard(sprite, active,
 		     spell
       	   )
 	 )
@@ -38,6 +49,7 @@ void SpellControls::Update(glm::vec4 camRect, Timer &timer, Input &input, glm::v
 	cards[i].Update(camRect, timer, input, mousePos);
 	if(cards[i].isSelected())
 	    targeting = true;
+	
 	if(cards[i].wasCast())
 	{
 	    spell = std::pair<Spells, glm::vec2>(cards[i].getSpell(), cards[i].getTarget());

@@ -14,25 +14,34 @@ enum class Spells {
   Go,
   Restart,
   Wind,
+  Smoke,
 };
 
+const glm::vec2 CARD_SIZE = glm::vec2((int)(491/1.4), (int)(570/1.4));
+const glm::vec2 START_CARDS = glm::vec2(0, settings::TARGET_HEIGHT - CARD_SIZE.y*0.55f);
+    const float CARD_GAP = 0.85f;
+
 namespace{
-const float RAISE_CARD_DIST = 30.0f;
+    const float RAISE_CARD_DIST = CARD_SIZE.y * 0.4f;
 const float CARD_FLOATINESS = 100.0f;
 const float CARD_TRANSPARENCY_RANGE = 300.0f;
 const float CARD_ACTIATION_THREASHOLD = 0.5f;
 } // namespace
 
+
+    
 class SpellCard : public Button
 {
  public:
     SpellCard() {}
-    SpellCard(Sprite card, Spells spell) : Button(card, true)
+    SpellCard(Sprite card, Sprite cardActive, Spells spell) : Button(card, cardActive, true)
     {
 	this->spell = spell;
 	this->sprite.depth = 2.0f;
+	this->activeSprite.depth = 2.0f;
+	horizontalHitboxOffset  = CARD_SIZE.x * (1.0f - CARD_GAP);
     }
-
+  
   void Update(glm::vec4 camRect, Timer &timer, Input &input, glm::vec2 mousePos)
   {
     Button::Update(camRect, input, mousePos);
@@ -58,11 +67,12 @@ class SpellCard : public Button
 	  }
 	else
 	  {
-	    sprite.spriteColour = SELECT_COLOUR;
+	      onSprite = true;
 	    float dist = originTarget.y - target.y;
 	    sprite.spriteColour.w = 1 - (dist / CARD_TRANSPARENCY_RANGE);
 	    prevDist = sprite.spriteColour.w;
 	    if(sprite.spriteColour.w < 0.1f) { sprite.spriteColour.w = 0.1f; }
+	    activeSprite.spriteColour.w = sprite.spriteColour.w;
 	    spellTarget = glm::vec2(mousePos.x + camRect.x, mousePos.y + camRect.y);
 	    float scale = settings::TARGET_WIDTH / camRect.z;
 	    target.x = mousePos.x*scale - initialRect.z/2.0f;
@@ -83,12 +93,14 @@ class SpellCard : public Button
 		wasOnSprite = true;
 		target.y -= RAISE_CARD_DIST;
 		sprite.depth += 0.1f;
+		activeSprite.depth += 0.1f;
 	      }
 	    else if(!onSprite && wasOnSprite)
 	      {
 		wasOnSprite = false;
 		target.y += RAISE_CARD_DIST;
 		sprite.depth -= 0.1f;
+		activeSprite.depth -= 0.1f;
 	      }
 	}
       }
@@ -114,6 +126,7 @@ class SpellCard : public Button
 	return selected && prevDist < CARD_ACTIATION_THREASHOLD && spell != Spells::Wait;
     }
 
+    
     void setWasOnSprite(bool state) { wasOnSprite = state; }
 
   Spells getSpell() { return spell; }

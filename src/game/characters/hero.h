@@ -11,8 +11,8 @@ class Hero : public Character
     Hero() {}
     Hero(Sprite sprite, Sprite circle) : Character(sprite, circle)
     {
-	this->sprite.rect.z *= 2.0f;
-	this->sprite.rect.w *= 2.0f;
+	this->sprite.rect.z *= 1.2f;
+	this->sprite.rect.w *= 1.2f;
     }
 
     bool isFinished() { return finishedLevel; }
@@ -22,6 +22,7 @@ class Hero : public Character
       waiting = false;
       currentSpeed = 0.0f;
       finishedLevel = false;
+      displayPath = true;
       circle.spriteColour = glm::vec4(0.2f, 0.54f, 0.3f, 0.2f);
       Character::setPath(path);
   }
@@ -52,6 +53,15 @@ class Hero : public Character
     void Go()
     {
 	waiting = false;
+    }
+
+    glm::vec4 getHitBox() override
+    {
+	const float HITBOX_SCALE = 0.6f;
+	float xOff = sprite.rect.z * HITBOX_SCALE;
+	float yOff = sprite.rect.w * HITBOX_SCALE;
+	auto rect = glm::vec4(sprite.rect.x + xOff/2.0f, sprite.rect.y + yOff/1.5f, sprite.rect.z - xOff, sprite.rect.w - yOff);
+	return rect;
     }
 
 protected:

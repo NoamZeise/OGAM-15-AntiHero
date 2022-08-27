@@ -2,15 +2,16 @@
 #define GAME_ENEMY_H
 
 #include "character.h"
+#include "gamehelper.h"
 #include "glm/geometric.hpp"
 
 namespace
 {    
-    const float DISTRACTION_RANGE = 200.0f;
+    const float DISTRACTION_RANGE = 250.0f;
     const float INVESTIGATION_INITIATION_PROXIMITY = 10.0f;
-    const float INVESTIGATION_DURATION = 4200.0f;
-    const float PLAYER_CHASE_RADIUS = 180.0f;
-    const float PLAYER_CHASE_OUT_OF_VIEW_RADIUS = 80.0f;
+    const float INVESTIGATION_DURATION = 6200.0f;
+    const float PLAYER_CHASE_RADIUS = 250.0f;
+    const float PLAYER_CHASE_OUT_OF_VIEW_RADIUS = 110.0f;
     const float ENEMY_PATROL_SPEED = 0.025f;
     const float ENEMY_INVESTIGATE_SPEED = 0.03f;
     const float ENEMY_CHASE_SPEED = 0.12f;
@@ -55,15 +56,21 @@ class Enemy : public Character
 	time += timer.FrameElapsed();
 	prevRect = sprite.rect;
 	currentSpeed += acceleration * timer.FrameElapsed();
+	search.rect.z = PLAYER_CHASE_RADIUS * 2.0f;
+	search.rect.w = PLAYER_CHASE_RADIUS * 2.0f;
+	outOfview.rect.z = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
+	outOfview.rect.w = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
 	if(currentSpeed > speed) { currentSpeed = speed; }
 	if(currentState == EnemyState::Patrol)
 	{
+	    searchRange = 30.0f;
 	    speed = ENEMY_PATROL_SPEED;
 	    Character::Update(camRect, timer);
 	    direction = glm::normalize(lastToTarget);
 	}
 	else if(currentState == EnemyState::Investigate)
 	{
+	    searchRange = 25.0f;
 	    speed = ENEMY_INVESTIGATE_SPEED;
 	    glm::vec2 toTarget = investigationTarget - gh::centre(sprite.rect);
 	    direction = glm::normalize(toTarget);
@@ -73,6 +80,7 @@ class Enemy : public Character
 	    else
 	    {
 		//wobble search
+		searchRange = 100.0f;
 	    }
 	    //if(length < INVESTIGATION_INITIATION_PROXIMITY)
 		investigationTimer += timer.FrameElapsed();
@@ -84,27 +92,66 @@ class Enemy : public Character
 	}
 	else if(currentState == EnemyState::Chase)
 	{
+	    searchRange = 5.0f;
 	    speed = ENEMY_CHASE_SPEED;
 	    glm::vec2 toTarget = playerPos - gh::centre(sprite.rect);
 	    direction = glm::normalize(toTarget);
+	    if(collided)
+	    {
+		direction *= -1;
+		
+	    }
 	    moveToTarget(toTarget, timer);
 	    sprite.UpdateMatrix(camRect);
+	}
+	else if(currentState == EnemyState::Confused)
+	{
+	    currentState = EnemyState::Patrol;
+	    searchRange = 180.0f;
+	    search.rect.z = PLAYER_CHASE_RADIUS * 0.5f;
+	    search.rect.w = PLAYER_CHASE_RADIUS * 0.5f;
+	    outOfview.rect.z = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 0.1f;
+	    outOfview.rect.w = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 0.1f;
 	}
 
 	distracted.rect.x = sprite.rect.x + (sprite.rect.z - distracted.rect.z)/2.0f;
 	distracted.rect.y = sprite.rect.y - distracted.rect.w;
 	distracted.UpdateMatrix(camRect);
 	
-	circle.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - circle.rect.z/2.0f;
-	circle.rect.y = (sprite.rect.y + sprite.rect.w/2.0f) - circle.rect.w/2.0f;
-	circle.spriteColour = glm::vec4(0.9f, 0.9f, 0.2f, 0.2f);
-	circle.UpdateMatrix(camRect);
+	//circle.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - circle.rect.z/2.0f;
+	//circle.rect.y = (sprite.rect.y + sprite.rect.w/2.0f) - circle.rect.w/2.0f;
+	//circle.spriteColour = glm::vec4(0.9f, 0.9f, 0.2f, 0.2f);
+	//circle.UpdateMatrix(camRect);
 	
 	search.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - search.rect.z/2.0f;
 	search.rect.y = (sprite.rect.y + sprite.rect.w/2.0f) - search.rect.w/2.0f;
 	search.spriteColour = glm::vec4(0.9f, 0.2f, 0.2f, 0.2f);
-	search.rotate = atan2(direction.y, direction.x)*180.0/3.14159265 + 90.0f
-	    + sin(time*0.001f)*25.0f;
+	float rot = atan2(direction.y, direction.x);
+	
+	if(rot > -3.1415/2.0)
+	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
+	else
+	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
+	
+	float trueAngle = rot*180.0/3.14159265 + 90.0f
+	    + sin(time*0.001f)*searchRange;
+
+	float diff = fmod(trueAngle - currentAngle, 360.0f);
+	if(diff > 180.0f)
+	    diff = -(360.0f - diff);
+	if(diff < -180.0f)
+	    diff = -(-360.0f - diff);
+	currentAngle += diff*turnSpeed*timer.FrameElapsed();
+	currentAngle = fmod(currentAngle, 360.0f);
+	currentAngle = currentAngle < 0.0f ? currentAngle + 360.0f : currentAngle;
+	
+	if(firstAngleUpdate)
+	{
+	    firstAngleUpdate = false;
+	    currentAngle = trueAngle;
+	}
+	search.rotate = currentAngle;
+
 	search.UpdateMatrix(camRect);
 	
 	outOfview.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - outOfview.rect.z/2.0f;
@@ -118,9 +165,25 @@ class Enemy : public Character
 	    glm::vec2 toPlayer = glm::vec2(playerPos) - glm::vec2(sprite.rect.x, sprite.rect.y);
 	    toPlayer = glm::normalize(toPlayer);
 	    float angle = atan2(toPlayer.y, toPlayer.x)*180.0/3.14159265 + 90.0f;
-	    if(abs(angle - search.rotate) < 22.5f || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS)
+	    angle = fmod(angle, 360.0f);
+	    if(angle < 0.0f)
+		angle += 360.0f;
+     
+	    //if(abs(angle - search.rotate) > 360.0f)
+	    //{
+	    //angle -= 360.0f;
+	    //}
+	    //std::cout << angle << std::endl;
+	    //std::cout << search.rotate << std::endl;
+	    if(abs(angle - search.rotate) < 40.0f || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS)
 		currentState = EnemyState::Chase;
 	}
+	 //else
+	 // {
+	 //    currentState = EnemyState::Patrol;
+	 //}
+
+	 collided = false;
     }
 
     void soundEvent(glm::vec2 sound)
@@ -136,6 +199,15 @@ class Enemy : public Character
 		}
 	}
 
+    }
+
+    void smokeEvent(glm::vec4 smoke)
+    {
+	if(gh::colliding(getHitBox(), smoke))
+	{
+	    currentState = EnemyState::Confused;
+
+	}
     }
 
     void Draw(Render *render) override
@@ -155,6 +227,7 @@ private:
 	    Patrol,
 	    Investigate,
 	    Chase,
+	    Confused,
 	    Dead,
 	};
 
@@ -167,6 +240,10 @@ private:
     float investigationTimer = 0.0f;
     float investigationDuration = INVESTIGATION_DURATION;
     glm::vec2 direction = glm::vec2(1.0f, 0.0f);
+    float currentAngle = 90.0f;
+    bool firstAngleUpdate = true;
+    float turnSpeed = 0.005f;
+    float searchRange = 25.0f;
     double time = 0.0f;
 };
 

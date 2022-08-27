@@ -65,6 +65,48 @@ namespace god
     float timeLimit = STONE_SPEED;
     };
 
+
+    class Smoke
+    {
+    public:
+	Smoke() {}
+	Smoke(Sprite sprite)
+	{
+	    this->sprite = sprite;
+	    this->sprite.depth = 1.5f;
+	    this->sprite.rect.z *= 0.2f;
+	    this->sprite.rect.w *= 0.2f;
+	}
+
+	void Update(glm::vec4 camRect, Timer &timer)
+	{
+	    time += timer.FrameElapsed(); 
+	    sprite.UpdateMatrix(camRect);
+	}
+	void Draw(Render* render)
+	{
+	    sprite.Draw(render);
+	}
+	glm::vec4 getHitBox()
+	{
+	    return sprite.rect;
+	}
+	bool isFinished()
+	{
+	    return time > duration;
+	}
+	void setPos(glm::vec2 pos)
+	{
+	    sprite.rect.x = pos.x - sprite.rect.z/2;
+	    sprite.rect.y = pos.y - sprite.rect.w/2;
+	}
+    private:
+
+	Sprite sprite;
+	float time = 0.0f;
+	float duration = 4000.0f;
+    };
+
 }
 
 #endif

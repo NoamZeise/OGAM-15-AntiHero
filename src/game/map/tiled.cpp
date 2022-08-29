@@ -95,6 +95,10 @@ Properties fillPropStruct(rapidxml::xml_node<> *propertiesNode)
 		{
 			 props.smoke = std::stoi(value);
 		}
+		else if(name == "wind")
+		{
+			 props.wind = std::stoi(value);
+		}
 		else
 		{
 			std::cout << "WARNING: property " << name << " not recognised!\n";
@@ -248,6 +252,8 @@ Map::Map(std::string filename)
 				texts.push_back(Text());
 				if(objTextNode->first_attribute("pixelsize") != nullptr)
 					texts.back().pixelSize = std::atoi(objTextNode->first_attribute("pixelsize")->value());
+				else
+				    texts.back().pixelSize = 20.0f;
 				texts.back().text = objTextNode->value();
 
 				std::string colour = objTextNode->first_attribute("color") != nullptr ? objTextNode->first_attribute("color")->value() : "";

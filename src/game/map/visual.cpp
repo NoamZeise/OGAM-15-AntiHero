@@ -82,11 +82,11 @@ void Visual::Draw(Render *render)
 {
 	for(auto &txt: mapTexts)
 	{
-		//render->DrawQuad(Resource::Texture(), glmhelper::calcMatFromRect(txt.rect, 0, -5.0f));
+	    //render->DrawQuad(Resource::Texture(), glmhelper::calcMatFromRect(txt.rect, 0, 5.0f));
 		if(txt.toDraw)
 			render->DrawString(mapFont, txt.text,
-				glm::vec2(txt.pos.x, txt.pos.y),
-				 txt.pixelSize, 0, txt.colour, 0.0f);
+					   txt.pos,
+					   txt.pixelSize, 1.0f, txt.colour, 0.0f);
 	}
 	for(unsigned int i = 0; i < toDraw.size(); i++)
 	{

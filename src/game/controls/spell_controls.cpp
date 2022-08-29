@@ -123,5 +123,4 @@ void SpellControls::recentreCards(bool smooth)
 	    cards[i].setTarget(glm::vec2(initialRect.x, initialRect.y));
 	}
     }
-
 }

@@ -9,7 +9,7 @@ class Obstacle : public Character
 public:
  Obstacle() {}
     Obstacle(Sprite sprite) : Character(sprite, sprite) {
-	this->sprite.depth = CHARACTER_DEPTH + 0.1f;
+	this->sprite.depth = CHARACTER_DEPTH + 0.05f;
     }
 
  void Update(glm::vec4 camRect, Timer &timer) override

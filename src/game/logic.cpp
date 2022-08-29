@@ -1,6 +1,7 @@
 #include "logic.h"
 #include "config.h"
 #include "gamehelper.h"
+#include "glm/geometric.hpp"
 
 GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager* audioManager)
 {
@@ -16,8 +17,13 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      targetCursor.rect.z *= 0.3f;
      targetCursor.rect.w *= 0.3f;
      
-     Resource::Font mapFont = render->LoadFont("textures/Roboto-Black.ttf");
-     
+     Resource::Font mapFont = render->LoadFont("textures/MedievalSharp-Regular.ttf");
+          levels.push_back(
+		      Level(render, "maps/tut1", mapFont)
+		      );
+	  levels.push_back(
+			   Level(render, "maps/tut2", mapFont)
+			   );
      levels.push_back(
 		      Level(render, "maps/level1", mapFont)
 		      );
@@ -37,6 +43,7 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      obstacle = Obstacle(Sprite(render->LoadTexture("textures/obstacle.png")));
      stone = god::Stone(Sprite(render->LoadTexture("textures/spells/stone.png")));
      smoke = god::Smoke(Sprite(render->LoadTexture("textures/spells/smoke.png")));
+     gust = god::Gust(Sprite(render->LoadTexture("textures/spells/wind.png")));
      checkpoint = Sprite(render->LoadTexture("textures/checkpoint.png"));
      checkpoint.depth = CHARACTER_DEPTH;
      spellControls = SpellControls(render);
@@ -58,6 +65,10 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
 
 void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)
 {
+    if(input.Keys[GLFW_KEY_F1] && !prevInput.Keys[GLFW_KEY_F1])
+    {
+	hero.simulateEnd();
+    }
     lastScale = camRect.z / settings::TARGET_WIDTH;
     std::vector<glm::vec4> frameColliders;
     spellControls.Update(camRect, timer, input, mousePos);
@@ -72,6 +83,7 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 	if(gh::colliding(e.getHitBox(), hero.getHitBox()))
 	    playerDeath(cam2D);
     }
+    spellUpdate(camRect, timer);
     for(auto& o: obstacles)
     {
       o.Update(camRect, timer);
@@ -79,6 +91,14 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 	  hero.setRectToPrev();
       for(auto& e: enemies)
 	  if(gh::colliding(o.getHitBox(), e.getHitBox()))
+	      e.setRectToPrev();
+    }
+    for(auto& s: staticColliders)
+    {
+      if(gh::colliding(s, hero.getHitBox()))
+	  hero.setRectToPrev();
+      for(auto& e: enemies)
+	  if(gh::colliding(s, e.getHitBox()))
 	      e.setRectToPrev();
     }
     for(int i = 0; i < pickups.size(); i++)
@@ -111,6 +131,7 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 	    {
 		lastCheckpoint = &checkpoints[i];
 		checkpointTargetIndex = hero.getTargetIndex();
+		checkpointPos = hero.getPos();
 		checkpointSpells = spellControls.getSpells();
 		checkpointObstacles.clear();
 		for(int o = 0; o < obstacles.size(); o++)
@@ -124,8 +145,6 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 		checkpointGotGold = gotGold;
 	    }
     }
-    spellUpdate(camRect, timer);
-    
     if(spellControls.isTargeting())
     {
 	targetCursor.rect.x = mousePos.x + camRect.x - targetCursor.rect.z / 2.0f;
@@ -164,6 +183,8 @@ void GameLogic::Draw(Render *render)
       e.Draw(render);
   for(auto& s: smokes)
       s.Draw(render);
+  for(auto& g: gusts)
+      g.Draw(render);
   spellControls.Draw(render);
   currentCursor->Draw(render);
   restartBtn.Draw(render);
@@ -186,6 +207,7 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
   hero.setPath(mapObjs.heroPath);
   stones.clear();
   smokes.clear();
+  gusts.clear();
   enemies.clear();
   for(auto& p: mapObjs.enemyPaths)
   {
@@ -218,6 +240,7 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
       pickups.push_back(std::pair<Pickup, Sprite>(pu, puS));
   }
   gold.rect = mapObjs.gold;
+  staticColliders = mapObjs.staticColliders;
 }
 
 void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
@@ -226,14 +249,23 @@ void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
     LoadMap(cam2D);
     if(cp != glm::vec4(0))
     {
-	hero.setCheckpoint(glm::vec2(cp.x, cp.y), checkpointTargetIndex);
+	hero.Wait();
+	hero.setCheckpoint(checkpointPos, checkpointTargetIndex);
+	for(int i = 0; i < checkpointSpells.size(); i++)
+	{
+	    if(checkpointSpells[i] == Spells::Wait)
+		checkpointSpells[i] = Spells::Go;
+	}
 	spellControls.setCards(checkpointSpells);
 	obstacles.clear();
 	for(int o = 0; o < checkpointObstacles.size(); o++)
 	    obstacles.push_back(checkpointObstacles[o]);
 	enemies.clear();
 	for(int c = 0; c < checkpointEnemies.size(); c++)
-	    enemies.push_back(checkpointEnemies[c]);
+	{
+	    if(!checkpointEnemies[c].isChasable(hero.getPos()))
+	       enemies.push_back(checkpointEnemies[c]);
+	}
 	pickups.clear();
 	for(int p = 0; p < checkpointPickups.size(); p++)
 	    pickups.push_back(checkpointPickups[p]);
@@ -249,8 +281,18 @@ void GameLogic::levelComplete(Camera::RoomFollow2D *cam2D)
 	currentLevel = levels[currentLevelIndex];
 	LoadMap(cam2D);
     }
+    cam2D->Target(hero.getPos());
 }
 
+void pushCharacter(glm::vec2 pos, Character* character, god::Gust *gust, Timer &timer)
+{
+    auto otherPos = character->getPos();
+    float dist = glm::distance(pos, otherPos);
+    if(dist < gust->getAOE())
+    {
+	character->push((otherPos - pos)/(dist*dist*0.01f), timer);
+    }
+}
 
 void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 {
@@ -279,16 +321,30 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 	if(smokes[i].isFinished())
 	    smokes.erase(smokes.begin() + i--);
     }
+    for(int i = 0; i < gusts.size(); i++)
+    {
+	gusts[i].Update(camRect, timer);
+	auto pos = gusts[i].getPos();
+	pushCharacter(pos, &hero, &gusts[i], timer);
+	for(int e = 0 ; e < enemies.size(); e++)
+	{
+	    pushCharacter(pos, &enemies[e], &gusts[i], timer);
+	}
+
+	if(gusts[i].isFinished())
+	    gusts.erase(gusts.begin() + i--);
+    }
 }
 
 void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam2D)
 {
     god::Stone s = stone;
     god::Smoke smk = smoke;
+    god::Gust gst = gust;
     switch (spell)
     {
     case Spells::Stone:
-	s.setPos(glm::vec2(pos));
+	s.setPos(pos);
 	stones.push_back(s);
 	break;
     case Spells::Wait:
@@ -301,9 +357,12 @@ void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam
 	playerDeath(cam2D);
 	break;
     case Spells::Smoke:
-	smk.setPos(glm::vec2(pos));
+	smk.setPos(pos);
 	smokes.push_back(smk);
 	break;
+    case Spells::Wind:
+	gst.setPos(pos);
+	gusts.push_back(gst);
   }
 
 }

@@ -79,6 +79,7 @@ class Level
       std::vector<glm::vec4> checkpoints;
       std::vector<Pickup> pickups;
       glm::vec4 gold;
+      std::vector<glm::vec4> staticColliders;
   };
 
   MapGameplayObjects getObjLists()
@@ -105,11 +106,14 @@ class Level
 	    Pickup pu;
 	    pu.spells.push_back(std::pair<Spells, int>(Spells::Stone, obj.props.stone));
 	    pu.spells.push_back(std::pair<Spells, int>(Spells::Smoke, obj.props.smoke));
+	    pu.spells.push_back(std::pair<Spells, int>(Spells::Wind, obj.props.wind));
 	    pu.rect = glm::vec4(obj.x, obj.y, obj.w, obj.h);
 	    mapObjs.pickups.push_back(pu);
 	}
 	if(obj.props.gold || objGroup.props.gold)
 	    mapObjs.gold = glm::vec4(obj.x, obj.y, obj.w, obj.h);
+	if(obj.props.collidable || objGroup.props.collidable)
+	    mapObjs.staticColliders.push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
       }
       for(auto& obj: objGroup.polys)
       {

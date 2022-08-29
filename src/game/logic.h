@@ -45,6 +45,7 @@ class GameLogic
   Level currentLevel;
   Player player;
   Hero hero;
+    std::vector<glm::vec4> staticColliders;
   Enemy enemy;
   std::vector<Enemy> enemies;
     Obstacle obstacle;
@@ -53,6 +54,8 @@ class GameLogic
   std::vector<god::Stone> stones;
     god::Smoke smoke;
     std::vector<god::Smoke> smokes;
+    god::Gust gust;
+    std::vector<god::Gust> gusts;
     Sprite pickupSprite;
     std::vector<std::pair<Pickup, Sprite>> pickups;
     Sprite gold;
@@ -61,6 +64,7 @@ class GameLogic
     std::vector<Sprite> checkpoints;
     Sprite* lastCheckpoint;
     int checkpointTargetIndex;
+    glm::vec2 checkpointPos;
     std::vector<Spells> checkpointSpells;
     std::vector<Obstacle> checkpointObstacles;
     std::vector<Enemy> checkpointEnemies;

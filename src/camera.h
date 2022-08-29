@@ -38,6 +38,7 @@ const unsigned int CAM2D_FLOAT = 400;
 		}
 
 		void Target(glm::vec2 focus, Timer &timer);
+	    void Target(glm::vec2 focus);
 
 		void setScale(float val) { scale = val; }
 		float getScale() { return scale; }

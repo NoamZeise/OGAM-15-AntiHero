@@ -103,6 +103,9 @@ class Enemy : public Character
 	    }
 	    moveToTarget(toTarget, timer);
 	    sprite.UpdateMatrix(camRect);
+	    currentState = EnemyState::Investigate;
+	    investigationTarget = playerPos;
+	    investigationTimer = 0.0f;
 	}
 	else if(currentState == EnemyState::Confused)
 	{
@@ -128,7 +131,7 @@ class Enemy : public Character
 	search.spriteColour = glm::vec4(0.9f, 0.2f, 0.2f, 0.2f);
 	float rot = atan2(direction.y, direction.x);
 	
-	if(rot > -3.1415/2.0)
+	if(rot < 3.1415/2.0 && rot > -3.1415/2.0)
 	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
 	else
 	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
@@ -175,7 +178,7 @@ class Enemy : public Character
 	    //}
 	    //std::cout << angle << std::endl;
 	    //std::cout << search.rotate << std::endl;
-	    if(abs(angle - search.rotate) < 40.0f || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS)
+	    if(abs(angle - search.rotate) < 40.0f || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS || currentState == EnemyState::Chase)
 		currentState = EnemyState::Chase;
 	}
 	 //else
@@ -218,6 +221,31 @@ class Enemy : public Character
 	//circle.Draw(render);
 	search.Draw(render);
 	outOfview.Draw(render);
+    }
+
+    bool isChasable(glm::vec2 playerPos)
+    {
+	float distToPlayer = glm::distance(gh::centre(sprite.rect), playerPos);
+	if(distToPlayer < PLAYER_CHASE_RADIUS)
+	{
+	    glm::vec2 toPlayer = glm::vec2(playerPos) - glm::vec2(sprite.rect.x, sprite.rect.y);
+	    toPlayer = glm::normalize(toPlayer);
+	    float angle = atan2(toPlayer.y, toPlayer.x)*180.0/3.14159265 + 90.0f;
+	    angle = fmod(angle, 360.0f);
+	    if(angle < 0.0f)
+		angle += 360.0f;
+     
+	    //if(abs(angle - search.rotate) > 360.0f)
+	    //{
+	    //angle -= 360.0f;
+	    //}
+	    //std::cout << angle << std::endl;
+	    //std::cout << search.rotate << std::endl;
+	    if(abs(angle - search.rotate) < 40.0f || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS || currentState == EnemyState::Chase)
+		return true;
+	}
+	return false;
+
     }
 
 private:

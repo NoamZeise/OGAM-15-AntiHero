@@ -23,6 +23,7 @@ class Hero : public Character
       currentSpeed = 0.0f;
       finishedLevel = false;
       displayPath = true;
+      pathOutline.clear();
       circle.spriteColour = glm::vec4(0.2f, 0.54f, 0.3f, 0.2f);
       Character::setPath(path);
   }
@@ -30,14 +31,17 @@ class Hero : public Character
     void Update(glm::vec4 camRect, Timer &timer) override
     {
 	//waitTimer += timer.FrameElapsed();
+	prevRect = sprite.rect;
 	if(!waiting)
 	    Character::Update(camRect, timer);
+	else
+	    sprite.UpdateMatrix(camRect);
     }
 
     void setCheckpoint(glm::vec2 pos, int targetIndex)
     {
-	this->sprite.rect.x = pos.x;
-	this->sprite.rect.y = pos.y;
+	this->sprite.rect.x = pos.x - sprite.rect.z/2.0f;
+	this->sprite.rect.y = pos.y - sprite.rect.w/2.0f;
 	currentTargetIndex = targetIndex;
 	dir = 1;
     }
@@ -64,6 +68,12 @@ class Hero : public Character
 	return rect;
     }
 
+    void simulateEnd()
+    {
+	currentTargetIndex = path.size() - 1;
+	nextPoint();
+    }
+
 protected:
    void nextPoint() override
   {
@@ -72,9 +82,14 @@ protected:
               1 :
               currentTargetIndex >= path.size() - 1 ?
                  -1 : dir;
-    currentTargetIndex += dir;
     if(dir == -1)
+    {
+	dir = 1;
 	finishedLevel = true;
+    }
+    else {
+	    currentTargetIndex += dir;
+    }
   }
 private:
     bool finishedLevel = false;

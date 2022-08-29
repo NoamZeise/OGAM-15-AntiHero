@@ -19,13 +19,13 @@ enum class Spells {
 
 const glm::vec2 CARD_SIZE = glm::vec2((int)(491/1.4), (int)(570/1.4));
 const glm::vec2 START_CARDS = glm::vec2(0, settings::TARGET_HEIGHT - CARD_SIZE.y*0.55f);
-    const float CARD_GAP = 0.85f;
+const float CARD_GAP = 0.85f;
 
 namespace{
     const float RAISE_CARD_DIST = CARD_SIZE.y * 0.4f;
-const float CARD_FLOATINESS = 100.0f;
-const float CARD_TRANSPARENCY_RANGE = 300.0f;
-const float CARD_ACTIATION_THREASHOLD = 0.5f;
+    const float CARD_FLOATINESS = 100.0f;
+    const float CARD_TRANSPARENCY_RANGE = 300.0f;
+    const float CARD_ACTIATION_THREASHOLD = 0.5f;
 } // namespace
 
 
@@ -44,13 +44,19 @@ class SpellCard : public Button
   
   void Update(glm::vec4 camRect, Timer &timer, Input &input, glm::vec2 mousePos)
   {
+      initialRect.x = (int)(initialRect.x) + ((int)initialRect.x %2);
+	  initialRect.y = (int)(initialRect.y) + ((int)initialRect.y %2);
+	  // std::cout << initialRect.x << std::endl;
     Button::Update(camRect, input, mousePos);
-    cast = false;
+    cast = false;   
     glm::vec2 toTarget = target - glm::vec2(initialRect.x, initialRect.y);
     toTarget /= CARD_FLOATINESS;
     toTarget *= timer.FrameElapsed();
     initialRect.x += toTarget.x;
     initialRect.y += toTarget.y;
+    // std::cout << initialRect.x<< std::endl;
+    activeSprite.spriteColour.w = 1.0f;
+    sprite.spriteColour.w = 1.0f;
     if(selected)
       {
 	if(!clicked)

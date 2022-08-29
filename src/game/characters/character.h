@@ -41,10 +41,12 @@ class Character
 	glm::vec2 toTarget = path[currentTargetIndex] - pos;
 	lastToTarget = toTarget;
 	float rot = atan2(toTarget.y, toTarget.x);
-	if(rot > -3.1415/2.0)
+
+	if(rot < 3.1415/2.0 && rot > -3.1415/2.0)
 	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
 	else
 	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
+	
 	float length = glm::length(toTarget);
 	currentSpeed += acceleration * timer.FrameElapsed();
 	if(currentSpeed > speed) { currentSpeed = speed; }
@@ -69,9 +71,9 @@ class Character
   {
     this->path = path;
     dir = 1;
+    currentTargetIndex = 0;
     if(path.size() != 0)
     {
-      currentTargetIndex = 0;
       this->sprite.rect.x = this->path[0].x;// - sprite.rect.z/2.0f;
       this->sprite.rect.y = this->path[0].y;// - sprite.rect.w/2.0f;
       if(displayPath)
@@ -121,6 +123,13 @@ class Character
 	currentSpeed = 0.0f;
 	sprite.rect = prevRect;
 	collided = true;
+    }
+    
+    virtual void push(glm::vec2 vec, Timer &timer)
+    {
+	sprite.rect.x += vec.x * timer.FrameElapsed();
+	sprite.rect.y += vec.y * timer.FrameElapsed();
+	currentSpeed = 0.0f;
     }
 
  protected:

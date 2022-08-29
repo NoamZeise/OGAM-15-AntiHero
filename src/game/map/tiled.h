@@ -32,6 +32,7 @@ struct Properties
     bool pickup = false;
     int stone = 0;
     int smoke = 0;
+    int wind = 0;
     bool gold = false;
   };
 

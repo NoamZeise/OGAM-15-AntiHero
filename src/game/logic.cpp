@@ -24,6 +24,9 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
 	  levels.push_back(
 			   Level(render, "maps/tut2", mapFont)
 			   );
+	  levels.push_back(
+			   Level(render, "maps/level0", mapFont)
+			   );
      levels.push_back(
 		      Level(render, "maps/level1", mapFont)
 		      );
@@ -181,6 +184,8 @@ void GameLogic::Draw(Render *render)
       c.Draw(render);
   for(auto& e: enemies)
       e.Draw(render);
+  for(auto& e: enemies)
+      e.DrawTransparent(render);
   for(auto& s: smokes)
       s.Draw(render);
   for(auto& g: gusts)

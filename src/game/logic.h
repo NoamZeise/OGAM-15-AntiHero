@@ -41,7 +41,7 @@ class GameLogic
     
   std::vector<Level> levels;
     Button restartBtn;
-  int currentLevelIndex = 0;
+  int currentLevelIndex = 2;
   Level currentLevel;
   Player player;
   Hero hero;

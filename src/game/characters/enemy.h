@@ -213,9 +213,8 @@ class Enemy : public Character
 	}
     }
 
-    void Draw(Render *render) override
+    void DrawTransparent(Render *render)
     {
-	Character::Draw(render);
 	if(currentState == EnemyState::Investigate)
 	    distracted.Draw(render);
 	//circle.Draw(render);

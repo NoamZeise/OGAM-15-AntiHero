@@ -281,11 +281,12 @@ void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
 void GameLogic::levelComplete(Camera::RoomFollow2D *cam2D)
 {
     currentLevelIndex++;
-    if(currentLevelIndex<levels.size())
+    if(currentLevelIndex<levels.size() - 1)
     {
 	currentLevel = levels[currentLevelIndex];
 	LoadMap(cam2D);
     }
+    
     cam2D->Target(hero.getPos());
 }
 

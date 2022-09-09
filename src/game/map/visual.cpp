@@ -11,7 +11,6 @@ Visual::Visual(tiled::Map map, Render* render, Resource::Font mapFont)
 	this->mapFont = mapFont;
 
 	tileMats.resize(map.layers.size());
-	toDraw.resize(map.width * map.height);
 	tileRects.resize(map.width * map.height);
 	int index = 0;
 	for(unsigned int y = 0; y < map.height; y++)
@@ -62,7 +61,7 @@ void Visual::Update(glm::vec4 cameraRect, Timer &timer, std::vector<glm::vec4> *
 		txt.toDraw = gh::colliding(txt.rect, cameraRect);
 	}
 
-  activeColliders->clear();
+	activeColliders->clear();
 	toDraw.clear();
 	for(unsigned int tile = 0; tile < tileRects.size(); tile++)
 		if(gh::colliding(cameraRect, tileRects[tile]))

@@ -1,3 +1,4 @@
+
 #ifndef MAP_VISUAL_H
 #define MAP_VISUAL_H
 
@@ -58,7 +59,7 @@ namespace Map
       }
       Resource::Texture tex;
       glm::mat4 tileMat;
-      glm::vec4 texOffset;
+	glm::vec4 texOffset;
     };
 
     tiled::Map map;

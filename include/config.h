@@ -20,8 +20,8 @@ const bool USE_TARGET_RESOLUTION = true;
 const int TARGET_WIDTH = 1920;
 const int TARGET_HEIGHT = 1080;
 
-const int INITIAL_WINDOW_WIDTH = 1600;
-const int INITIAL_WINDOW_HEIGHT = 900;
+const int INITIAL_WINDOW_WIDTH = 800;
+const int INITIAL_WINDOW_HEIGHT = 450;
 
 #ifndef NDEBUG
 const bool ERROR_ONLY = false;

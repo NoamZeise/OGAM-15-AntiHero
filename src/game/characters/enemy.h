@@ -1,6 +1,7 @@
 #ifndef GAME_ENEMY_H
 #define GAME_ENEMY_H
 
+#include "audio.h"
 #include "character.h"
 #include "gamehelper.h"
 #include "glm/geometric.hpp"
@@ -12,16 +13,18 @@ namespace
     const float INVESTIGATION_DURATION = 6200.0f;
     const float PLAYER_CHASE_RADIUS = 250.0f;
     const float PLAYER_CHASE_OUT_OF_VIEW_RADIUS = 110.0f;
+    const float PLAYER_SIZE_OFFSET = 40.0f;
     const float ENEMY_PATROL_SPEED = 0.025f;
     const float ENEMY_INVESTIGATE_SPEED = 0.03f;
     const float ENEMY_CHASE_SPEED = 0.12f;
+    const float ENEMY_POV_ANGLE = 40.0f;
 } // namespace
 
 class Enemy : public Character
 {
  public:
   Enemy() {}
-    Enemy(Sprite sprite, Sprite distracted, Sprite circle, Sprite search) : Character(sprite, circle)
+    Enemy(Sprite sprite, Sprite distracted, Sprite circle, Sprite search, Audio::Manager* audio) : Character(sprite, circle, audio)
   {
       speed = ENEMY_PATROL_SPEED;
       distracted.rect.z *= 0.1f;
@@ -96,11 +99,6 @@ class Enemy : public Character
 	    speed = ENEMY_CHASE_SPEED;
 	    glm::vec2 toTarget = playerPos - gh::centre(sprite.rect);
 	    direction = glm::normalize(toTarget);
-	    if(collided)
-	    {
-		direction *= -1;
-		
-	    }
 	    moveToTarget(toTarget, timer);
 	    sprite.UpdateMatrix(camRect);
 	    currentState = EnemyState::Investigate;
@@ -163,9 +161,9 @@ class Enemy : public Character
 	outOfview.UpdateMatrix(camRect);
 
 	float distToPlayer = glm::distance(gh::centre(sprite.rect), playerPos);
-	 if(distToPlayer < PLAYER_CHASE_RADIUS)
+	 if(distToPlayer < PLAYER_CHASE_RADIUS + PLAYER_SIZE_OFFSET)
 	{
-	    glm::vec2 toPlayer = glm::vec2(playerPos) - glm::vec2(sprite.rect.x, sprite.rect.y);
+	    glm::vec2 toPlayer = glm::vec2(playerPos) - gh::centre(sprite.rect);
 	    toPlayer = glm::normalize(toPlayer);
 	    float angle = atan2(toPlayer.y, toPlayer.x)*180.0/3.14159265 + 90.0f;
 	    angle = fmod(angle, 360.0f);
@@ -178,7 +176,8 @@ class Enemy : public Character
 	    //}
 	    //std::cout << angle << std::endl;
 	    //std::cout << search.rotate << std::endl;
-	    if(abs(angle - search.rotate) < 40.0f || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS || currentState == EnemyState::Chase)
+	    float angle_diff = abs(angle - search.rotate);
+	    if(angle_diff < ENEMY_POV_ANGLE || angle_diff > 360.0f - ENEMY_POV_ANGLE || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS || currentState == EnemyState::Chase)
 		currentState = EnemyState::Chase;
 	}
 	 //else

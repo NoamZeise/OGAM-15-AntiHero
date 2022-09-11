@@ -1,6 +1,7 @@
 #ifndef GAME_OBSTACLE_H
 #define GAME_OBSTACLE_H
 
+#include "audio.h"
 #include "character.h"
 #include <memory>
 
@@ -8,7 +9,7 @@ class Obstacle : public Character
 {
 public:
  Obstacle() {}
-    Obstacle(Sprite sprite) : Character(sprite, sprite) {
+    Obstacle(Sprite sprite, Audio::Manager *audio) : Character(sprite, sprite, audio) {
 	this->sprite.depth = CHARACTER_DEPTH + 0.05f;
     }
 

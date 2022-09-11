@@ -67,7 +67,7 @@ private:
   void postUpdate();
   void draw();
 
-    glm::vec2 appToScreen(glm::vec2 pos);
+  glm::vec2 appToScreen(glm::vec2 pos);
   glm::vec2 correctedPos(glm::vec2 pos);
   glm::vec2 correctedMouse();
 

@@ -5,6 +5,7 @@
 #include "gamehelper.h"
 #include "glm/geometric.hpp"
 #include <glmhelper.h>
+#include <audio.h>
 
 #include <iostream>
 #include <vector>
@@ -16,8 +17,9 @@ class Character
  public:
   Character() {}
 
-    Character(Sprite sprite, Sprite circle)
+  Character(Sprite sprite, Sprite circle, Audio::Manager* audio)
   {
+    this->audio = audio;
     this->sprite = sprite;
     this->sprite.rect.z *= 0.2f;
     this->sprite.rect.w *= 0.2f;
@@ -155,15 +157,17 @@ class Character
       vecToTarget.y *= movement;
       gh::addVec2ToRect(vecToTarget , &sprite.rect);
     }
+
+    Audio::Manager* audio;
     glm::vec2 lastToTarget;
-  glm::vec4 prevRect;
-  Sprite sprite;
-  std::vector<glm::vec2> path;
-  int currentTargetIndex;
-  float speed = 0.1f;
+    glm::vec4 prevRect;
+    Sprite sprite;
+    std::vector<glm::vec2> path;
+    int currentTargetIndex;
+    float speed = 0.1f;
     float currentSpeed = 0.0f;
     float acceleration = 0.0001f;
-  int dir = 1;
+    int dir = 1;
     Sprite circle;
     std::vector<Sprite> pathOutline;
 

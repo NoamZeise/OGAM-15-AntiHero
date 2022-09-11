@@ -1,6 +1,7 @@
 #ifndef GAME_HERO_H
 #define GAME_HERO_H
 
+#include "audio.h"
 #include "character.h"
 
 const float WAIT_TIME = 1200.0f;
@@ -9,7 +10,7 @@ class Hero : public Character
 {
  public:
     Hero() {}
-    Hero(Sprite sprite, Sprite circle) : Character(sprite, circle)
+    Hero(Sprite sprite, Sprite circle, Audio::Manager* audio) : Character(sprite, circle, audio)
     {
 	this->sprite.rect.z *= 1.2f;
 	this->sprite.rect.w *= 1.2f;

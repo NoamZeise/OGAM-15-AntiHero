@@ -6,7 +6,6 @@
 GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager* audioManager)
 {
      this->audio = audioManager;
-     audioManager->Play("audio/Robin Hood Medieval Music2.ogg", true, 0.5f);
 
      defaultCursor = Sprite(render->LoadTexture("textures/UI/cursor/default.png"));
      defaultCursor.depth = 3.0f;
@@ -30,20 +29,25 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      levels.push_back(
 		      Level(render, "maps/level1", mapFont)
 		      );
+     levels.push_back(
+		      Level(render, "maps/level2", mapFont)
+		      );
      currentLevel = levels[currentLevelIndex];
      player = Player(
 		     
 		     );
      hero = Hero(
 		 Sprite(render->LoadTexture("textures/characters/Robyn.png")),
-		 Sprite(render->LoadTexture("textures/UI/circle.png"))
+		 Sprite(render->LoadTexture("textures/UI/circle.png")),
+		 audio
 		   );
      enemy = Enemy(
 		   Sprite(render->LoadTexture("textures/characters/enemy.png")),
 		   Sprite(render->LoadTexture("textures/UI/distracted.png")),
 		   Sprite(render->LoadTexture("textures/UI/circle.png")),
-		   Sprite(render->LoadTexture("textures/UI/search.png")));
-     obstacle = Obstacle(Sprite(render->LoadTexture("textures/obstacle.png")));
+		   Sprite(render->LoadTexture("textures/UI/search.png")),
+		   audio);
+     obstacle = Obstacle(Sprite(render->LoadTexture("textures/obstacle.png")), audio);
      stone = god::Stone(Sprite(render->LoadTexture("textures/spells/stone.png")));
      smoke = god::Smoke(Sprite(render->LoadTexture("textures/spells/smoke.png")));
      gust = god::Gust(Sprite(render->LoadTexture("textures/spells/wind.png")));
@@ -64,6 +68,7 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      gold.depth = CHARACTER_DEPTH;
 				
      LoadMap(cam2D);
+     audioManager->Play("audio/Robin Hood Medieval Music2.ogg", true, 0.5f);
 }
 
 void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)

@@ -9,7 +9,7 @@
 #include <vector>
 #include <map>
 #include <cstring>
-
+#include <iostream>
 
 #define MUTE_MUSIC
 
@@ -167,9 +167,14 @@ public:
 
 	void RemovePlayed()
 	{
+	    //std::cout << activeAudio.size() << std::endl;
+	    //std::cout << loaded.size() << std::endl;
 		for (size_t i = 0; i < activeAudio.size(); i++)
 			if(!activeAudio[i]->paused && !activeAudio[i]->Playing())
-				activeAudio.erase(activeAudio.begin() + i--);
+			{
+			    delete activeAudio[i];
+			    activeAudio.erase(activeAudio.begin() + i--);
+			}
 	}
 
 //optional, can frontload loading to make Play() faster the first time on a file

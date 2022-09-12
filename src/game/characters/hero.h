@@ -3,8 +3,11 @@
 
 #include "audio.h"
 #include "character.h"
+#include "gamehelper.h"
 
 const float WAIT_TIME = 1200.0f;
+const float FOOTSTEP_SFX_DELAY = 600.0f;
+const float PLAYER_FOOTSTEP_VOLUME = 0.15f;
 
 class Hero : public Character
 {
@@ -14,6 +17,9 @@ class Hero : public Character
     {
 	this->sprite.rect.z *= 1.2f;
 	this->sprite.rect.w *= 1.2f;
+
+	for( int i = 1; i < 6; i++)
+	    audio->LoadAudioFile("audio/SFX/Footsteps/Footstep Light" + std::to_string(i) + ".wav");
     }
 
     bool isFinished() { return finishedLevel; }
@@ -32,11 +38,31 @@ class Hero : public Character
     void Update(glm::vec4 camRect, Timer &timer) override
     {
 	//waitTimer += timer.FrameElapsed();
+	footstepTimer += timer.FrameElapsed();
 	prevRect = sprite.rect;
 	if(!waiting)
+	{
+	    if(collided)
+		footstepTimer = 0.0f;
+
+	    
 	    Character::Update(camRect, timer);
+	    
+	    
+	    if(footstepTimer > FOOTSTEP_SFX_DELAY)
+	    {
+		footstepTimer = 0.0f;
+		if(rand.PositiveReal() > 0.95)
+		     audio->Play("audio/SFX/Footsteps/Footstep Light" + rand.stringNum(5) + ".wav", false, PLAYER_FOOTSTEP_VOLUME);
+		//	else if(rand.PositiveReal() > 0.7)
+		//   audio->Play("audio/SFX/Footsteps/Footstep Water" + rand.stringNum(5) + ".wav", false, 0.4);
+		else
+		    audio->Play("audio/SFX/Footsteps/Footstep Mud" + rand.stringNum(5) + ".wav", false, PLAYER_FOOTSTEP_VOLUME);
+	    }
+	}
 	else
 	    sprite.UpdateMatrix(camRect);
+	collided = false;
     }
 
     void setCheckpoint(glm::vec2 pos, int targetIndex)
@@ -95,6 +121,8 @@ protected:
 private:
     bool finishedLevel = false;
     bool waiting = false;
+
+    float footstepTimer = 0.0f;
 };
 
 #endif

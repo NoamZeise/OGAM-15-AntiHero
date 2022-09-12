@@ -173,6 +173,7 @@ class Character
 
     bool  displayPath = false;
     bool collided = false;
+    gh::Random rand;
 };
 
 #endif

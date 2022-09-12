@@ -81,6 +81,14 @@ randomGen = std::mt19937((unsigned int)time(0));
 	{
 		return posReal(randomGen);
 	}
+    std::string stringNum(int max)
+    {
+	return std::to_string((int)(PositiveReal()*max) + 1);
+    }
+    std::string stringNum(int min, int max)
+    {
+	return std::to_string((int)(PositiveReal()*max) + min);
+    }
 private:
 	std::mt19937 randomGen;
 	std::uniform_real_distribution<float> posReal;

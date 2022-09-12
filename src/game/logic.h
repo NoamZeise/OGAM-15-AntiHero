@@ -44,7 +44,7 @@ class GameLogic
 #ifdef NDEBUG
   int currentLevelIndex = 0;
 #else
-  int currentLevelIndex = 4;
+  int currentLevelIndex = 0;
 #endif
   Level currentLevel;
   Player player;
@@ -87,6 +87,10 @@ class GameLogic
     Sprite targetCursor;
 
     bool gotGold = false;
+    gh::Random rand;
+
+    float removeAudioTimer = 0.0f;
+    float removeAudioDelay = 1000.0f;
 };
 
 #endif

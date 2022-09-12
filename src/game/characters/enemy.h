@@ -13,11 +13,15 @@ namespace
     const float INVESTIGATION_DURATION = 6200.0f;
     const float PLAYER_CHASE_RADIUS = 250.0f;
     const float PLAYER_CHASE_OUT_OF_VIEW_RADIUS = 110.0f;
-    const float PLAYER_SIZE_OFFSET = 40.0f;
+    const float PLAYER_SIZE_OFFSET = 0.0f;
     const float ENEMY_PATROL_SPEED = 0.025f;
     const float ENEMY_INVESTIGATE_SPEED = 0.03f;
     const float ENEMY_CHASE_SPEED = 0.12f;
     const float ENEMY_POV_ANGLE = 40.0f;
+    const float ENEMY_FOOTSTEP_MAX = 1.5f;
+    const float ENEMY_AUDIBLE_DISTANCE = 2.0f;
+    const float STANDING_SEARCH_RANGE = 100.0f;
+    const float CONFUSED_SEARCH_RANGE = 180.0f;
 } // namespace
 
 class Enemy : public Character
@@ -42,6 +46,9 @@ class Enemy : public Character
       circle.rect.z = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
       circle.rect.w = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
       this->outOfview = circle;
+
+      for( int i = 1; i < 6; i++)
+	  audio->LoadAudioFile("audio/SFX/Footsteps/Footstep Heavy" + std::to_string(i) + ".wav");
   }
     void setRectToPrev() override
     {
@@ -83,7 +90,7 @@ class Enemy : public Character
 	    else
 	    {
 		//wobble search
-		searchRange = 100.0f;
+		searchRange = STANDING_SEARCH_RANGE;
 	    }
 	    //if(length < INVESTIGATION_INITIATION_PROXIMITY)
 		investigationTimer += timer.FrameElapsed();
@@ -108,7 +115,7 @@ class Enemy : public Character
 	else if(currentState == EnemyState::Confused)
 	{
 	    currentState = EnemyState::Patrol;
-	    searchRange = 180.0f;
+	    searchRange = CONFUSED_SEARCH_RANGE;
 	    search.rect.z = PLAYER_CHASE_RADIUS * 0.5f;
 	    search.rect.w = PLAYER_CHASE_RADIUS * 0.5f;
 	    outOfview.rect.z = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 0.1f;
@@ -161,7 +168,7 @@ class Enemy : public Character
 	outOfview.UpdateMatrix(camRect);
 
 	float distToPlayer = glm::distance(gh::centre(sprite.rect), playerPos);
-	 if(distToPlayer < PLAYER_CHASE_RADIUS + PLAYER_SIZE_OFFSET)
+	if(distToPlayer < PLAYER_CHASE_RADIUS + PLAYER_SIZE_OFFSET)
 	{
 	    glm::vec2 toPlayer = glm::vec2(playerPos) - gh::centre(sprite.rect);
 	    toPlayer = glm::normalize(toPlayer);
@@ -184,6 +191,19 @@ class Enemy : public Character
 	 // {
 	 //    currentState = EnemyState::Patrol;
 	 //}
+	if(distToPlayer < PLAYER_CHASE_RADIUS*ENEMY_AUDIBLE_DISTANCE &&
+	   searchRange != STANDING_SEARCH_RANGE &&
+	   searchRange != CONFUSED_SEARCH_RANGE)
+	{
+	    footstepTimer += timer.FrameElapsed();
+	    if(footstepTimer > 800.0f - speed*5000.0f)
+	    {
+		footstepTimer = 0.0f;
+		float sfxVolume = 1.0f - (distToPlayer / (PLAYER_CHASE_RADIUS*ENEMY_AUDIBLE_DISTANCE));
+		//	std::cout << sfxVolume * sfxVolume << std::endl;
+		audio->Play("audio/SFX/Footsteps/Footstep Heavy" + rand.stringNum(5) + ".wav", false, ENEMY_FOOTSTEP_MAX * sfxVolume * sfxVolume);
+	    }
+	}
 
 	 collided = false;
     }
@@ -208,7 +228,6 @@ class Enemy : public Character
 	if(gh::colliding(getHitBox(), smoke))
 	{
 	    currentState = EnemyState::Confused;
-
 	}
     }
 
@@ -217,8 +236,8 @@ class Enemy : public Character
 	if(currentState == EnemyState::Investigate)
 	    distracted.Draw(render);
 	//circle.Draw(render);
-	search.Draw(render);
 	outOfview.Draw(render);
+	search.Draw(render);
     }
 
     bool isChasable(glm::vec2 playerPos)
@@ -271,6 +290,7 @@ private:
     float turnSpeed = 0.005f;
     float searchRange = 25.0f;
     double time = 0.0f;
+    float footstepTimer = 0.0f;
 };
 
 #endif

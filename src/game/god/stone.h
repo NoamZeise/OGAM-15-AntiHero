@@ -2,6 +2,7 @@
 #define GAME_GOD_STONE_H
 
 #include "../sprite.h"
+#include "audio.h"
 #include "gamehelper.h"
 #include "glm/geometric.hpp"
 
@@ -16,7 +17,7 @@ namespace god
   {
   public:
       Stone() {}
-    Stone(Sprite sprite)
+      Stone(Sprite sprite)
     {
       this->sprite = sprite;
       this->sprite.depth = 1.0f;
@@ -76,8 +77,8 @@ namespace god
 	{
 	    this->sprite = sprite;
 	    this->sprite.depth = 1.5f;
-	    this->sprite.rect.z *= 0.2f;
-	    this->sprite.rect.w *= 0.2f;
+	    this->sprite.rect.z *= 0.4f;
+	    this->sprite.rect.w *= 0.4f;
 	}
 
 	void Update(glm::vec4 camRect, Timer &timer)
@@ -106,7 +107,7 @@ namespace god
 
 	Sprite sprite;
 	float time = 0.0f;
-	float duration = 4000.0f;
+	float duration = 6000.0f;
     };
 
 

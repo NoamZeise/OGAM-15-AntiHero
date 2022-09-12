@@ -144,8 +144,8 @@
   </properties>
   <object id="59" x="1098.67" y="1084" width="58.6667" height="34.6667">
    <properties>
-    <property name="gust" type="int" value="1"/>
-    <property name="smoke" type="int" value="1"/>
+    <property name="stone" type="int" value="1"/>
+    <property name="wind" type="int" value="1"/>
    </properties>
   </object>
  </objectgroup>

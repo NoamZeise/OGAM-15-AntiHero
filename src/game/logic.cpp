@@ -171,6 +171,13 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
     if(restartBtn.Clicked())
 	LoadMap(cam2D);
     prevInput = input;
+
+    removeAudioTimer += timer.FrameElapsed();
+    if(removeAudioTimer > removeAudioDelay)
+    {
+	removeAudioTimer = 0.0f;
+	audio->RemovePlayed();
+    }
 }
 
 void GameLogic::Draw(Render *render)
@@ -286,7 +293,7 @@ void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)
 void GameLogic::levelComplete(Camera::RoomFollow2D *cam2D)
 {
     currentLevelIndex++;
-    if(currentLevelIndex<levels.size() - 1)
+    if(currentLevelIndex<levels.size())
     {
 	currentLevel = levels[currentLevelIndex];
 	LoadMap(cam2D);
@@ -317,10 +324,14 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 	  for(int i = 0; i < enemies.size(); i++)
 	      enemies[i].soundEvent(gh::centre(hit));
 
+	  bool wasHit = false;
 	  //stone destroys box
 	  for(int i = 0; i < obstacles.size(); i++)
 	      if(gh::colliding(hit, obstacles[i].getHitBox()))
-		  obstacles.erase(obstacles.begin() + i--);
+	      {
+		  audio->Play("audio/SFX/Box/Box" + rand.stringNum(3) + ".wav", false, 0.5f);		  obstacles.erase(obstacles.begin() + i--);
+	      }
+	  audio->Play("audio/SFX/Rock/Rock" + rand.stringNum(3) + ".wav", false, 0.5f);
 	  stones.erase(stones.begin() + stoneI--);
       }
   }
@@ -330,7 +341,9 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 	for(int j = 0; j < enemies.size(); j++)
 	    enemies[j].smokeEvent(smokes[i].getHitBox());
 	if(smokes[i].isFinished())
+	{
 	    smokes.erase(smokes.begin() + i--);
+	}
     }
     for(int i = 0; i < gusts.size(); i++)
     {
@@ -370,8 +383,10 @@ void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam
     case Spells::Smoke:
 	smk.setPos(pos);
 	smokes.push_back(smk);
+	audio->Play("audio/SFX/Smoke Bomb.wav", false, 0.8f);
 	break;
     case Spells::Wind:
+	audio->Play("audio/SFX/Wind" + rand.stringNum(2)  + ".wav", false, 0.8f);
 	gst.setPos(pos);
 	gusts.push_back(gst);
   }

@@ -115,6 +115,9 @@ void App::update() {
   cam2d.Target(gameLogic.getTarget(), timer);
 
   gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d, correctedMouse());
+
+  if(gameLogic.gameComplete())
+      glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
   
   postUpdate();
 #ifdef TIME_APP_DRAW_UPDATE

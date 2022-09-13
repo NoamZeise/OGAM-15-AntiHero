@@ -44,7 +44,7 @@ class GameLogic
 #ifdef NDEBUG
   int currentLevelIndex = 0;
 #else
-  int currentLevelIndex = 0;
+  int currentLevelIndex = 4;
 #endif
   Level currentLevel;
   Player player;

@@ -5,6 +5,9 @@
 #include "audio.h"
 #include "gamehelper.h"
 #include "glm/geometric.hpp"
+#include "../animation.h"
+#include "glmhelper.h"
+#include <cmath>
 
 const float STONE_SPEED = 500.0f;
 
@@ -73,26 +76,46 @@ namespace god
     {
     public:
 	Smoke() {}
-	Smoke(Sprite sprite)
+	Smoke(Resource::Texture sprite)
 	{
-	    this->sprite = sprite;
-	    this->sprite.depth = 1.5f;
-	    this->sprite.rect.z *= 0.4f;
-	    this->sprite.rect.w *= 0.4f;
+	    this->sprite = CreateAnimationSetFromTexture(sprite, glm::vec2(1500,892), glm::vec2(0.0f, 0.0f))[0];
+	    this->sprite.Reset();
+	    this->sprite.setFrameDelay(250.0f);
+	    
+	    depth = 1.5f;
+	    rect.z = this->sprite.GetCurrentFrame().size.x * 0.3f;
+	    rect.w = this->sprite.GetCurrentFrame().size.y * 0.3f;
 	}
 
 	void Update(glm::vec4 camRect, Timer &timer)
 	{
-	    time += timer.FrameElapsed(); 
-	    sprite.UpdateMatrix(camRect);
+	    time += timer.FrameElapsed();
+	    if(time < start)
+	    {
+		fract = (time/start);
+		fract = log10(fract*10);
+		rect.z = this->sprite.GetCurrentFrame().size.x * fract * 0.3f;
+		rect.w = this->sprite.GetCurrentFrame().size.y * fract * 0.3f;
+	    }
+	    currentFrame = sprite.PlayThenSkipToFrame(timer, 2);
 	}
 	void Draw(Render* render)
 	{
-	    sprite.Draw(render);
+	  render->DrawQuad(currentFrame.tex,
+			   glmhelper::calcMatFromRect(
+	      glm::vec4(
+			rect.x + ((currentFrame.size.x*0.3f)/2.0f) * (1.0f - fract),
+			rect.y + ((currentFrame.size.y*0.3f)/2.0f) * (1.0f - fract),
+			rect.z,
+			rect.w
+			),
+    	      0.0f, depth),
+			   glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - ((time - (duration - end))/end)),
+	      currentFrame.texOffset);
 	}
 	glm::vec4 getHitBox()
 	{
-	    return sprite.rect;
+	    return rect;
 	}
 	bool isFinished()
 	{
@@ -100,14 +123,21 @@ namespace god
 	}
 	void setPos(glm::vec2 pos)
 	{
-	    sprite.rect.x = pos.x - sprite.rect.z/2;
-	    sprite.rect.y = pos.y - sprite.rect.w/2;
+	    rect.x = pos.x - rect.z/2;
+	    rect.y = pos.y - rect.w/2;
 	}
     private:
 
-	Sprite sprite;
+	AnimatedSprite sprite;
+	Frame currentFrame;
 	float time = 0.0f;
 	float duration = 6000.0f;
+	float start = 500.0f;
+	float end = 2000.0f;
+	float depth = 0.0f;
+	glm::vec2 offset = glm::vec2(0.0f, 0.0f);
+	glm::vec4 rect;
+	float fract = 0.0f;
     };
 
 
@@ -115,30 +145,32 @@ namespace god
     {
     public:
 	Gust() {}
-	Gust(Sprite sprite)
+	Gust(Resource::Texture texture)
 	{
-	    this->sprite = sprite;
-	    this->sprite.depth = 1.5f;
-	    this->sprite.rect.z = GUST_AOE;
-	    this->sprite.rect.w = GUST_AOE;
+	    this->sprite = CreateAnimationSetFromTexture(texture, glm::vec2(1125, 1091), glm::vec2(0, 0))[0];
+	    sprite.Reset();
+	    this->sprite.setFrameDelay(50.0f);
+	    depth = 1.5f;
+	    rect.z = GUST_AOE*2;
+	    rect.w = GUST_AOE*2;
 	}
 
 	void Update(glm::vec4 camRect, Timer &timer)
 	{
-	    time += timer.FrameElapsed(); 
-	    sprite.UpdateMatrix(camRect);
+	    time += timer.FrameElapsed();
+	    currentFrame = sprite.PlayOnce(timer);
 	}
 	void Draw(Render* render)
 	{
-	    sprite.Draw(render);
+	    render->DrawQuad(currentFrame.tex, glmhelper::calcMatFromRect(rect, 0.0f, depth), glm::vec4(1.0f), currentFrame.texOffset);
 	}
 	glm::vec4 getHitBox()
 	{
-	    return sprite.rect;
+	    return rect;
 	}
 	glm::vec2 getPos()
 	{
-	    return glm::vec2(sprite.rect.x + sprite.rect.z/2.0f, sprite.rect.y + sprite.rect.w/2.0f);
+	    return gh::centre(rect);
 	}
 	bool isFinished()
 	{
@@ -146,19 +178,21 @@ namespace god
 	}
 	void setPos(glm::vec2 pos)
 	{
-	    sprite.rect.x = pos.x - sprite.rect.z/2;
-	    sprite.rect.y = pos.y - sprite.rect.w/2;
+	    rect.x = pos.x - rect.z/2;
+	    rect.y = pos.y - rect.w/2;
 	}
-
 	float getAOE()
 	{
 	    return GUST_AOE;
 	}
     private:
 
-	Sprite sprite;
+	AnimatedSprite sprite;
+	Frame currentFrame;
 	float time = 0.0f;
 	float duration = 500.0f;
+	float depth = 0.0f;
+	glm::vec4 rect;
     };
 
 }

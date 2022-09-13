@@ -66,6 +66,7 @@ private:
   void update();
   void postUpdate();
   void draw();
+  void drawEndScreen();
 
   glm::vec2 appToScreen(glm::vec2 pos);
   glm::vec2 correctedPos(glm::vec2 pos);
@@ -85,6 +86,7 @@ private:
   float camScale = 0.50f;
 
   GameLogic gameLogic;
+  Resource::Font endScreenFont;
 };
 
 #endif

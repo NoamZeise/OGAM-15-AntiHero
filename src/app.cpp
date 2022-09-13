@@ -41,14 +41,14 @@ App::App()
   int height = mWindowHeight;
   if (settings::USE_TARGET_RESOLUTION)
   {
-    width = settings::TARGET_WIDTH;
-    height = settings::TARGET_HEIGHT;
+      width = settings::TARGET_WIDTH;
+      height = settings::TARGET_HEIGHT;
   }
 
   mRender = new Render(mWindow, glm::vec2(width, height));
-
+  
   if (settings::FIXED_RATIO)
-    glfwSetWindowAspectRatio(mWindow, width, height);
+      glfwSetWindowAspectRatio(mWindow, width, height);
 
   loadAssets();
 
@@ -64,7 +64,8 @@ App::~App() {
 
 void App::loadAssets() {
     gameLogic = GameLogic(mRender, &cam2d, &audioManager);
-  mRender->EndResourceLoad();
+    endScreenFont = mRender->LoadFont("textures/MedievalSharp-Regular.ttf");
+    mRender->EndResourceLoad();
 }
 
 void App::run() {
@@ -111,13 +112,20 @@ void App::update() {
   if(input.Keys[GLFW_KEY_MINUS])
     camScale +=  0.001f * timer.FrameElapsed();
 
-  cam2d.setScale(camScale);
-  cam2d.Target(gameLogic.getTarget(), timer);
-
-  gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d, correctedMouse());
-
   if(gameLogic.gameComplete())
-      glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+  {
+      cam2d.SetCameraOrigin();
+      cam2d.setScale(1.0f);
+      audioManager.StopAll();
+      if(input.Keys[GLFW_KEY_ENTER])
+	  glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+  }
+  else
+  {
+      cam2d.setScale(camScale);
+      cam2d.Target(gameLogic.getTarget(), timer);
+      gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d, correctedMouse());
+  }
   
   postUpdate();
 #ifdef TIME_APP_DRAW_UPDATE
@@ -153,8 +161,15 @@ void App::draw() {
 
     mRender->Begin2DDraw();
 
-    gameLogic.Draw(mRender);
-        
+    if(gameLogic.gameComplete())
+    {
+	drawEndScreen();
+    }
+    else
+    {
+	gameLogic.Draw(mRender);
+    }
+    
 #ifdef GFX_ENV_VULKAN
   submitDraw =
       std::thread(&Render::EndDraw, mRender, std::ref(finishedDrawSubmit));
@@ -182,6 +197,32 @@ glm::vec2 App::correctedPos(glm::vec2 pos)
         pos.y * ((float)settings::TARGET_HEIGHT*camScale / (float)mWindowHeight));
 
   return glm::vec2(pos.x, pos.y);
+}
+
+void App::drawEndScreen()
+{
+    mRender->DrawString(endScreenFont, "Thanks for playing!",
+			glm::vec2(250.0f, 100.0f), 70, 1.0f, glm::vec4(1.0f));
+    
+    mRender->DrawString(endScreenFont, "Mick Cooke(Make Fire Music)",
+			glm::vec2(100.0f, 300.0f), 60, 1.0f, glm::vec4(1.0f));
+    mRender->DrawString(endScreenFont, "-    Music",
+			glm::vec2(1000.0f, 300.0f), 60, 1.0f, glm::vec4(1.0f));
+    mRender->DrawString(endScreenFont, "Thanos Gramosis",
+			glm::vec2(100.0f, 450.0f), 60, 1.0f, glm::vec4(1.0f));
+    mRender->DrawString(endScreenFont, "-    Art",
+			glm::vec2(1000.0f, 450.0f), 60, 1.0f, glm::vec4(1.0f));
+    mRender->DrawString(endScreenFont, "Paulina Ramirez(Lady Yami)",
+			glm::vec2(100.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
+    mRender->DrawString(endScreenFont, "-    Voice Acting",
+			glm::vec2(1000.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
+    mRender->DrawString(endScreenFont, "Noam Zeise",
+			glm::vec2(100.0f, 750.0f), 60, 1.0f, glm::vec4(1.0f));
+    mRender->DrawString(endScreenFont, "-    Programming",
+			glm::vec2(1000.0f, 750.0f), 60, 1.0f, glm::vec4(1.0f));
+    
+    mRender->DrawString(endScreenFont, "Press Esc To Exit",
+			glm::vec2(1500.0f, 1000.0f), 50, 1.0f, glm::vec4(1.0f));
 }
 
 glm::vec2 App::appToScreen(glm::vec2 pos)

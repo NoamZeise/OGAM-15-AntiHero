@@ -37,6 +37,11 @@ const unsigned int CAM2D_FLOAT = 400;
 			previousOff.y = getOffset(settings::TARGET_HEIGHT, pos.y, currentRect.y, currentRect.w);
 		}
 
+	    void SetCameraOrigin()
+	    {
+		offset = glm::mat4(1.0f);
+	    }
+
 		void Target(glm::vec2 focus, Timer &timer);
 	    void Target(glm::vec2 focus);
 

@@ -257,6 +257,7 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
       pickups.push_back(std::pair<Pickup, Sprite>(pu, puS));
   }
   gold.rect = mapObjs.gold;
+  gotGold = false;
   staticColliders = mapObjs.staticColliders;
 }
 

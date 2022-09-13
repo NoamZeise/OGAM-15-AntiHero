@@ -18,7 +18,7 @@ namespace
     const float ENEMY_INVESTIGATE_SPEED = 0.03f;
     const float ENEMY_CHASE_SPEED = 0.12f;
     const float ENEMY_POV_ANGLE = 40.0f;
-    const float ENEMY_FOOTSTEP_MAX = 1.5f;
+    const float ENEMY_FOOTSTEP_MAX = 1.8f;
     const float ENEMY_AUDIBLE_DISTANCE = 2.0f;
     const float STANDING_SEARCH_RANGE = 100.0f;
     const float CONFUSED_SEARCH_RANGE = 180.0f;

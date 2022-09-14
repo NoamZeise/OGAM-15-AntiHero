@@ -1,5 +1,6 @@
 #include "app.h"
 #include "GLFW/glfw3.h"
+#include "glmhelper.h"
 #include <cmath>
 
 App::App()
@@ -65,6 +66,11 @@ App::~App() {
 void App::loadAssets() {
     gameLogic = GameLogic(mRender, &cam2d, &audioManager);
     endScreenFont = mRender->LoadFont("textures/MedievalSharp-Regular.ttf");
+    cursor = Sprite(mRender->LoadTexture("textures/UI/cursor/default.png"));
+    cursor.depth = 3.0f;
+    cursor.rect.z *= 0.3f;
+    cursor.rect.w *= 0.3f;
+    pixel = mRender->LoadTexture("textures/pixel.png");
     mRender->EndResourceLoad();
 }
 
@@ -102,10 +108,6 @@ void App::update() {
                            mode->refreshRate);
     }
   }
-  if (input.Keys[GLFW_KEY_ESCAPE] && !previousInput.Keys[GLFW_KEY_ESCAPE]) {
-    glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
-  }
-
 
   if(input.Keys[GLFW_KEY_EQUAL])
     camScale -=  0.001f * timer.FrameElapsed();
@@ -117,14 +119,40 @@ void App::update() {
       cam2d.SetCameraOrigin();
       cam2d.setScale(1.0f);
       audioManager.StopAll();
-      if(input.Keys[GLFW_KEY_ENTER])
+      if(input.Keys[GLFW_KEY_ESCAPE])
 	  glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
   }
   else
   {
+      if (input.Keys[GLFW_KEY_ESCAPE] && !previousInput.Keys[GLFW_KEY_ESCAPE]) {
+	  paused = !paused;
+	  if(paused)
+	  {
+	      gameLogic.setCurrentAudioVolume(GAME_MUSIC_VOLUME / 2.5f);
+	  }
+	  else
+	  {
+	      timeSincePause = 0.0f;
+	      gameLogic.setCurrentAudioVolume(GAME_MUSIC_VOLUME);
+	  }
+	  gameLogic.setCursorActive(!paused);
+      }
+
       cam2d.setScale(camScale);
-      cam2d.Target(gameLogic.getTarget(), timer);
-      gameLogic.Update(cam2d.getCameraArea(), timer, input, &cam2d, correctedMouse());
+      auto mousePos =  correctedMouse();
+      auto camRect = cam2d.getCameraArea();
+      if(!paused)
+      {
+	  cam2d.Target(gameLogic.getTarget(), timer);
+	  gameLogic.Update(camRect, timer, input, &cam2d, mousePos);
+      }
+      else
+      {
+	  timeSincePause += timer.FrameElapsed();
+	  cursor.rect.x = mousePos.x + camRect.x;
+	  cursor.rect.y = mousePos.y + camRect.y;
+	  cursor.UpdateMatrix(camRect);
+      }
   }
   
   postUpdate();
@@ -168,6 +196,11 @@ void App::draw() {
     else
     {
 	gameLogic.Draw(mRender);
+	if(paused)
+	    cursor.Draw(mRender);
+	float fade = (timeSincePause / FADE_TIME);
+	mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam2d.getCameraArea(), 0.0f, 2.5f),
+			  glm::vec4(0.2f, 0.1f, 0.0f, fade > FADE_MAX ? FADE_MAX : fade));
     }
     
 #ifdef GFX_ENV_VULKAN

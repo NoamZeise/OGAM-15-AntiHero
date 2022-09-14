@@ -162,7 +162,9 @@ namespace god
 	}
 	void Draw(Render* render)
 	{
-	    render->DrawQuad(currentFrame.tex, glmhelper::calcMatFromRect(rect, 0.0f, depth), glm::vec4(1.0f), currentFrame.texOffset);
+	    render->DrawQuad(currentFrame.tex, glmhelper::calcMatFromRect(rect, 0.0f, depth),
+			     glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - ((time - (duration - end))/end)),
+			     currentFrame.texOffset);
 	}
 	glm::vec4 getHitBox()
 	{
@@ -191,6 +193,7 @@ namespace god
 	Frame currentFrame;
 	float time = 0.0f;
 	float duration = 500.0f;
+	float end = 200.0f;
 	float depth = 0.0f;
 	glm::vec4 rect;
     };

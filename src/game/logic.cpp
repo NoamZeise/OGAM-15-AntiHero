@@ -68,7 +68,8 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      gold.depth = CHARACTER_DEPTH;
 				
      LoadMap(cam2D);
-     audioManager->Play("audio/Robin Hood Medieval Music2.ogg", true, 0.5f);
+     currentAudio = "audio/Robin Hood Medieval Music2.ogg";
+     audioManager->Play(currentAudio, true, GAME_MUSIC_VOLUME);
 
 }
 
@@ -204,7 +205,7 @@ void GameLogic::Draw(Render *render)
   for(auto& g: gusts)
       g.Draw(render);
   spellControls.Draw(render);
-  currentCursor->Draw(render);
+  if(cursorActive) currentCursor->Draw(render);
   restartBtn.Draw(render);
 }
 
@@ -310,7 +311,7 @@ void pushCharacter(glm::vec2 pos, Character* character, god::Gust *gust, Timer &
     float dist = glm::distance(pos, otherPos);
     if(dist < gust->getAOE())
     {
-	character->push((otherPos - pos)/(dist*dist*0.01f), timer);
+	character->push(glm::normalize((otherPos - pos))/(dist*dist*0.0001f), timer);
     }
 }
 

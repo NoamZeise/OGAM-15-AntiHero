@@ -76,8 +76,8 @@ class Character
     currentTargetIndex = 0;
     if(path.size() != 0)
     {
-      this->sprite.rect.x = this->path[0].x;// - sprite.rect.z/2.0f;
-      this->sprite.rect.y = this->path[0].y;// - sprite.rect.w/2.0f;
+	this->sprite.rect.x = this->path[0].x - this->sprite.rect.z/2.0f;
+	this->sprite.rect.y = this->path[0].y - this->sprite.rect.w/2.0f - 10.0f;
       if(displayPath)
       {
 	  float takeaway = 0.0f;

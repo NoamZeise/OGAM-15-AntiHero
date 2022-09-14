@@ -45,6 +45,10 @@
 //#define TIME_APP_DRAW_UPDATE
 //#define MULTI_UPDATE_ON_SLOW_DRAW
 
+
+const float FADE_TIME = 300.0f;
+const float FADE_MAX = 0.6f;
+
 class App {
 public:
   App();
@@ -87,6 +91,10 @@ private:
 
   GameLogic gameLogic;
   Resource::Font endScreenFont;
+  bool paused = false;
+  Sprite cursor;
+  Resource::Texture pixel;
+  float timeSincePause = 0.0f;
 };
 
 #endif

@@ -11,7 +11,7 @@
 #include <cstring>
 #include <iostream>
 
-//#define MUTE_MUSIC
+#define MUTE_MUSIC
 
 namespace Audio
 {

@@ -33,6 +33,7 @@ class Hero : public Character
       pathOutline.clear();
       circle.spriteColour = glm::vec4(0.2f, 0.54f, 0.3f, 0.2f);
       Character::setPath(path);
+      
   }
 
     void Update(glm::vec4 camRect, Timer &timer) override

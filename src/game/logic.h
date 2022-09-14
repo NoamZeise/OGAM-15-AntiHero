@@ -21,6 +21,8 @@
 #include <vector>
 #include <iostream>
 
+const float GAME_MUSIC_VOLUME = 0.5f;
+
 class GameLogic
 {
  public:
@@ -30,6 +32,14 @@ class GameLogic
     void Draw(Render *render);
     glm::vec2 getTarget();
     bool gameComplete() { return currentLevelIndex >= levels.size(); }
+    void setCurrentAudioVolume(float vol)
+    {
+	audio->SetVolume(currentAudio, vol);
+    }
+    void setCursorActive(bool active)
+    {
+	cursorActive = active;
+    }
 
  private:
     void LoadMap(Camera::RoomFollow2D *cam2D);
@@ -40,11 +50,11 @@ class GameLogic
 
     
   std::vector<Level> levels;
-    Button restartBtn;
+  Button restartBtn;
 #ifdef NDEBUG
   int currentLevelIndex = 0;
 #else
-  int currentLevelIndex = 1;
+  int currentLevelIndex = 4;
 #endif
   Level currentLevel;
   Player player;
@@ -91,6 +101,9 @@ class GameLogic
 
     float removeAudioTimer = 0.0f;
     float removeAudioDelay = 1000.0f;
+
+    std::string currentAudio;
+    bool cursorActive = true;
 };
 
 #endif

@@ -10,7 +10,7 @@ namespace
 {    
     const float DISTRACTION_RANGE = 250.0f;
     const float INVESTIGATION_INITIATION_PROXIMITY = 10.0f;
-    const float INVESTIGATION_DURATION = 6200.0f;
+    const float INVESTIGATION_DURATION = 9200.0f;
     const float PLAYER_CHASE_RADIUS = 250.0f;
     const float PLAYER_CHASE_OUT_OF_VIEW_RADIUS = 110.0f;
     const float PLAYER_SIZE_OFFSET = 0.0f;

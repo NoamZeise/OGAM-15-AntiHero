@@ -25,7 +25,9 @@ public:
     if(isStatic)
   {
       float scale = camRect.z / (float)settings::TARGET_WIDTH;
-      sprite.rect = glm::vec4((int)(initialRect.x*scale + camRect.x), (int)(initialRect.y*scale + camRect.y),(int)( initialRect.z*scale), (int)(initialRect.w*scale));
+      sprite.rect = initialRect * scale;
+      sprite.rect.x += camRect.x;
+      sprite.rect.y += camRect.y;
       //std::cout << sprite.rect.x << std::endl;
       activeSprite.rect = sprite.rect;
       mousePos.x += camRect.x;

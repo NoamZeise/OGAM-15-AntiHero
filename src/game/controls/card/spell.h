@@ -45,16 +45,15 @@ class SpellCard : public Button
   void Update(glm::vec4 camRect, Timer &timer, Input &input, glm::vec2 mousePos)
   {
       initialRect.x = (int)(initialRect.x) + ((int)initialRect.x %2);
-	  initialRect.y = (int)(initialRect.y) + ((int)initialRect.y %2);
-	  // std::cout << initialRect.x << std::endl;
-    Button::Update(camRect, input, mousePos);
+      initialRect.y = (int)(initialRect.y) + ((int)initialRect.y %2);
+      // std::cout << initialRect.x << std::endl;
+      Button::Update(camRect, input, mousePos);
     cast = false;   
     glm::vec2 toTarget = target - glm::vec2(initialRect.x, initialRect.y);
     toTarget /= CARD_FLOATINESS;
     toTarget *= timer.FrameElapsed();
     initialRect.x += toTarget.x;
     initialRect.y += toTarget.y;
-    // std::cout << initialRect.x<< std::endl;
     activeSprite.spriteColour.w = 1.0f;
     sprite.spriteColour.w = 1.0f;
     if(selected)

@@ -11,7 +11,9 @@
 #include <cstring>
 #include <iostream>
 
+#ifndef NDEBUG
 #define MUTE_MUSIC
+#endif
 
 namespace Audio
 {

@@ -144,6 +144,7 @@ void App::update() {
       if(!paused)
       {
 	  cam2d.Target(gameLogic.getTarget(), timer);
+	  camRect = cam2d.getCameraArea();
 	  gameLogic.Update(camRect, timer, input, &cam2d, mousePos);
       }
       else

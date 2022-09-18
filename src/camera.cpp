@@ -76,10 +76,18 @@ namespace Camera
 			transform = previousOff;
 			}
 
-			cameraArea = glm::vec4(-transform.x - (float)correctedWidth/2.0f, -transform.y - (float)correctedHeight/2.0f,
-									(correctedWidth), (correctedHeight));
-			offset = glm::translate(glm::mat4(1.0f), glm::vec3((int)(transform.x + correctedWidth/2.0f),
-				 					(int)(transform.y + correctedHeight/2.0f), 0));
+			cameraArea = glm::vec4(
+					       (int)(-transform.x - (float)correctedWidth/2.0f) ,
+					       (int)( -transform.y - (float)correctedHeight/2.0f),
+					       (correctedWidth),
+					       (correctedHeight)
+					       );
+			offset = glm::translate(glm::mat4(1.0f),
+						glm::vec3(
+							  (int)(transform.x + (float)correctedWidth/2.0f),
+				 			  (int)(transform.y + (float)correctedHeight/2.0f),
+							  0)
+						);
 			previousOff = transform;
 		}
 
@@ -139,10 +147,18 @@ namespace Camera
 			transform = previousOff;
 			}*/
 
-			cameraArea = glm::vec4(-transform.x - (float)correctedWidth/2.0f, -transform.y - (float)correctedHeight/2.0f,
-									(correctedWidth), (correctedHeight));
-			offset = glm::translate(glm::mat4(1.0f), glm::vec3((int)(transform.x + correctedWidth/2.0f),
-				 					(int)(transform.y + correctedHeight/2.0f), 0));
+			cameraArea = glm::vec4(
+					       (int)(-transform.x - (float)correctedWidth/2.0f) ,
+					       (int)( -transform.y - (float)correctedHeight/2.0f),
+					       (correctedWidth),
+					       (correctedHeight)
+					       );
+			offset = glm::translate(glm::mat4(1.0f),
+						glm::vec3(
+							  (int)(transform.x + (float)correctedWidth/2.0f),
+				 			  (int)(transform.y + (float)correctedHeight/2.0f),
+							  0)
+						);
 			previousOff = transform;
 
     }

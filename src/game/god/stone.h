@@ -23,7 +23,7 @@ namespace god
       Stone(Sprite sprite)
     {
       this->sprite = sprite;
-      this->sprite.depth = 1.0f;
+      this->sprite.depth = 4.5f;
       ogRect = this->sprite.rect;
     }
 
@@ -78,34 +78,34 @@ namespace god
 	Smoke() {}
 	Smoke(Resource::Texture sprite)
 	{
-	    this->sprite = CreateAnimationSetFromTexture(sprite, glm::vec2(1500,892), glm::vec2(0.0f, 0.0f))[0];
+	    this->sprite = CreateAnimationSetFromTexture(sprite, glm::vec2(551,297), glm::vec2(0.0f, 0.0f))[0];
 	    this->sprite.Reset();
 	    this->sprite.setFrameDelay(250.0f);
 	    
-	    depth = 0.16f;
-	    rect.z = this->sprite.GetCurrentFrame().size.x * 0.3f;
-	    rect.w = this->sprite.GetCurrentFrame().size.y * 0.3f;
+	    depth = 1.5f;
+	    rect.z = this->sprite.GetCurrentFrame().size.x;
+	    rect.w = this->sprite.GetCurrentFrame().size.y;
 	}
 
 	void Update(glm::vec4 camRect, Timer &timer)
 	{
 	    time += timer.FrameElapsed();
-	    if(time < start)
-	    {
-		fract = (time/start);
+	    /*if(time < start)
+	     {
+	    	fract = (time/start);
 		fract = log10(fract*10);
 		rect.z = this->sprite.GetCurrentFrame().size.x * fract * 0.3f;
 		rect.w = this->sprite.GetCurrentFrame().size.y * fract * 0.3f;
-	    }
-	    currentFrame = sprite.PlayThenSkipToFrame(timer, 2);
+		}*/
+	    currentFrame = sprite.PlayThenSkipToFrame(timer, 3);
 	}
 	void Draw(Render* render)
 	{
 	  render->DrawQuad(currentFrame.tex,
 			   glmhelper::calcMatFromRect(
 	      glm::vec4(
-			rect.x + ((currentFrame.size.x*0.3f)/2.0f) * (1.0f - fract),
-			rect.y + ((currentFrame.size.y*0.3f)/2.0f) * (1.0f - fract),
+			rect.x,// + ((currentFrame.size.x*0.3f)/2.0f) * (1.0f - fract),
+			rect.y,// + ((currentFrame.size.y*0.3f)/2.0f) * (1.0f - fract),
 			rect.z,
 			rect.w
 			),

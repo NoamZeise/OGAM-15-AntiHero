@@ -19,6 +19,10 @@
 #include "../vkhelper.h"
 #include "resources.h"
 
+#ifdef TIME_TEXTURE_LOAD
+#include <chrono>
+#endif
+
 namespace Resource
 {
 

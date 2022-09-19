@@ -1,4 +1,5 @@
 #include "texture_loader.h"
+#include <chrono>
 
 namespace Resource
 {
@@ -38,6 +39,9 @@ void TextureLoader::UnloadTextures()
 
 Texture TextureLoader::LoadTexture(std::string path)
 {
+    #ifdef TIME_TEXTURE_LOAD
+    auto start = std::chrono::high_resolution_clock::now();
+    #endif
 	for(unsigned int i = 0; i > texToLoad.size(); i++)
 	{
 		if(texToLoad[i].path == path)
@@ -63,6 +67,15 @@ Texture TextureLoader::LoadTexture(std::string path)
 		tex->format = VK_FORMAT_R8G8B8A8_SRGB;
 	else
 		tex->format = VK_FORMAT_R8G8B8A8_UNORM;
+
+	#ifdef TIME_TEXTURE_LOAD
+	auto stop = std::chrono::high_resolution_clock::now();
+  std::cout
+            << std::chrono::duration_cast<std::chrono::milliseconds>(stop -
+                                                                     start)
+                   .count()
+            << " ms load time" << std::endl;
+       #endif
 
 	return Texture((unsigned int)(texToLoad.size() - 1), glm::vec2(tex->width, tex->height), path);
 }

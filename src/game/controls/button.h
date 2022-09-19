@@ -13,7 +13,13 @@ class Button
 {
 public:
   Button() {}
-    Button(Sprite sprite, bool isStatic) { this->sprite = sprite; this->activeSprite = sprite; this->activeSprite.spriteColour = SELECT_COLOUR; this->initialRect = sprite.rect; this->isStatic = isStatic; }
+    Button(Sprite sprite, bool isStatic) {
+	this->sprite = sprite;
+	this->activeSprite = sprite;
+	this->activeSprite.spriteColour = SELECT_COLOUR;
+	this->initialRect = sprite.rect;
+	this->isStatic = isStatic;
+    }
     Button(Sprite sprite, Sprite activeSprite, bool isStatic)
     {
 	this->sprite = sprite;
@@ -40,11 +46,11 @@ public:
   clicked = input.Buttons[GLFW_MOUSE_BUTTON_LEFT];
   if(gh::contains(mousePos, glm::vec4(sprite.rect.x + horizontalHitboxOffset/2.0f, sprite.rect.y, sprite.rect.z - horizontalHitboxOffset, sprite.rect.w)))
   {
-    onSprite = true;
+      onSprite = true;
   }
   else
   {
-    onSprite = false;
+      onSprite = false;
   }
 }
 
@@ -57,13 +63,13 @@ public:
 
 protected:
   Sprite sprite;
-    Sprite activeSprite;
+  Sprite activeSprite;
   bool prevClicked = true;
   bool clicked = false;
   bool onSprite = false;
   bool isStatic;
   glm::vec4 initialRect;
-    float horizontalHitboxOffset = 0.0f;
+  float horizontalHitboxOffset = 0.0f;
 };
 
 #endif

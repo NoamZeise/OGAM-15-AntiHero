@@ -224,7 +224,7 @@
   <properties>
    <property name="obstacle" type="bool" value="true"/>
   </properties>
-  <object id="257" x="1534" y="122.333" width="164.833" height="108"/>
+  <object id="257" x="1534" y="122.333" width="118.833" height="134"/>
  </objectgroup>
  <objectgroup id="11" name="pickup">
   <properties>
@@ -311,7 +311,7 @@
   <properties>
    <property name="checkpoint" type="bool" value="true"/>
   </properties>
-  <object id="229" x="1344" y="32" width="64" height="96"/>
+  <object id="229" x="1344" y="32" width="107" height="64"/>
   <object id="232" x="928" y="928" width="128" height="64"/>
   <object id="262" x="1900" y="1077" width="136" height="121"/>
  </objectgroup>

@@ -141,7 +141,7 @@
    <property name="hero" type="bool" value="true"/>
   </properties>
   <object id="59" x="317.333" y="762.667">
-   <polyline points="-392,-5.33333 0,0 230.667,-5.33333 476,-2.66667 685.333,-4 781.333,-4 782.667,-142.667 791.333,-341 793.333,-429.667 810.667,-584.333 1133.33,-584 1308,-582.667 1422.67,-578.667 1420,-12 1966.67,-2.66667 2609.33,0.666667 2610.67,-322.667 2646.67,-460.667 2652.67,-806.667"/>
+   <polyline points="-348.667,2.66667 0,0 230.667,-5.33333 476,-2.66667 685.333,-4 781.333,-4 782.667,-142.667 791.333,-341 793.333,-429.667 810.667,-584.333 1133.33,-584 1308,-582.667 1422.67,-578.667 1420,-12 1966.67,-2.66667 2609.33,0.666667 2610.67,-322.667 2646.67,-460.667 2652.67,-806.667"/>
   </object>
  </objectgroup>
  <objectgroup id="12" name="gold">
@@ -213,17 +213,17 @@
   <properties>
    <property name="obstacle" type="bool" value="true"/>
   </properties>
-  <object id="56" x="971.667" y="645.333" width="260" height="204"/>
-  <object id="57" x="1041" y="374" width="134.667" height="132"/>
-  <object id="58" x="989.333" y="122.667" width="261.333" height="172"/>
+  <object id="56" x="1001" y="638.666" width="196" height="216"/>
+  <object id="57" x="1041" y="319.333" width="134.667" height="186.667"/>
+  <object id="58" x="989.333" y="53.3337" width="261.333" height="241.333"/>
   <object id="97" x="1697.33" y="672" width="65.3333" height="65.3333"/>
  </objectgroup>
  <objectgroup id="9" name="checkpoint">
   <properties>
    <property name="checkpoint" type="bool" value="true"/>
   </properties>
-  <object id="83" x="1528" y="156" width="69.3333" height="101.333"/>
-  <object id="84" x="2890.67" y="636" width="76" height="76"/>
-  <object id="106" x="1791.33" y="734" width="69.3333" height="101.333"/>
+  <object id="83" x="1507" y="131" width="156.833" height="116"/>
+  <object id="84" x="2866.67" y="628" width="125.333" height="76"/>
+  <object id="106" x="1799.33" y="708.667" width="94.8333" height="61.833"/>
  </objectgroup>
 </map>

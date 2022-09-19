@@ -31,13 +31,13 @@ class Enemy : public Character
     Enemy(Sprite sprite, Sprite distracted, Sprite circle, Sprite search, Audio::Manager* audio) : Character(sprite, circle, audio)
   {
       speed = ENEMY_PATROL_SPEED;
-      distracted.rect.z *= 0.1f;
-      distracted.rect.w *= 0.1f;
+      distracted.rect.z *= 0.2f;
+      distracted.rect.w *= 0.2f;
       distracted.depth = 3.0f;
-      circle.depth = 2.99f;
+      circle.depth = 2.48f;
       circle.rect.z = DISTRACTION_RANGE * 2.0f;
       circle.rect.w = DISTRACTION_RANGE * 2.0f;
-      search.depth = 2.99f;
+      search.depth = 2.49f;
       search.rect.z = PLAYER_CHASE_RADIUS * 2.0f;
       search.rect.w = PLAYER_CHASE_RADIUS * 2.0f;
       this->search = search;

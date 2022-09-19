@@ -31,7 +31,7 @@ class Hero : public Character
       finishedLevel = false;
       displayPath = true;
       pathOutline.clear();
-      circle.spriteColour = glm::vec4(0.2f, 0.54f, 0.3f, 0.2f);
+      circle.spriteColour = glm::vec4(0.4f, 0.84f, 0.3f, 0.4f);
       Character::setPath(path);
       
   }

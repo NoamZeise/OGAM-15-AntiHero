@@ -8,24 +8,24 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      this->audio = audioManager;
 
      defaultCursor = Sprite(render->LoadTexture("textures/UI/cursor/default.png"));
-     defaultCursor.depth = 3.0f;
+     defaultCursor.depth = 5.1f;
      defaultCursor.rect.z *= 0.3f;
      defaultCursor.rect.w *= 0.3f;
      targetCursor = Sprite(render->LoadTexture("textures/UI/cursor/target.png"));
-     targetCursor.depth = 3.0f;
+     targetCursor.depth = 5.1f;
      targetCursor.rect.z *= 0.3f;
      targetCursor.rect.w *= 0.3f;
      
      Resource::Font mapFont = render->LoadFont("textures/MedievalSharp-Regular.ttf");
-          levels.push_back(
+     levels.push_back(
 		      Level(render, "maps/tut1", mapFont)
 		      );
-	  levels.push_back(
-			   Level(render, "maps/tut2", mapFont)
-			   );
-	  levels.push_back(
-			   Level(render, "maps/level0", mapFont)
-			   );
+     levels.push_back(
+		      Level(render, "maps/tut2", mapFont)
+		      );
+     levels.push_back(
+		      Level(render, "maps/level0", mapFont)
+		      );
      levels.push_back(
 		      Level(render, "maps/level1", mapFont)
 		      );
@@ -56,21 +56,25 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      spellControls = SpellControls(render);
 
      pickupSprite = Sprite(render->LoadTexture("textures/spells/pickup.png"));
-     pickupSprite.depth = CHARACTER_DEPTH + 0.01f;
+     pickupSprite.depth = CHARACTER_DEPTH - 0.005f;
 
      Sprite restartBtnSprite = Sprite(glm::vec2(10.0f, 10.0f),render->LoadTexture("textures/UI/restart.png"));
-     restartBtnSprite.depth = 2.0f;
-     restartBtnSprite.rect.z *= 0.4f;
-     restartBtnSprite.rect.w *= 0.4f;
-     restartBtn = Button(restartBtnSprite, true);
+     restartBtnSprite.depth = 5.0f;
+     restartBtnSprite.rect.z *= 0.3f;
+     restartBtnSprite.rect.w *= 0.3f;
+     Sprite restartBtnActiveSprite = Sprite(glm::vec2(10.0f, 10.0f),render->LoadTexture("textures/UI/restart_pressed.png"));
+     restartBtnActiveSprite.depth = 5.0f;
+     restartBtnActiveSprite.rect.z *= 0.3f;
+     restartBtnActiveSprite.rect.w *= 0.3f;
+     restartBtn = Button(restartBtnSprite, restartBtnActiveSprite, true);
+     restartBtn.setInitialRect(restartBtnSprite.rect);
 
      gold = Sprite(render->LoadTexture("textures/gold.png"));
-     gold.depth = CHARACTER_DEPTH;
+     gold.depth = CHARACTER_DEPTH - 0.1f;
 				
      LoadMap(cam2D);
      currentAudio = "audio/Robin Hood Medieval Music2.ogg";
      audioManager->Play(currentAudio, true, GAME_MUSIC_VOLUME);
-
 }
 
 void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)
@@ -198,12 +202,12 @@ void GameLogic::Draw(Render *render)
       c.Draw(render);
   for(auto& e: enemies)
       e.Draw(render);
-  for(auto& e: enemies)
-      e.DrawTransparent(render);
   for(auto& s: smokes)
       s.Draw(render);
   for(auto& g: gusts)
       g.Draw(render);
+  for(auto& e: enemies)
+      e.DrawTransparent(render);
   spellControls.Draw(render);
   if(cursorActive) currentCursor->Draw(render);
   restartBtn.Draw(render);
@@ -246,7 +250,11 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
   for(auto &c: mapObjs.checkpoints)
   {
       auto cp = checkpoint;
-      cp.rect = c;
+      cp.rect.x = c.x;
+      cp.rect.y = c.y;
+      float ratio = cp.rect.w / cp.rect.z;
+      cp.rect.z = c.z;
+      cp.rect.w = c.z * ratio;
       checkpoints.push_back(cp);
   }
   
@@ -255,7 +263,11 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
   for(auto &pu: mapObjs.pickups)
   {
       Sprite puS = pickupSprite;
-      puS.rect = pu.rect;
+      float ratio = puS.rect.w / puS.rect.z;
+      puS.rect.x = pu.rect.x;
+      puS.rect.y = pu.rect.y;
+      puS.rect.z = pu.rect.z;
+      puS.rect.w = pu.rect.z * ratio;
       pickups.push_back(std::pair<Pickup, Sprite>(pu, puS));
   }
   gold.rect = mapObjs.gold;

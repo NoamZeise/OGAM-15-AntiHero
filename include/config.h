@@ -6,6 +6,10 @@
 #define NO_ASSIMP
 #define ONLY_2D
 
+#ifndef NDEBUG
+   #define TIME_TEXTURE_LOAD
+#endif
+
 namespace settings
 {
 const bool SRGB = false;

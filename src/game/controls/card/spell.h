@@ -17,9 +17,9 @@ enum class Spells {
   Smoke,
 };
 
-const glm::vec2 CARD_SIZE = glm::vec2((int)(491/1.4), (int)(570/1.4));
+const glm::vec2 CARD_SIZE = glm::vec2((int)(1848/6), (int)(2454/6));
 const glm::vec2 START_CARDS = glm::vec2(0, settings::TARGET_HEIGHT - CARD_SIZE.y*0.55f);
-const float CARD_GAP = 0.85f;
+const float CARD_GAP = 0.9f;
 
 namespace{
     const float RAISE_CARD_DIST = CARD_SIZE.y * 0.4f;
@@ -37,8 +37,8 @@ class SpellCard : public Button
     SpellCard(Sprite card, Sprite cardActive, Spells spell) : Button(card, cardActive, true)
     {
 	this->spell = spell;
-	this->sprite.depth = 2.0f;
-	this->activeSprite.depth = 2.0f;
+	this->sprite.depth = 4.0f;
+	this->activeSprite.depth = 4.1f;
 	horizontalHitboxOffset  = CARD_SIZE.x * (1.0f - CARD_GAP);
     }
   
@@ -72,7 +72,7 @@ class SpellCard : public Button
 	  }
 	else
 	  {
-	      onSprite = true;
+	    onSprite = true;
 	    float dist = originTarget.y - target.y;
 	    sprite.spriteColour.w = 1 - (dist / CARD_TRANSPARENCY_RANGE);
 	    prevDist = sprite.spriteColour.w;

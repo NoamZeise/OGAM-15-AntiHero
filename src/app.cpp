@@ -10,8 +10,8 @@ App::App()
     throw std::runtime_error("failed to initialise glfw!");
 
   const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-  mWindowWidth = (int)((float)videoMode->width / 1.2);
-  mWindowHeight = (int)((float)videoMode->height / 1.2);
+  mWindowWidth = (int)((float)videoMode->width);// / 1.2);
+  mWindowHeight = (int)((float)videoMode->height);// / 1.2);
   
   Render::SetGLFWWindowHints();
 
@@ -37,7 +37,7 @@ App::App()
   glfwSetMouseButtonCallback(mWindow, mouse_button_callback);
   glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
   glfwSetInputMode(mWindow, GLFW_RAW_MOUSE_MOTION, glfwRawMouseMotionSupported());
-  glfwSetWindowPos(mWindow, mWindowWidth / 10.0f, mWindowHeight / 10.0f);
+  glfwSetWindowPos(mWindow, 0.0f, 0.0f);
   int width = mWindowWidth;
   int height = mWindowHeight;
   if (settings::USE_TARGET_RESOLUTION)
@@ -200,7 +200,7 @@ void App::draw() {
 	if(paused)
 	    cursor.Draw(mRender);
 	float fade = (timeSincePause / FADE_TIME);
-	mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam2d.getCameraArea(), 0.0f, 2.5f),
+	mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam2d.getCameraArea(), 0.0f, 8.0f),
 			  glm::vec4(0.2f, 0.1f, 0.0f, fade > FADE_MAX ? FADE_MAX : fade));
     }
     

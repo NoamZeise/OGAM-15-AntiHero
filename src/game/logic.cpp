@@ -311,6 +311,7 @@ void pushCharacter(glm::vec2 pos, Character* character, god::Gust *gust, Timer &
     float dist = glm::distance(pos, otherPos);
     if(dist < gust->getAOE())
     {
+	dist = dist < 70.0f ? 70.0f : dist;
 	character->push(glm::normalize((otherPos - pos))/(dist*dist*0.0001f), timer);
     }
 }

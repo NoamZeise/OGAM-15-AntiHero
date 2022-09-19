@@ -38,7 +38,6 @@ file(GLOB SOURCES src/*
 		  src/game/controls/*
 		  src/game/controls/card/*
 		  )
-list(FILTER SOURCES EXCLUDE REGEX ".*#+")
 if(GFX_ENV_VULKAN)
   file(GLOB GRAPHICS-RENDER src/vulkan-render/*
                             src/vulkan-render/resources/*
@@ -68,12 +67,10 @@ if(UNIX)
     target_link_libraries(${ProjectName} glfw
                                          Vulkan::Vulkan
                                          ${FREETYPE_LIBRARIES}
-                                         assimp
                                          sndfile
                                          portaudio)
     elseif(GFX_ENV_OPENGL)
       target_link_libraries(${ProjectName} glfw
-                                     assimp
                                      ${FREETYPE_LIBRARIES}
                                      sndfile
                                      portaudio
@@ -85,14 +82,12 @@ else()
     target_link_libraries(${ProjectName} ${Lib}glfw3.lib
                                          ${Lib}freetype.lib
                                          ${Lib}vulkan-1.lib
-                                         ${Lib}assimp-vc140-mt.lib
                                          ${Lib}portaudio_x64.lib
                                          ${Lib}sndfile.lib
                                         bufferoverflowU.lib)
     elseif(GFX_ENV_OPENGL)
       target_link_libraries(${ProjectName} ${Lib}glfw3.lib
                                          ${Lib}freetype.lib
-                                         ${Lib}assimp-vc140-mt.lib
                                          ${Lib}portaudio_x64.lib
                                          ${Lib}sndfile.lib)
     endif()

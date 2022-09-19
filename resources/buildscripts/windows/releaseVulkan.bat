@@ -1,3 +1,4 @@
+SETLOCAL
 cd build
 call vcvars64
 cmake .. -G"Ninja Multi-Config" -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DGFX_ENV_VULKAN=1
@@ -11,4 +12,4 @@ Xcopy resources\windows-dlls build\Release\ /i /c /e /r /y
 Xcopy resources\maps build\Release\maps /i /c /e /r /y
 cd build\Release
 Vulkan-Environment
-cd ../..
+ENDLOCAL

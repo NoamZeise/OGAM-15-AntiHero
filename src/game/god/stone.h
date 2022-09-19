@@ -82,7 +82,7 @@ namespace god
 	    this->sprite.Reset();
 	    this->sprite.setFrameDelay(250.0f);
 	    
-	    depth = 1.5f;
+	    depth = 0.16f;
 	    rect.z = this->sprite.GetCurrentFrame().size.x * 0.3f;
 	    rect.w = this->sprite.GetCurrentFrame().size.y * 0.3f;
 	}

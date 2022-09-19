@@ -42,7 +42,7 @@ ModelInfo::Model ModelLoader::LoadModel(std::string path)
     return model;
 
     #else
-    return Resources::Model();
+    return ModelInfo::Model();
     #endif
 }
 #ifndef NO_ASSIMP

@@ -18,8 +18,8 @@ namespace
     const float ENEMY_INVESTIGATE_SPEED = 0.03f;
     const float ENEMY_CHASE_SPEED = 0.12f;
     const float ENEMY_POV_ANGLE = 40.0f;
-    const float ENEMY_FOOTSTEP_MAX = 1.8f;
-    const float ENEMY_AUDIBLE_DISTANCE = 2.0f;
+    const float ENEMY_FOOTSTEP_MAX = 1.2f;
+    const float ENEMY_AUDIBLE_DISTANCE = 3.0f;
     const float STANDING_SEARCH_RANGE = 100.0f;
     const float CONFUSED_SEARCH_RANGE = 180.0f;
 } // namespace
@@ -33,11 +33,11 @@ class Enemy : public Character
       speed = ENEMY_PATROL_SPEED;
       distracted.rect.z *= 0.1f;
       distracted.rect.w *= 0.1f;
-      distracted.depth = 2.0f;
-      circle.depth = CHARACTER_DEPTH;
+      distracted.depth = 3.0f;
+      circle.depth = 2.99f;
       circle.rect.z = DISTRACTION_RANGE * 2.0f;
       circle.rect.w = DISTRACTION_RANGE * 2.0f;
-      search.depth = CHARACTER_DEPTH+0.01f;
+      search.depth = 2.99f;
       search.rect.z = PLAYER_CHASE_RADIUS * 2.0f;
       search.rect.w = PLAYER_CHASE_RADIUS * 2.0f;
       this->search = search;

@@ -1,16 +1,20 @@
 #ifndef MODEL_LOADER_H
 #define MODEL_LOADER_H
 
-#include <assimp/anim.h>
-#include <assimp/matrix4x4.h>
-#include <assimp/mesh.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
 
+#include <config.h>
+
+#ifndef NO_ASSIMP
+#include <assimp/anim.h>
+#include <assimp/matrix4x4.h>
+#include <assimp/mesh.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#endif
 
 #include <vector>
 #include <map>
@@ -18,7 +22,7 @@
 #include <iostream>
 #include <stdexcept>
 
-
+#include "../resources.h"
 #include "model_info.h"
 
 namespace Resource

@@ -14,7 +14,7 @@
 
 namespace gh
 {
-  inline static bool colliding(glm::vec4 a, glm::vec4 b)
+  inline bool colliding(glm::vec4 a, glm::vec4 b)
   {
     return  a.x < b.x + b.z &&
       a.x + a.z > b.x &&
@@ -22,23 +22,23 @@ namespace gh
       a.y + a.w > b.y;
   }
 
-inline static bool aInB(glm::vec4 a, glm::vec4 b)
+inline bool aInB(glm::vec4 a, glm::vec4 b)
 {
 return a.x > b.x && a.x < b.x + b.z &&
   a.y > b.y && a.y < b.y + b.z;
 }
 
-inline static bool contains(glm::vec2 p, glm::vec4 r)
+inline bool contains(glm::vec2 p, glm::vec4 r)
 {
 return r.x < p.x && p.x < r.x + r.z  && r.y < p.y && p.y < r.y + r.w;
 }
 
-  inline static void addVec2ToRect(glm::vec2 v, glm::vec4 *r)
+  inline void addVec2ToRect(glm::vec2 v, glm::vec4 *r)
   {
     *r = glm::vec4(r->x + v.x, r->y + v.y, r->z, r->w);
   }
 
-inline static bool exists (const std::string& name) {
+inline bool exists (const std::string& name) {
 if (FILE *file = fopen(name.c_str(), "r")) {
 fclose(file);
 return true;

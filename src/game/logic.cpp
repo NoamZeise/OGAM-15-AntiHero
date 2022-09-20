@@ -70,7 +70,7 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      restartBtn.setInitialRect(restartBtnSprite.rect);
 
      gold = Sprite(render->LoadTexture("textures/gold.png"));
-     gold.depth = CHARACTER_DEPTH - 0.1f;
+     gold.depth = CHARACTER_DEPTH - 0.01f;
 				
      LoadMap(cam2D);
      currentAudio = "audio/Robin Hood Medieval Music2.ogg";
@@ -270,7 +270,9 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
       puS.rect.w = pu.rect.z * ratio;
       pickups.push_back(std::pair<Pickup, Sprite>(pu, puS));
   }
+  float ratio = gold.rect.w / gold.rect.z;
   gold.rect = mapObjs.gold;
+  gold.rect.w = gold.rect.z * ratio;
   gotGold = false;
   staticColliders = mapObjs.staticColliders;
 }

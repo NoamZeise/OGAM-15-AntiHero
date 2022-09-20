@@ -123,7 +123,7 @@ class Enemy : public Character
 	}
 
 	distracted.rect.x = sprite.rect.x + (sprite.rect.z - distracted.rect.z)/2.0f;
-	distracted.rect.y = sprite.rect.y - distracted.rect.w;
+	distracted.rect.y = sprite.rect.y - distracted.rect.w/5.0f;
 	distracted.UpdateMatrix(camRect);
 	
 	//circle.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - circle.rect.z/2.0f;
@@ -136,11 +136,14 @@ class Enemy : public Character
 	search.spriteColour = glm::vec4(0.9f, 0.2f, 0.2f, 0.2f);
 	float rot = atan2(direction.y, direction.x);
 	
-	if(rot < 3.1415/2.0 && rot > -3.1415/2.0)
+	if(rot < 3.1415/2.0 && rot > -3.1415/2.0) {
 	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
-	else
+	    distracted.texOffset = glm::vec4(0, 0, -1, 1);
+	}
+	else {
 	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
-	
+	    distracted.texOffset = glm::vec4(0, 0, 1, 1);
+	}
 	float trueAngle = rot*180.0/3.14159265 + 90.0f
 	    + sin(time*0.001f)*searchRange;
 
@@ -233,11 +236,11 @@ class Enemy : public Character
 
     void DrawTransparent(Render *render)
     {
-	if(currentState == EnemyState::Investigate)
-	    distracted.Draw(render);
 	//circle.Draw(render);
 	outOfview.Draw(render);
 	search.Draw(render);
+	if(currentState == EnemyState::Investigate)
+	    distracted.Draw(render);
     }
 
     bool isChasable(glm::vec2 playerPos)

@@ -230,7 +230,7 @@
   <properties>
    <property name="obstacle" type="bool" value="true"/>
   </properties>
-  <object id="187" x="1912" y="834.667" width="120" height="105.333"/>
+  <object id="187" x="1912" y="834.667" width="88" height="105.333"/>
  </objectgroup>
  <objectgroup id="11" name="pickup">
   <properties>
@@ -246,7 +246,7 @@
     <property name="wind" type="int" value="1"/>
    </properties>
   </object>
-  <object id="185" x="2260" y="1502" width="56" height="36">
+  <object id="185" x="2245" y="1506" width="94" height="54">
    <properties>
     <property name="smoke" type="int" value="1"/>
     <property name="stone" type="int" value="2"/>

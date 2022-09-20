@@ -137,6 +137,12 @@ void App::update() {
 	  }
 	  gameLogic.setCursorActive(!paused);
       }
+       if (input.Keys[GLFW_KEY_BACKSPACE] && !previousInput.Keys[GLFW_KEY_BACKSPACE]) {
+	  if(paused)
+	  {
+	      glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+	  }
+      }
 
       cam2d.setScale(camScale);
       auto mousePos =  correctedMouse();
@@ -198,10 +204,20 @@ void App::draw() {
     {
 	gameLogic.Draw(mRender);
 	if(paused)
+	{
 	    cursor.Draw(mRender);
-	float fade = (timeSincePause / FADE_TIME);
-	mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam2d.getCameraArea(), 0.0f, 8.0f),
-			  glm::vec4(0.2f, 0.1f, 0.0f, fade > FADE_MAX ? FADE_MAX : fade));
+	    float fade = (timeSincePause / FADE_TIME);
+	    auto cam = cam2d.getCameraArea();
+	    mRender->DrawString(endScreenFont, "Press Esc to unpause",
+				glm::vec2(cam.x + 20.0f, cam.y + 170.0f), 30, 8.1f, glm::vec4(1.0f, 1.0f, 1.0f, fade));
+	    mRender->DrawString(endScreenFont, "Press F1 to skip this level while unpaused",
+				glm::vec2(cam.x + 20.0f, cam.y + 270.0f), 30, 8.1f, glm::vec4(1.0f, 1.0f, 1.0f, fade));
+	    mRender->DrawString(endScreenFont, "Press Backspace to quit",
+				glm::vec2(cam.x + 20.0f, cam.y + 370.0f), 30, 8.1f, glm::vec4(1.0f, 1.0f, 1.0f, fade));
+	    mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam, 0.0f, 8.0f),
+			      glm::vec4(0.2f, 0.1f, 0.0f, fade > FADE_MAX ? FADE_MAX : fade));
+	}
+    
     }
     
 #ifdef GFX_ENV_VULKAN

@@ -296,6 +296,11 @@ void Render::DrawString(Resource::Font font, std::string text, glm::vec2 positio
   }
 }
 
+void Render::DrawString(Resource::Font font, std::string text, glm::vec2 position, float size, float depth, glm::vec4 colour)
+{
+    DrawString(font, text, position, size, depth, colour, 0);
+}
+
 void Render::FramebufferResize()
 {
   glfwGetWindowSize(window, &this->width, &this->height);

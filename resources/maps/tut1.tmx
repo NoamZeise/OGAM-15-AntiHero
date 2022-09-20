@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="134">
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="135">
  <tileset firstgid="1" source="Environment.tsx"/>
  <layer id="13" name="Tile Layer 1" width="100" height="30">
   <data encoding="csv">
@@ -113,7 +113,7 @@
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Cast spells to assist Robyn</text>
   </object>
   <object id="95" x="2048" y="0" width="192" height="192"/>
-  <object id="99" x="2602" y="98" width="650" height="632"/>
+  <object id="99" x="2602" y="98" width="650" height="839"/>
   <object id="100" x="930.167" y="628.833" width="345" height="28.3333">
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Use the Stone spell to break obstacles</text>
   </object>
@@ -135,6 +135,9 @@
   <object id="107" x="1882.17" y="745.833" width="414.334" height="28.3333">
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Use the wait and go spells to avoid this enemy</text>
   </object>
+  <object id="134" x="968.667" y="118" width="305" height="28.3333">
+   <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Press Esc to pause the game</text>
+  </object>
  </objectgroup>
  <objectgroup id="5" name="hero">
   <properties>
@@ -148,7 +151,7 @@
   <properties>
    <property name="gold" type="bool" value="true"/>
   </properties>
-  <object id="63" x="1678.67" y="482.667" width="86.6667" height="85.3333"/>
+  <object id="63" x="1682.67" y="445.667" width="86.6667" height="85.3333"/>
  </objectgroup>
  <objectgroup id="10" name="coliiders">
   <properties>
@@ -192,7 +195,7 @@
     <property name="stone" type="int" value="1"/>
    </properties>
   </object>
-  <object id="85" x="2802.67" y="755.333" width="80" height="57.3333">
+  <object id="85" x="2602.67" y="736.666" width="80" height="57.3333">
    <properties>
     <property name="stone" type="int" value="2"/>
    </properties>
@@ -215,15 +218,15 @@
   </properties>
   <object id="56" x="1001" y="638.666" width="196" height="216"/>
   <object id="57" x="1041" y="319.333" width="134.667" height="186.667"/>
-  <object id="58" x="989.333" y="53.3337" width="261.333" height="241.333"/>
-  <object id="97" x="1697.33" y="672" width="65.3333" height="65.3333"/>
+  <object id="58" x="998.666" y="9.3337" width="237.333" height="286.666"/>
+  <object id="97" x="1697.33" y="672" width="65.3333" height="93.3333"/>
  </objectgroup>
  <objectgroup id="9" name="checkpoint">
   <properties>
    <property name="checkpoint" type="bool" value="true"/>
   </properties>
-  <object id="83" x="1507" y="131" width="156.833" height="116"/>
-  <object id="84" x="2866.67" y="628" width="125.333" height="76"/>
-  <object id="106" x="1799.33" y="708.667" width="94.8333" height="61.833"/>
+  <object id="83" x="1505.67" y="81.6667" width="156.833" height="116"/>
+  <object id="84" x="2723" y="674.667" width="160" height="129.667"/>
+  <object id="106" x="1796.33" y="672.334" width="165.5" height="111.166"/>
  </objectgroup>
 </map>

@@ -42,14 +42,7 @@ class Character
 	
 	glm::vec2 toTarget = path[currentTargetIndex] - pos;
 	lastToTarget = toTarget;
-	float rot = atan2(toTarget.y, toTarget.x);
-
-	if(rot < 3.1415/2.0 && rot > -3.1415/2.0)
-	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
-	else
-	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
-
-	previousRotation = rot;
+	previousRotation = atan2(toTarget.y, toTarget.x);
 	
 	float length = glm::length(toTarget);
 	currentSpeed += acceleration * timer.FrameElapsed();

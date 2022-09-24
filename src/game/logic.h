@@ -21,7 +21,7 @@
 #include <vector>
 #include <iostream>
 
-const float GAME_MUSIC_VOLUME = 0.5f;
+const float GAME_MUSIC_VOLUME = 0.3f;
 
 class GameLogic
 {

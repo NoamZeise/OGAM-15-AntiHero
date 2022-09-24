@@ -156,16 +156,17 @@ class Enemy : public Character
 	search.rect.x = (sprite.rect.x + sprite.rect.z/2.0f) - search.rect.z/2.0f;
 	search.rect.y = (sprite.rect.y + sprite.rect.w/2.0f) - search.rect.w/2.0f;
 	search.spriteColour = glm::vec4(0.9f, 0.2f, 0.2f, 0.2f);
+
 	float rot = atan2(direction.y, direction.x);
-	
-	if(rot < 3.1415/2.0 && rot > -3.1415/2.0) {
-	    //  sprite.texOffset = glm::vec4(0, 0, 1, 1);
+
+	if(isnan(rot))
+	    rot = 0;
+       
+	if(rot < 3.1415/2.0 && rot > -3.1415/2.0)
 	    distracted.texOffset = glm::vec4(0, 0, -1, 1);
-	}
-	else {
-	    //  sprite.texOffset = glm::vec4(0, 0, -1, 1);
+	else 
 	    distracted.texOffset = glm::vec4(0, 0, 1, 1);
-	}
+	
 	float trueAngle = rot*180.0/3.14159265 + 90.0f
 	    + sin(time*0.001f)*searchRange;
 
@@ -177,6 +178,7 @@ class Enemy : public Character
 	currentAngle += diff*turnSpeed*timer.FrameElapsed();
 	currentAngle = fmod(currentAngle, 360.0f);
 	currentAngle = currentAngle < 0.0f ? currentAngle + 360.0f : currentAngle;
+
 	
 	if(firstAngleUpdate)
 	{
@@ -244,7 +246,7 @@ class Enemy : public Character
 	    float frameS = 300.0f;
 	    if(speed == ENEMY_CHASE_SPEED)
 		frameS = 100.0f;
-	    else if(speed == 0)
+	    else if(speed == 0 ||searchRange == STANDING_SEARCH_RANGE)
 		frameS = 1000000.0f;
 	    else
 		frameS = BASE_ANIM_SPEED;

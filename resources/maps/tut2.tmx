@@ -208,7 +208,7 @@
   <object id="150" x="1283.65" y="1755.35" width="341.667" height="19">
    <text wrap="1" color="#aa0000">Use gust to push characters away from a point</text>
   </object>
-  <object id="208" x="1882" y="758" width="696" height="757"/>
+  <object id="208" x="1882" y="758" width="696" height="817"/>
   <object id="209" x="692" y="-38" width="718" height="784"/>
   <object id="210" x="1416" y="-46" width="1188" height="654"/>
  </objectgroup>
@@ -246,7 +246,7 @@
     <property name="wind" type="int" value="1"/>
    </properties>
   </object>
-  <object id="185" x="2245" y="1506" width="94" height="54">
+  <object id="185" x="2173" y="1579.33" width="94" height="54">
    <properties>
     <property name="smoke" type="int" value="1"/>
     <property name="stone" type="int" value="2"/>
@@ -321,7 +321,7 @@
    <property name="checkpoint" type="bool" value="true"/>
   </properties>
   <object id="142" x="1172.67" y="1661" width="131" height="140.333"/>
-  <object id="184" x="2227.5" y="1344" width="123.5" height="64"/>
-  <object id="206" x="953.5" y="536" width="110" height="83"/>
+  <object id="184" x="2251.5" y="1469.33" width="123.5" height="64"/>
+  <object id="206" x="938.167" y="697.333" width="110" height="83"/>
  </objectgroup>
 </map>

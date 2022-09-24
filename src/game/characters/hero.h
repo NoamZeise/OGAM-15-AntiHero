@@ -10,7 +10,7 @@
 
 const float WAIT_TIME = 1200.0f;
 const float FOOTSTEP_SFX_DELAY = 600.0f;
-const float PLAYER_FOOTSTEP_VOLUME = 0.15f;
+const float PLAYER_FOOTSTEP_VOLUME = 0.2f;
 const glm::vec2 PLAYER_SIZE = glm::vec2(525, 679);
 
 class Hero : public Character

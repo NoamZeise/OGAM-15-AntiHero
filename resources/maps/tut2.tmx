@@ -289,7 +289,7 @@
   <object id="156" x="0" y="1600" width="285" height="120"/>
   <object id="157" x="386" y="1710" width="637" height="65"/>
   <object id="158" x="1024" y="1824" width="384" height="96"/>
-  <object id="159" x="1408" y="1856" width="1152" height="64"/>
+  <object id="159" x="1408" y="1880" width="1152" height="40"/>
   <object id="160" x="1120" y="1216" width="288" height="448"/>
   <object id="163" x="1408" y="1248" width="832" height="137"/>
   <object id="165" x="2336" y="1248" width="224" height="190.667"/>

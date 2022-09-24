@@ -37,12 +37,12 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
 		     
 		     );
      hero = Hero(
-		 Sprite(render->LoadTexture("textures/characters/Robyn.png")),
+		 Sprite(render->LoadTexture("textures/characters/Robyn-anim.png")),
 		 Sprite(render->LoadTexture("textures/UI/circle.png")),
 		 audio
 		   );
      enemy = Enemy(
-		   Sprite(render->LoadTexture("textures/characters/enemy.png")),
+		   Sprite(render->LoadTexture("textures/characters/enemy-anim.png")),
 		   Sprite(render->LoadTexture("textures/UI/distracted.png")),
 		   Sprite(render->LoadTexture("textures/UI/circle.png")),
 		   Sprite(render->LoadTexture("textures/UI/search.png")),
@@ -247,14 +247,15 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
   }
   checkpoints.clear();
   lastCheckpoint = nullptr;
+  const float CHECKPOINT_WIDTH = 200.0f;
   for(auto &c: mapObjs.checkpoints)
   {
       auto cp = checkpoint;
-      cp.rect.x = c.x;
-      cp.rect.y = c.y;
       float ratio = cp.rect.w / cp.rect.z;
-      cp.rect.z = c.z;
-      cp.rect.w = c.z * ratio;
+      cp.rect.z = CHECKPOINT_WIDTH;
+      cp.rect.w = CHECKPOINT_WIDTH * ratio;
+      cp.rect.x = c.x + c.z/2.0 - cp.rect.z/2.0;
+      cp.rect.y = c.y + c.w/2.0 - cp.rect.w/2.0;
       checkpoints.push_back(cp);
   }
   

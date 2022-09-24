@@ -4,10 +4,14 @@
 #include "audio.h"
 #include "character.h"
 #include "gamehelper.h"
+#include "../animation.h"
+#include "glm/ext/scalar_constants.hpp"
+#include <map>
 
 const float WAIT_TIME = 1200.0f;
 const float FOOTSTEP_SFX_DELAY = 600.0f;
 const float PLAYER_FOOTSTEP_VOLUME = 0.15f;
+const glm::vec2 PLAYER_SIZE = glm::vec2(525, 679);
 
 class Hero : public Character
 {
@@ -15,8 +19,17 @@ class Hero : public Character
     Hero() {}
     Hero(Sprite sprite, Sprite circle, Audio::Manager* audio) : Character(sprite, circle, audio)
     {
-	this->sprite.rect.z *= 1.2f;
-	this->sprite.rect.w *= 1.2f;
+	this->sprite.rect.z = PLAYER_SIZE.x * 0.25f;
+	this->sprite.rect.w = PLAYER_SIZE.y * 0.25f;
+
+	auto animations = CreateAnimationSetFromTexture(sprite.texture, PLAYER_SIZE, glm::vec2(0));
+	for(auto &a: animations)
+	    a.setFrameDelay(280.0f);
+	this->animations[Direction::Right] = animations[0];
+	animations[0].InvertFrameX();
+	this->animations[Direction::Left] = animations[0];
+	this->animations[Direction::Up] = animations[1];
+	this->animations[Direction::Down] = animations[2];
 
 	for( int i = 1; i < 6; i++)
 	    audio->LoadAudioFile("audio/SFX/Footsteps/Footstep Light" + std::to_string(i) + ".wav");
@@ -48,7 +61,22 @@ class Hero : public Character
 
 	    
 	    Character::Update(camRect, timer);
-	    
+
+	    if(!collided)
+	    {
+		if(abs(previousRotation)> 3.1415*(3.0/4.0))
+		    currentDirection = Direction::Left;
+		else if(previousRotation > 3.1415*(1.0/4.0))
+		    currentDirection = Direction::Up;
+		else if(previousRotation > -3.1415*(1.0/4.0))
+		    currentDirection = Direction::Right;
+		else
+		    currentDirection = Direction::Down;
+
+		currentFrame = animations[currentDirection].Play(timer);
+	    }
+	    sprite.texture = currentFrame.tex;
+	    sprite.texOffset = currentFrame.texOffset;
 	    
 	    if(footstepTimer > FOOTSTEP_SFX_DELAY)
 	    {
@@ -124,6 +152,17 @@ private:
     bool waiting = false;
 
     float footstepTimer = 0.0f;
+
+    enum Direction  {
+	Left,
+	Right,
+	Up,
+	Down
+    };
+
+    Direction currentDirection;
+    std::map<Direction, AnimatedSprite> animations;
+    Frame currentFrame;
 };
 
 #endif

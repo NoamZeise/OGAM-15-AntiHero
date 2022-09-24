@@ -48,6 +48,8 @@ class Character
 	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
 	else
 	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
+
+	previousRotation = rot;
 	
 	float length = glm::length(toTarget);
 	currentSpeed += acceleration * timer.FrameElapsed();
@@ -170,6 +172,7 @@ class Character
     int dir = 1;
     Sprite circle;
     std::vector<Sprite> pathOutline;
+    float previousRotation;
 
     bool  displayPath = false;
     bool collided = false;

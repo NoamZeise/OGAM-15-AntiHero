@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="135">
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="138">
  <tileset firstgid="1" source="Environment.tsx"/>
  <layer id="13" name="Tile Layer 1" width="100" height="30">
   <data encoding="csv">
@@ -107,13 +107,13 @@
   <properties>
    <property name="room" type="bool" value="true"/>
   </properties>
-  <object id="61" x="801.667" y="546.667" width="580" height="326.667"/>
-  <object id="62" x="826.667" y="6.66667" width="697.333" height="467.667"/>
+  <object id="61" x="801.667" y="478.667" width="580" height="394.667"/>
+  <object id="62" x="826.667" y="6.66667" width="517.333" height="467.667"/>
   <object id="87" x="29.8333" y="758.833" width="229" height="28.3333">
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Cast spells to assist Robyn</text>
   </object>
   <object id="95" x="2048" y="0" width="192" height="192"/>
-  <object id="99" x="2602" y="98" width="650" height="839"/>
+  <object id="99" x="2602" y="98" width="650" height="573"/>
   <object id="100" x="930.167" y="628.833" width="345" height="28.3333">
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Use the Stone spell to break obstacles</text>
   </object>

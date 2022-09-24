@@ -1,10 +1,14 @@
+
 #ifndef GAME_ENEMY_H
 #define GAME_ENEMY_H
 
 #include "audio.h"
 #include "character.h"
+#include "../animation.h"
 #include "gamehelper.h"
 #include "glm/geometric.hpp"
+
+#include <map>
 
 namespace
 {    
@@ -22,6 +26,9 @@ namespace
     const float ENEMY_AUDIBLE_DISTANCE = 3.0f;
     const float STANDING_SEARCH_RANGE = 100.0f;
     const float CONFUSED_SEARCH_RANGE = 180.0f;
+    const glm::vec2 ENEMY_RECT = glm::vec2(525, 558);
+
+    const float BASE_ANIM_SPEED = 270.0f;
 } // namespace
 
 class Enemy : public Character
@@ -46,9 +53,25 @@ class Enemy : public Character
       circle.rect.z = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
       circle.rect.w = PLAYER_CHASE_OUT_OF_VIEW_RADIUS * 2.0f;
       this->outOfview = circle;
+      this->sprite.rect.z = ENEMY_RECT.x * 0.25f;
+      this->sprite.rect.w = ENEMY_RECT.y * 0.25f;
 
       for( int i = 1; i < 6; i++)
 	  audio->LoadAudioFile("audio/SFX/Footsteps/Footstep Heavy" + std::to_string(i) + ".wav");
+
+      auto animations = CreateAnimationSetFromTexture(sprite.texture, ENEMY_RECT, glm::vec2(0, 0));
+
+      this->animations[Direction::Right] = animations[0];
+      animations[0].InvertFrameX();
+      this->animations[Direction::Left] = animations[0];
+      this->animations[Direction::Down] = animations[1];
+      this->animations[Direction::Up] = animations[2];
+
+      for(auto &anim: this->animations)
+	  anim.second.setFrameDelay(BASE_ANIM_SPEED);
+
+      prevSpeed = speed;
+      
   }
     void setRectToPrev() override
     {
@@ -63,6 +86,7 @@ class Enemy : public Character
 
     void Update(glm::vec4 camRect, Timer &timer, glm::vec2 playerPos)
     {
+	bool updateCharacter = false;
 	time += timer.FrameElapsed();
 	prevRect = sprite.rect;
 	currentSpeed += acceleration * timer.FrameElapsed();
@@ -75,7 +99,7 @@ class Enemy : public Character
 	{
 	    searchRange = 30.0f;
 	    speed = ENEMY_PATROL_SPEED;
-	    Character::Update(camRect, timer);
+	    updateCharacter = true;
 	    direction = glm::normalize(lastToTarget);
 	}
 	else if(currentState == EnemyState::Investigate)
@@ -98,7 +122,6 @@ class Enemy : public Character
 	    {
 		currentState = EnemyState::Patrol;
 	    }
-	    sprite.UpdateMatrix(camRect);
 	}
 	else if(currentState == EnemyState::Chase)
 	{
@@ -107,7 +130,6 @@ class Enemy : public Character
 	    glm::vec2 toTarget = playerPos - gh::centre(sprite.rect);
 	    direction = glm::normalize(toTarget);
 	    moveToTarget(toTarget, timer);
-	    sprite.UpdateMatrix(camRect);
 	    currentState = EnemyState::Investigate;
 	    investigationTarget = playerPos;
 	    investigationTimer = 0.0f;
@@ -137,11 +159,11 @@ class Enemy : public Character
 	float rot = atan2(direction.y, direction.x);
 	
 	if(rot < 3.1415/2.0 && rot > -3.1415/2.0) {
-	    sprite.texOffset = glm::vec4(0, 0, 1, 1);
+	    //  sprite.texOffset = glm::vec4(0, 0, 1, 1);
 	    distracted.texOffset = glm::vec4(0, 0, -1, 1);
 	}
 	else {
-	    sprite.texOffset = glm::vec4(0, 0, -1, 1);
+	    //  sprite.texOffset = glm::vec4(0, 0, -1, 1);
 	    distracted.texOffset = glm::vec4(0, 0, 1, 1);
 	}
 	float trueAngle = rot*180.0/3.14159265 + 90.0f
@@ -208,7 +230,41 @@ class Enemy : public Character
 	    }
 	}
 
+	if(currentAngle>305 || currentAngle < 45)
+	    currentDirection = Direction::Up;
+	else if(currentAngle>215)
+	    currentDirection = Direction::Left;
+	else if(currentAngle>135)
+	    currentDirection = Direction::Down;
+	else
+	    currentDirection = Direction::Right;
+
+	if(speed != prevSpeed)
+	{
+	    float frameS = 300.0f;
+	    if(speed == ENEMY_CHASE_SPEED)
+		frameS = 100.0f;
+	    else if(speed == 0)
+		frameS = 1000000.0f;
+	    else
+		frameS = BASE_ANIM_SPEED;
+	    for(auto &anim: this->animations)
+		anim.second.setFrameDelay(frameS);
+	}
+
+	//auto rect = sprite.rect;
+	auto frame = animations[currentDirection].Play(timer);
+
+	if(updateCharacter)
+	    Character::Update(camRect, timer);
+	else
+	    sprite.UpdateMatrix(camRect);
+
+	sprite.texture = frame.tex;
+	sprite.texOffset = frame.texOffset;
+
 	 collided = false;
+	 prevSpeed = speed;
     }
 
     void soundEvent(glm::vec2 sound)
@@ -279,6 +335,13 @@ private:
 	    Dead,
 	};
 
+    enum Direction {
+	Up,
+	Down,
+	Left,
+	Right,
+    };
+
     Sprite distracted;
     Sprite circle;
     Sprite outOfview;
@@ -294,6 +357,10 @@ private:
     float searchRange = 25.0f;
     double time = 0.0f;
     float footstepTimer = 0.0f;
+    float prevSpeed;
+
+    std::map<Direction, AnimatedSprite> animations;
+    Direction currentDirection;
 };
 
 #endif

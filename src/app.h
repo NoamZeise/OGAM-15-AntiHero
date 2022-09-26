@@ -95,6 +95,9 @@ private:
   Sprite cursor;
   Resource::Texture pixel;
   float timeSincePause = 0.0f;
+
+    bool playingEndMusic = false;
+    Resource::Texture endScreen;
 };
 
 #endif

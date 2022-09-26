@@ -20,8 +20,22 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
-const float GAME_MUSIC_VOLUME = 0.3f;
+const float GAME_MUSIC_VOLUME = 0.35f;
+const float GAME_SFX_VOLUME = 0.85f;
+const float GAME_ROCK_BOX_VOLUME = 0.55f;
+
+namespace game_music {
+    const std::string Voiceless = "audio/Robin Hood Medieval Music2.ogg";
+    const std::string Hip = "audio/Robin Hood Song Level3.wav";
+    const std::string Voiced = "audio/Robin Hood SongV3.wav";
+    const std::string Menu = "audio/Robin Hood Menu Music.wav";
+    
+    const std::string Victory = "audio/Robin Hood Win Song.wav";
+    const std::string EndOfLevel = "audio/Robin Hood End of Level.wav";
+    const std::string Lose = "audio/Robin Hood Lose Music.wav";
+}
 
 class GameLogic
 {
@@ -36,9 +50,19 @@ class GameLogic
     {
 	audio->SetVolume(currentAudio, vol);
     }
+    void toggleActiveAudio(bool pause)
+    {
+	if(pause)
+	    audio->Pause(currentAudio);
+	else
+	    audio->Resume(currentAudio);
+    }
     void setCursorActive(bool active)
     {
 	cursorActive = active;
+    }
+    void skipLevel() {
+	hero.simulateEnd();
     }
 
  private:
@@ -77,6 +101,7 @@ class GameLogic
     Sprite checkpoint;
     std::vector<Sprite> checkpoints;
     Sprite* lastCheckpoint;
+    Resource::Texture checkpointActive;
     int checkpointTargetIndex;
     glm::vec2 checkpointPos;
     std::vector<Spells> checkpointSpells;

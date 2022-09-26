@@ -11,7 +11,7 @@
 const float WAIT_TIME = 1200.0f;
 const float FOOTSTEP_SFX_DELAY = 600.0f;
 const float PLAYER_FOOTSTEP_VOLUME = 0.2f;
-const glm::vec2 PLAYER_SIZE = glm::vec2(525, 679);
+const glm::vec2 PLAYER_SIZE = glm::vec2(526, 469);
 
 class Hero : public Character
 {
@@ -33,6 +33,8 @@ class Hero : public Character
 
 	for( int i = 1; i < 6; i++)
 	    audio->LoadAudioFile("audio/SFX/Footsteps/Footstep Light" + std::to_string(i) + ".wav");
+	for( int i = 1; i < 6; i++)
+	    audio->LoadAudioFile("audio/SFX/Footsteps/Footstep Mud" + std::to_string(i) + ".wav");
     }
 
     bool isFinished() { return finishedLevel; }
@@ -44,7 +46,7 @@ class Hero : public Character
       finishedLevel = false;
       displayPath = true;
       pathOutline.clear();
-      circle.spriteColour = glm::vec4(0.4f, 0.84f, 0.3f, 0.4f);
+      circle.spriteColour = DOT_ACTIVE;
       Character::setPath(path);
       
   }
@@ -61,6 +63,17 @@ class Hero : public Character
 
 	    
 	    Character::Update(camRect, timer);
+
+	    if(displayPath)
+	    {
+		auto pos = getPos();
+		for(auto &pathSpot: pathOutline) {
+		    if(
+		       abs(pathSpot.rect.x - pos.x) < 10 &&
+		       abs(pathSpot.rect.y - (pos.y + sprite.rect.w/2)) < 15)
+			pathSpot.spriteColour = DOT_DONE;
+		}
+	    }
 
 	    if(!collided)
 	    {
@@ -90,7 +103,11 @@ class Hero : public Character
 	    }
 	}
 	else
+	{
 	    sprite.UpdateMatrix(camRect);
+	    for(auto& c: pathOutline)
+		c.UpdateMatrix(camRect);
+	}
 	collided = false;
     }
 

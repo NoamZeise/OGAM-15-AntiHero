@@ -113,7 +113,7 @@
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Cast spells to assist Robyn</text>
   </object>
   <object id="95" x="2048" y="0" width="192" height="192"/>
-  <object id="99" x="2602" y="98" width="650" height="573"/>
+  <object id="99" x="2602" y="98" width="650" height="643"/>
   <object id="100" x="930.167" y="628.833" width="345" height="28.3333">
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#ff6265">Use the Stone spell to break obstacles</text>
   </object>

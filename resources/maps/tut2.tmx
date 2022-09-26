@@ -205,7 +205,7 @@
   </object>
   <object id="144" x="126.667" y="1189.33" width="676" height="606.667"/>
   <object id="147" x="1142.42" y="1446.06" width="916.667" height="469.697"/>
-  <object id="150" x="1283.65" y="1755.35" width="341.667" height="19">
+  <object id="150" x="1368.32" y="1750.68" width="341.667" height="19">
    <text wrap="1" color="#aa0000">Use gust to push characters away from a point</text>
   </object>
   <object id="208" x="1882" y="758" width="696" height="817"/>

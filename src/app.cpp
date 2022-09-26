@@ -1,5 +1,6 @@
 #include "app.h"
 #include "GLFW/glfw3.h"
+#include "config.h"
 #include "glmhelper.h"
 #include <cmath>
 
@@ -71,6 +72,8 @@ void App::loadAssets() {
     cursor.rect.z *= 0.3f;
     cursor.rect.w *= 0.3f;
     pixel = mRender->LoadTexture("textures/pixel.png");
+    audioManager.Play(game_music::Menu, true, GAME_MUSIC_VOLUME);
+    audioManager.Pause(game_music::Menu);
     mRender->EndResourceLoad();
 }
 
@@ -118,7 +121,12 @@ void App::update() {
   {
       cam2d.SetCameraOrigin();
       cam2d.setScale(1.0f);
-      audioManager.StopAll();
+      if(!playingEndMusic)
+      {
+	  playingEndMusic = true;
+	  audioManager.StopAll();
+	  audioManager.Play(game_music::Victory, false, GAME_MUSIC_VOLUME);
+      }
       if(input.Keys[GLFW_KEY_ESCAPE])
 	  glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
   }
@@ -128,22 +136,35 @@ void App::update() {
 	  paused = !paused;
 	  if(paused)
 	  {
-	      gameLogic.setCurrentAudioVolume(GAME_MUSIC_VOLUME / 2.5f);
+	      gameLogic.toggleActiveAudio(true);
+	      audioManager.Resume(game_music::Menu);
 	  }
 	  else
 	  {
 	      timeSincePause = 0.0f;
-	      gameLogic.setCurrentAudioVolume(GAME_MUSIC_VOLUME);
+	      audioManager.Pause(game_music::Menu);
+	      gameLogic.toggleActiveAudio(false);
 	  }
 	  gameLogic.setCursorActive(!paused);
       }
-       if (input.Keys[GLFW_KEY_BACKSPACE] && !previousInput.Keys[GLFW_KEY_BACKSPACE]) {
+      if (input.Keys[GLFW_KEY_BACKSPACE] && !previousInput.Keys[GLFW_KEY_BACKSPACE]) {
 	  if(paused)
 	  {
 	      glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
 	  }
       }
-
+      if (input.Keys[GLFW_KEY_F1] && !previousInput.Keys[GLFW_KEY_F1]) {
+	  if(paused)
+	  {
+	      paused = false;
+	      timeSincePause = 0.0f;
+	      audioManager.Pause(game_music::Menu);
+	      gameLogic.toggleActiveAudio(false);
+	      gameLogic.skipLevel();
+	      gameLogic.setCursorActive(!paused);
+	  }
+      }
+      
       cam2d.setScale(camScale);
       auto mousePos =  correctedMouse();
       auto camRect = cam2d.getCameraArea();
@@ -210,7 +231,7 @@ void App::draw() {
 	    auto cam = cam2d.getCameraArea();
 	    mRender->DrawString(endScreenFont, "Press Esc to unpause",
 				glm::vec2(cam.x + 20.0f, cam.y + 170.0f), 30, 8.1f, glm::vec4(1.0f, 1.0f, 1.0f, fade));
-	    mRender->DrawString(endScreenFont, "Press F1 to skip this level while unpaused",
+	    mRender->DrawString(endScreenFont, "Press F1 to skip this level",
 				glm::vec2(cam.x + 20.0f, cam.y + 270.0f), 30, 8.1f, glm::vec4(1.0f, 1.0f, 1.0f, fade));
 	    mRender->DrawString(endScreenFont, "Press Backspace to quit",
 				glm::vec2(cam.x + 20.0f, cam.y + 370.0f), 30, 8.1f, glm::vec4(1.0f, 1.0f, 1.0f, fade));
@@ -251,6 +272,9 @@ glm::vec2 App::correctedPos(glm::vec2 pos)
 
 void App::drawEndScreen()
 {
+    mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(glm::vec4(0, 0, settings::TARGET_WIDTH, settings::TARGET_HEIGHT), 0.0f, 0.0f),
+			      glm::vec4(0.2f, 0.1f, 0.0f, 1.0f));
+    
     mRender->DrawString(endScreenFont, "Thanks for playing!",
 			glm::vec2(250.0f, 100.0f), 70, 1.0f, glm::vec4(1.0f));
     
@@ -262,14 +286,14 @@ void App::drawEndScreen()
 			glm::vec2(100.0f, 450.0f), 60, 1.0f, glm::vec4(1.0f));
     mRender->DrawString(endScreenFont, "-    Art",
 			glm::vec2(1000.0f, 450.0f), 60, 1.0f, glm::vec4(1.0f));
-    mRender->DrawString(endScreenFont, "Paulina Ramirez(Lady Yami)",
-			glm::vec2(100.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
-    mRender->DrawString(endScreenFont, "-    Voice Acting",
-			glm::vec2(1000.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
+    // mRender->DrawString(endScreenFont, "Paulina Ramirez(Lady Yami)",
+    //			glm::vec2(100.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
+    // mRender->DrawString(endScreenFont, "-    Voice Acting",
+    //			glm::vec2(1000.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
     mRender->DrawString(endScreenFont, "Noam Zeise",
-			glm::vec2(100.0f, 750.0f), 60, 1.0f, glm::vec4(1.0f));
+			glm::vec2(100.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
     mRender->DrawString(endScreenFont, "-    Programming",
-			glm::vec2(1000.0f, 750.0f), 60, 1.0f, glm::vec4(1.0f));
+			glm::vec2(1000.0f, 600.0f), 60, 1.0f, glm::vec4(1.0f));
     
     mRender->DrawString(endScreenFont, "Press Esc To Exit",
 			glm::vec2(1500.0f, 1000.0f), 50, 1.0f, glm::vec4(1.0f));

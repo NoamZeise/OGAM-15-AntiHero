@@ -26,7 +26,7 @@ namespace
     const float ENEMY_AUDIBLE_DISTANCE = 3.0f;
     const float STANDING_SEARCH_RANGE = 100.0f;
     const float CONFUSED_SEARCH_RANGE = 180.0f;
-    const glm::vec2 ENEMY_RECT = glm::vec2(525, 558);
+    const glm::vec2 ENEMY_RECT = glm::vec2(526, 679);
 
     const float BASE_ANIM_SPEED = 270.0f;
 } // namespace

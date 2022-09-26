@@ -17,7 +17,7 @@ struct Sprite
   float rotate = 0.0f;
   float depth = 0.0f;
   bool toDraw = true;
-  
+ 
   Sprite()
   {
     rect = glm::vec4(0);

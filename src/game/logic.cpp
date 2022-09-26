@@ -51,9 +51,10 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      stone = god::Stone(Sprite(render->LoadTexture("textures/spells/stone.png")));
      smoke = god::Smoke(render->LoadTexture("textures/spells/smoke.png"));
      gust = god::Gust(render->LoadTexture("textures/spells/wind.png"));
-     checkpoint = Sprite(render->LoadTexture("textures/checkpoint.png"));
+     checkpoint = Sprite(render->LoadTexture("textures/checkpoint_off.png"));
      checkpoint.depth = CHARACTER_DEPTH;
      spellControls = SpellControls(render);
+     checkpointActive = render->LoadTexture("textures/checkpoint_on.png");
 
      pickupSprite = Sprite(render->LoadTexture("textures/spells/pickup.png"));
      pickupSprite.depth = CHARACTER_DEPTH - 0.005f;
@@ -73,15 +74,45 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      gold.depth = CHARACTER_DEPTH - 0.01f;
 				
      LoadMap(cam2D);
-     currentAudio = "audio/Robin Hood Medieval Music2.ogg";
-     audioManager->Play(currentAudio, true, GAME_MUSIC_VOLUME);
+     currentAudio = game_music::EndOfLevel;
+     audioManager->LoadAudioFile(game_music::EndOfLevel);
+     audioManager->LoadAudioFile(game_music::Voiced);
+     audioManager->LoadAudioFile(game_music::Voiceless);
+     audioManager->LoadAudioFile(game_music::Victory);
+     audioManager->LoadAudioFile(game_music::Hip);
+     audioManager->LoadAudioFile(game_music::Menu);
+     audioManager->LoadAudioFile(game_music::Lose);
+     for( int i = 1; i < 4; i++)
+	 audio->LoadAudioFile("audio/SFX/Box/Box" + std::to_string(i) + ".wav");
+     for( int i = 1; i < 4; i++)
+	 audio->LoadAudioFile("audio/SFX/Rock/Rock" + std::to_string(i) + ".wav");
+     audio->LoadAudioFile("audio/SFX/Smoke Bomb.wav");
+     audio->LoadAudioFile("audio/SFX/Thunder.wav");
+     audio->LoadAudioFile("audio/SFX/Wind1.wav");
+     audio->LoadAudioFile("audio/SFX/Wind2.wav");
 }
 
 void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::RoomFollow2D *cam2D, glm::vec2 mousePos)
 {
-    if(input.Keys[GLFW_KEY_F1] && !prevInput.Keys[GLFW_KEY_F1])
+    if(currentAudio == game_music::EndOfLevel)
     {
-	hero.simulateEnd();
+	if(!audio->Playing(currentAudio))
+	{
+	    switch(currentLevelIndex) {
+	    case 0:
+	    case 1:
+		currentAudio = game_music::Voiceless;
+		break;
+	    case 2:
+	    case 3:
+		currentAudio = game_music::Hip;
+		break;
+	    case 4:
+		currentAudio = game_music::Voiced;
+		break;
+	    }
+	    audio->Play(currentAudio, true, GAME_MUSIC_VOLUME);
+	}
     }
     lastScale = camRect.z / settings::TARGET_WIDTH;
     std::vector<glm::vec4> frameColliders;
@@ -144,6 +175,7 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 	    if (gh::colliding(checkpoints[i].rect, hero.getHitBox()))
 	    {
 		lastCheckpoint = &checkpoints[i];
+		lastCheckpoint->texture = checkpointActive;
 		checkpointTargetIndex = hero.getTargetIndex();
 		checkpointPos = hero.getPos();
 		checkpointSpells = spellControls.getSpells();
@@ -316,7 +348,9 @@ void GameLogic::levelComplete(Camera::RoomFollow2D *cam2D)
 	currentLevel = levels[currentLevelIndex];
 	LoadMap(cam2D);
     }
-    
+    audio->Stop(currentAudio);
+    currentAudio = game_music::EndOfLevel;
+    audio->Play(currentAudio, false, GAME_MUSIC_VOLUME);
     cam2D->Target(hero.getPos());
 }
 
@@ -348,9 +382,9 @@ void GameLogic::spellUpdate(glm::vec4 camRect, Timer &timer)
 	  for(int i = 0; i < obstacles.size(); i++)
 	      if(gh::colliding(hit, obstacles[i].getHitBox()))
 	      {
-		  audio->Play("audio/SFX/Box/Box" + rand.stringNum(3) + ".wav", false, 0.5f);		  obstacles.erase(obstacles.begin() + i--);
+		  audio->Play("audio/SFX/Box/Box" + rand.stringNum(3) + ".wav", false, GAME_ROCK_BOX_VOLUME);		  obstacles.erase(obstacles.begin() + i--);
 	      }
-	  audio->Play("audio/SFX/Rock/Rock" + rand.stringNum(3) + ".wav", false, 0.5f);
+	  audio->Play("audio/SFX/Rock/Rock" + rand.stringNum(3) + ".wav", false, GAME_ROCK_BOX_VOLUME);
 	  stones.erase(stones.begin() + stoneI--);
       }
   }
@@ -402,10 +436,10 @@ void GameLogic::spellCast(Spells spell, glm::vec2 pos, Camera::RoomFollow2D* cam
     case Spells::Smoke:
 	smk.setPos(pos);
 	smokes.push_back(smk);
-	audio->Play("audio/SFX/Smoke Bomb.wav", false, 0.8f);
+	audio->Play("audio/SFX/Smoke Bomb.wav", false, GAME_SFX_VOLUME);
 	break;
     case Spells::Wind:
-	audio->Play("audio/SFX/Wind" + rand.stringNum(2)  + ".wav", false, 0.8f);
+	audio->Play("audio/SFX/Wind" + rand.stringNum(2)  + ".wav", false, GAME_SFX_VOLUME);
 	gst.setPos(pos);
 	gusts.push_back(gst);
   }

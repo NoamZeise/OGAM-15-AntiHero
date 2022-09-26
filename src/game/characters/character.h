@@ -11,6 +11,8 @@
 #include <vector>
 
 const float CHARACTER_DEPTH = 0.15f;
+const glm::vec4 DOT_ACTIVE = glm::vec4(0.4f, 0.84f, 0.3f, 0.4f);
+const glm::vec4 DOT_DONE = glm::vec4(0.2f, 0.2f, 0.15f, 0.5f); 
 
 class Character
 {
@@ -29,7 +31,7 @@ class Character
     this->circle.rect.z = 10.0f;
     this->circle.rect.w = 10.0f;
     this->circle.depth = CHARACTER_DEPTH - 0.01f;
-    this->circle.spriteColour = glm::vec4(0.5f, 0.1f, 0.14f, 0.4f);
+    this->circle.spriteColour = DOT_ACTIVE;
   }
    
   virtual void Update(glm::vec4 camRect, Timer &timer)

@@ -17,6 +17,9 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
      targetCursor.rect.w *= 0.3f;
      
      Resource::Font mapFont = render->LoadFont("textures/MedievalSharp-Regular.ttf");
+          levels.push_back(
+		      Level(render, "maps/intro", mapFont)
+			   );
      levels.push_back(
 		      Level(render, "maps/tut1", mapFont)
 		      );
@@ -102,14 +105,17 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 	{
 	    switch(currentLevelIndex) {
 	    case 0:
+		currentAudio = game_music::Menu;
+		break;
 	    case 1:
+	    case 2:
 		currentAudio = game_music::Voiceless;
 		break;
-	    case 2:
 	    case 3:
+	    case 4:
 		currentAudio = game_music::Hip;
 		break;
-	    case 4:
+	    case 5:
 		currentAudio = game_music::Voiced;
 		break;
 	    }
@@ -118,8 +124,10 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
     }
     lastScale = camRect.z / settings::TARGET_WIDTH;
     std::vector<glm::vec4> frameColliders;
-    spellControls.Update(camRect, timer, input, mousePos);
-    spellCast(spellControls.spellCast().first, spellControls.spellCast().second, cam2D);
+    if(currentLevelIndex != 0) {
+	spellControls.Update(camRect, timer, input, mousePos);
+	spellCast(spellControls.spellCast().first, spellControls.spellCast().second, cam2D);
+    }
     currentLevel.Update(camRect, timer, &frameColliders);
     hero.Update(camRect, timer);
     if(hero.isFinished())
@@ -210,7 +218,8 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
       defaultCursor.UpdateMatrix(camRect);
       currentCursor = &defaultCursor;
   }
-    restartBtn.Update(camRect, input, mousePos);
+    if(currentLevelIndex !=0)
+	restartBtn.Update(camRect, input, mousePos);
     if(restartBtn.Clicked())
 	LoadMap(cam2D);
     prevInput = input;
@@ -247,9 +256,12 @@ void GameLogic::Draw(Render *render)
       g.Draw(render);
   for(auto& e: enemies)
       e.DrawTransparent(render);
-  spellControls.Draw(render);
-  if(cursorActive) currentCursor->Draw(render);
-  restartBtn.Draw(render);
+  if(currentLevelIndex != 0)
+  {
+      spellControls.Draw(render);
+      if(cursorActive) currentCursor->Draw(render);
+      restartBtn.Draw(render);
+  }
 }
 
 glm::vec2 GameLogic::getTarget()
@@ -365,7 +377,8 @@ void GameLogic::levelComplete(Camera::RoomFollow2D *cam2D)
     }
     audio->Stop(currentAudio);
     currentAudio = game_music::EndOfLevel;
-    audio->Play(currentAudio, false, GAME_MUSIC_VOLUME);
+    if(currentLevelIndex != 1)
+	audio->Play(currentAudio, false, GAME_MUSIC_VOLUME);
     cam2D->Target(hero.getPos());
 }
 

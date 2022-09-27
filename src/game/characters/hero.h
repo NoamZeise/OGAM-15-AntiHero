@@ -70,7 +70,7 @@ class Hero : public Character
 		for(auto &pathSpot: pathOutline) {
 		    if(
 		       abs(pathSpot.rect.x - pos.x) < 10 &&
-		       abs(pathSpot.rect.y - (pos.y + sprite.rect.w/1.8)) < 15)
+		       abs(pathSpot.rect.y - (pos.y + sprite.rect.w/2.2)) < 17)
 			pathSpot.spriteColour = DOT_DONE;
 		}
 	    }
@@ -116,6 +116,14 @@ class Hero : public Character
 	this->sprite.rect.x = pos.x - sprite.rect.z/2.0f;
 	this->sprite.rect.y = pos.y - sprite.rect.w/2.0f;
 	currentTargetIndex = targetIndex;
+	for(auto& mark: pathOutline)
+	{
+	    if(abs(mark.rect.x - path[currentTargetIndex].x) < 100 &&
+	       abs(mark.rect.y - path[currentTargetIndex].y) < 100)
+		break;
+	    else
+		mark.spriteColour = DOT_DONE;
+	}
 	dir = 1;
     }
 

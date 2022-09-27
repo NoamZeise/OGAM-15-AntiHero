@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.1" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="55">
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="55">
  <tileset firstgid="1" source="Environment.tsx"/>
  <layer id="2" name="Tile Layer 2" width="60" height="40">
   <data encoding="csv">
@@ -137,8 +137,8 @@
   <properties>
    <property name="room" type="bool" value="true"/>
   </properties>
-  <object id="1" x="734.667" y="273.333" width="234" height="388.667"/>
-  <object id="3" x="1015.67" y="195" width="390.333" height="467.333"/>
+  <object id="1" x="734.667" y="273.333" width="191" height="388.667"/>
+  <object id="3" x="923.67" y="195" width="962.333" height="467.333"/>
   <object id="18" x="685" y="800" width="821.667" height="320"/>
   <object id="37" x="118.667" y="834" width="458.667" height="386"/>
   <object id="40" x="14.6665" y="318" width="573.667" height="517.609"/>
@@ -157,10 +157,10 @@
   <object id="35" x="944" y="464.667" width="73.8333" height="38">
    <properties>
     <property name="stone" type="int" value="2"/>
-    <property name="wind" type="int" value="0"/>
+    <property name="wind" type="int" value="1"/>
    </properties>
   </object>
-  <object id="36" x="1590.67" y="899.667" width="53.3333" height="32.6667">
+  <object id="36" x="1490.67" y="939.667" width="53.3333" height="32.6667">
    <properties>
     <property name="stone" type="int" value="1"/>
     <property name="wind" type="int" value="1"/>
@@ -227,7 +227,7 @@
   <object id="8" x="1675.73" y="512.592">
    <polyline points="44.4346,53.741 42.4096,22.9555 38.3455,-20.7287 14.5101,-13.512 -20.7287,-92.1275 -16.8421,-273.925"/>
   </object>
-  <object id="14" x="977.333" y="961.333">
+  <object id="14" x="917.333" y="1041.33">
    <polyline points="-23.6667,-144 73.333,-29.3333 86.3333,46.667"/>
   </object>
   <object id="42" x="440" y="425">
@@ -246,8 +246,8 @@
   <properties>
    <property name="checkpoint" type="bool" value="true"/>
   </properties>
-  <object id="13" x="1032.33" y="398.667" width="128.167" height="86.833"/>
-  <object id="15" x="1336" y="901" width="117.333" height="94.6663"/>
+  <object id="13" x="1014.33" y="352.667" width="146.167" height="142.833"/>
+  <object id="15" x="1336" y="850" width="117.333" height="145.666"/>
   <object id="41" x="264.543" y="686.867" width="119.356" height="75.8602"/>
  </objectgroup>
 </map>

@@ -65,6 +65,9 @@ class GameLogic
     void skipLevel() {
 	hero.simulateEnd();
     }
+    int getLevel() {
+	return currentLevelIndex;
+    }
 
  private:
     void LoadMap(Camera::RoomFollow2D *cam2D);

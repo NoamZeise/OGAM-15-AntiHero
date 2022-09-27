@@ -100,6 +100,12 @@ void App::update() {
 #endif
   glfwPollEvents();
 
+  if(timer.FrameElapsed() > 500.0f)
+      timer.Update();
+
+  if(gameLogic.getLevel() == 0)
+      timeSinceStart += timer.FrameElapsed();
+
   if (input.Keys[GLFW_KEY_F] && !previousInput.Keys[GLFW_KEY_F]) {
     if (glfwGetWindowMonitor(mWindow) == nullptr) {
       const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -132,12 +138,14 @@ void App::update() {
   }
   else
   {
-      if (input.Keys[GLFW_KEY_ESCAPE] && !previousInput.Keys[GLFW_KEY_ESCAPE]) {
+      if (input.Keys[GLFW_KEY_ESCAPE] && !previousInput.Keys[GLFW_KEY_ESCAPE] && gameLogic.getLevel() != 0) {
 	  paused = !paused;
 	  if(paused)
 	  {
 	      gameLogic.toggleActiveAudio(true);
 	      audioManager.Resume(game_music::Menu);
+	      if(!audioManager.Playing(game_music::Menu))
+		  audioManager.Play(game_music::Menu, true, GAME_MUSIC_VOLUME);
 	  }
 	  else
 	  {
@@ -146,6 +154,9 @@ void App::update() {
 	      gameLogic.toggleActiveAudio(false);
 	  }
 	  gameLogic.setCursorActive(!paused);
+	  //reset timer as takes a while to change music, which lags fade transition
+	  timer.Update();
+	  timer.Update();
       }
       if (input.Keys[GLFW_KEY_BACKSPACE] && !previousInput.Keys[GLFW_KEY_BACKSPACE]) {
 	  if(paused)
@@ -160,9 +171,9 @@ void App::update() {
 	      timeSincePause = 0.0f;
 	      audioManager.Pause(game_music::Menu);
 	      gameLogic.toggleActiveAudio(false);
-	      gameLogic.skipLevel();
 	      gameLogic.setCursorActive(!paused);
 	  }
+	  gameLogic.skipLevel();
       }
       
       cam2d.setScale(camScale);
@@ -237,6 +248,13 @@ void App::draw() {
 				glm::vec2(cam.x + 20.0f, cam.y + 370.0f), 30, 8.1f, glm::vec4(1.0f, 1.0f, 1.0f, fade));
 	    mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam, 0.0f, 8.0f),
 			      glm::vec4(0.2f, 0.1f, 0.0f, fade > FADE_MAX ? FADE_MAX : fade));
+	}
+	if(gameLogic.getLevel() == 0)
+	{
+	    auto cam = cam2d.getCameraArea();
+	    float fade = (timeSinceStart / FADE_START);
+	    mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam, 0.0f, 8.0f),
+			      glm::vec4(0.0f, 0.0f, 0.0f, 1.2f - fade));
 	}
     
     }

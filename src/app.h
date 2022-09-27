@@ -48,6 +48,7 @@
 
 const float FADE_TIME = 300.0f;
 const float FADE_MAX = 0.6f;
+const float FADE_START = 2300.0f;
 
 class App {
 public:
@@ -98,6 +99,8 @@ private:
 
     bool playingEndMusic = false;
     Resource::Texture endScreen;
+    float timeSinceStart = 0.0f;
+    
 };
 
 #endif

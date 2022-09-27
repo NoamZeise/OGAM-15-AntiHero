@@ -256,7 +256,7 @@ class Enemy : public Character
 	else
 	    currentDirection = Direction::Right;
 
-	if(speed != prevSpeed)
+	if(speed != prevSpeed || searchRange == STANDING_SEARCH_RANGE)
 	{
 	    float frameS = BASE_ANIM_SPEED;
 	    if(speed == ENEMY_CHASE_SPEED)

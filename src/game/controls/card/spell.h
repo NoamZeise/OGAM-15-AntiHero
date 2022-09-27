@@ -25,7 +25,7 @@ namespace{
     const float RAISE_CARD_DIST = CARD_SIZE.y * 0.4f;
     const float CARD_FLOATINESS = 100.0f;
     const float CARD_TRANSPARENCY_RANGE = 300.0f;
-    const float CARD_ACTIATION_THREASHOLD = 0.5f;
+    const float CARD_ACTIATION_THREASHOLD = 0.7f;
 } // namespace
 
 
@@ -128,7 +128,7 @@ class SpellCard : public Button
 
     bool isSelected()
     {
-	return selected && prevDist < CARD_ACTIATION_THREASHOLD && spell != Spells::Wait;
+	return selected && prevDist < CARD_ACTIATION_THREASHOLD;
     }
 
     

@@ -80,6 +80,7 @@ class Level
       std::vector<Pickup> pickups;
       glm::vec4 gold;
       std::vector<glm::vec4> staticColliders;
+      std::vector<glm::vec2> trees;
   };
 
   MapGameplayObjects getObjLists()
@@ -114,6 +115,8 @@ class Level
 	    mapObjs.gold = glm::vec4(obj.x, obj.y, obj.w, obj.h);
 	if(obj.props.collidable || objGroup.props.collidable)
 	    mapObjs.staticColliders.push_back(glm::vec4(obj.x, obj.y, obj.w, obj.h));
+	if(obj.props.tree || objGroup.props.tree)
+	    mapObjs.trees.push_back(glm::vec2(obj.x, obj.y));
       }
       for(auto& obj: objGroup.polys)
       {

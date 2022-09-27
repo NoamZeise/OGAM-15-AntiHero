@@ -25,6 +25,7 @@
 const float GAME_MUSIC_VOLUME = 0.35f;
 const float GAME_SFX_VOLUME = 0.85f;
 const float GAME_ROCK_BOX_VOLUME = 0.55f;
+const glm::vec2 TREE_DIM = glm::vec2(1359 * 0.25f, 1755 *0.25f);
 
 namespace game_music {
     const std::string Voiceless = "audio/Robin Hood Medieval Music2.ogg";
@@ -97,6 +98,8 @@ class GameLogic
     Sprite pickupSprite;
     std::vector<std::pair<Pickup, Sprite>> pickups;
     Sprite gold;
+    Sprite tree;
+    std::vector<Sprite> trees;
 
     Sprite checkpoint;
     std::vector<Sprite> checkpoints;

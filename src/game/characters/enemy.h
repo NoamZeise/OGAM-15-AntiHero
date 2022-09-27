@@ -84,8 +84,13 @@ class Enemy : public Character
 	sprite.rect = prevRect;
     }
 
+    bool chasing() {
+	return isChasing;
+    }
+
     void Update(glm::vec4 camRect, Timer &timer, glm::vec2 playerPos)
     {
+	isChasing = false;
 	bool updateCharacter = false;
 	time += timer.FrameElapsed();
 	prevRect = sprite.rect;
@@ -128,6 +133,7 @@ class Enemy : public Character
 	    searchRange = 5.0f;
 	    speed = ENEMY_CHASE_SPEED;
 	    glm::vec2 toTarget = playerPos - gh::centre(sprite.rect);
+	    isChasing = true;
 	    direction = glm::normalize(toTarget);
 	    moveToTarget(toTarget, timer);
 	    currentState = EnemyState::Investigate;
@@ -213,6 +219,7 @@ class Enemy : public Character
 	    float angle_diff = abs(angle - search.rotate);
 	    if(angle_diff < ENEMY_POV_ANGLE || angle_diff > 360.0f - ENEMY_POV_ANGLE || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS || currentState == EnemyState::Chase)
 		currentState = EnemyState::Chase;
+	    isChasing = true;
 	}
 	 //else
 	 // {
@@ -243,13 +250,11 @@ class Enemy : public Character
 
 	if(speed != prevSpeed)
 	{
-	    float frameS = 300.0f;
+	    float frameS = BASE_ANIM_SPEED;
 	    if(speed == ENEMY_CHASE_SPEED)
 		frameS = 100.0f;
-	    else if(speed == 0 ||searchRange == STANDING_SEARCH_RANGE)
+	    if(speed == 0 ||searchRange == STANDING_SEARCH_RANGE)
 		frameS = 1000000.0f;
-	    else
-		frameS = BASE_ANIM_SPEED;
 	    for(auto &anim: this->animations)
 		anim.second.setFrameDelay(frameS);
 	}
@@ -348,6 +353,7 @@ private:
     Sprite circle;
     Sprite outOfview;
     Sprite search;
+    bool isChasing = false;
     EnemyState currentState = EnemyState::Patrol;
     glm::vec2 investigationTarget = glm::vec2(0);
     float investigationTimer = 0.0f;

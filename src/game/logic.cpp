@@ -72,6 +72,8 @@ GameLogic::GameLogic(Render *render, Camera::RoomFollow2D *cam2D, Audio::Manager
 
      gold = Sprite(render->LoadTexture("textures/gold.png"));
      gold.depth = CHARACTER_DEPTH - 0.01f;
+
+     tree = Sprite(render->LoadTexture("textures/tree.png"));
 				
      LoadMap(cam2D);
      currentAudio = game_music::EndOfLevel;
@@ -122,6 +124,8 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
     hero.Update(camRect, timer);
     if(hero.isFinished())
 	levelComplete(cam2D);
+    for(auto& t: trees)
+	t.UpdateMatrix(camRect);
     for(auto& e: enemies)
     {
 	e.Update(camRect, timer, gh::centre(hero.getHitBox()));
@@ -135,15 +139,15 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
       if(gh::colliding(o.getHitBox(), hero.getHitBox()))
 	  hero.setRectToPrev();
       for(auto& e: enemies)
-	  if(gh::colliding(o.getHitBox(), e.getHitBox()))
-	      e.setRectToPrev();
+	  if(!e.chasing() && gh::colliding(o.getHitBox(), e.getHitBox()))
+            e.setRectToPrev();
     }
     for(auto& s: staticColliders)
     {
       if(gh::colliding(s, hero.getHitBox()))
 	  hero.setRectToPrev();
       for(auto& e: enemies)
-	  if(gh::colliding(s, e.getHitBox()))
+	  if(!e.chasing() && gh::colliding(s, e.getHitBox()))
 	      e.setRectToPrev();
     }
     for(int i = 0; i < pickups.size(); i++)
@@ -221,6 +225,8 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
 void GameLogic::Draw(Render *render)
 {
   currentLevel.Draw(render);
+  for(auto& t: trees)
+      t.Draw(render);
   hero.Draw(render);
   for(auto& s: stones)
     s.Draw(render);
@@ -308,6 +314,14 @@ void GameLogic::LoadMap(Camera::RoomFollow2D *cam2D)
   gold.rect.w = gold.rect.z * ratio;
   gotGold = false;
   staticColliders = mapObjs.staticColliders;
+  trees.clear();
+  for(auto& t: mapObjs.trees)
+  {
+      Sprite tSprite = tree;
+      tSprite.rect = glm::vec4(t.x - TREE_DIM.x/2.0, t.y - TREE_DIM.y*0.8f, TREE_DIM.x, TREE_DIM.y);
+      tSprite.depth = CHARACTER_DEPTH - 0.001f;
+      trees.push_back(tSprite);
+  }
 }
 
 void GameLogic::playerDeath(Camera::RoomFollow2D *cam2D)

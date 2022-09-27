@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="80" height="60" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="303">
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="80" height="60" tilewidth="32" tileheight="32" infinite="0" nextlayerid="18" nextobjectid="307">
  <tileset firstgid="1" source="Environment.tsx"/>
  <layer id="13" name="Tile Layer 1" width="80" height="60">
   <data encoding="csv">
@@ -197,14 +197,29 @@
   <properties>
    <property name="room" type="bool" value="true"/>
   </properties>
-  <object id="252" x="169" y="685" width="1016" height="594"/>
+  <object id="252" x="169" y="840" width="1016" height="439"/>
   <object id="254" x="46" y="422" width="644" height="408"/>
-  <object id="255" x="700" y="-8" width="606.667" height="686"/>
+  <object id="255" x="700" y="-8" width="606.667" height="786">
+   <properties>
+    <property name="tree" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="259" x="1332" y="-13.3333" width="588" height="337.333"/>
   <object id="260" x="1333.33" y="325.333" width="816" height="617.333"/>
   <object id="265" x="1560" y="962" width="388" height="330"/>
   <object id="266" x="2014.67" y="824" width="581.333" height="474"/>
   <object id="267" x="1840" y="1302" width="710" height="316"/>
+ </objectgroup>
+ <objectgroup id="17" name="trees">
+  <object id="304" x="1232" y="1120">
+   <point/>
+  </object>
+  <object id="305" x="712" y="273.333">
+   <point/>
+  </object>
+  <object id="306" x="1961.33" y="196">
+   <point/>
+  </object>
  </objectgroup>
  <objectgroup id="5" name="hero">
   <properties>
@@ -238,6 +253,7 @@
   <object id="234" x="299.75" y="911.75" width="76.5" height="44.5">
    <properties>
     <property name="smoke" type="int" value="1"/>
+    <property name="stone" type="int" value="2"/>
    </properties>
   </object>
   <object id="235" x="1259.08" y="63.0833" width="76.5" height="44.5">
@@ -257,13 +273,13 @@
   <properties>
    <property name="enemy" type="bool" value="true"/>
   </properties>
-  <object id="225" x="573" y="736">
+  <object id="225" x="533" y="735">
    <polyline points="0,0 192,0 0,0"/>
   </object>
   <object id="231" x="1113" y="106">
    <polyline points="0,0 -149,-4 -69,121 -177.5,214 -239,230.5"/>
   </object>
-  <object id="233" x="628.168" y="1039.25">
+  <object id="233" x="530.168" y="1059.25">
    <polyline points="0,0 132,-0.333333"/>
   </object>
   <object id="256" x="1798" y="29">

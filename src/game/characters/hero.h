@@ -6,7 +6,7 @@
 #include "gamehelper.h"
 #include "../animation.h"
 #include "glm/ext/scalar_constants.hpp"
-#include <map>
+#include <map>s
 
 const float WAIT_TIME = 1200.0f;
 const float FOOTSTEP_SFX_DELAY = 600.0f;
@@ -70,7 +70,7 @@ class Hero : public Character
 		for(auto &pathSpot: pathOutline) {
 		    if(
 		       abs(pathSpot.rect.x - pos.x) < 10 &&
-		       abs(pathSpot.rect.y - (pos.y + sprite.rect.w/2)) < 15)
+		       abs(pathSpot.rect.y - (pos.y + sprite.rect.w/1.8)) < 15)
 			pathSpot.spriteColour = DOT_DONE;
 		}
 	    }

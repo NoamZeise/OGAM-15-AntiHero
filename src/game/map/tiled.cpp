@@ -91,6 +91,15 @@ Properties fillPropStruct(rapidxml::xml_node<> *propertiesNode)
 			else
 				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
 		}
+		else if(name == "tree")
+		{
+			if(value == "true")
+				props.tree = true;
+			else if(value == "false")
+				props.tree = false;
+			else
+				std::cout << "WARNING: property " << name << " did not have true or false value!" << std::endl;
+		}
 		else if(name == "smoke")
 		{
 			 props.smoke = std::stoi(value);

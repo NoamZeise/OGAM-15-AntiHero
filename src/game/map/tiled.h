@@ -34,6 +34,7 @@ struct Properties
     int smoke = 0;
     int wind = 0;
     bool gold = false;
+    bool tree = false;
   };
 
 //change this function defined in tiled.cpp to match the properties you added

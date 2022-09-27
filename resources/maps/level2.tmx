@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="40" height="110" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="144">
+<map version="1.9" tiledversion="1.9.1" orientation="orthogonal" renderorder="right-down" width="40" height="110" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="144">
  <tileset firstgid="1" source="Environment.tsx"/>
  <layer id="2" name="Tile Layer 2" width="40" height="110">
   <data encoding="csv">
@@ -485,7 +485,7 @@
    <property name="checkpoint" type="bool" value="true"/>
   </properties>
   <object id="65" x="283.036" y="2474.06" width="98.7677" height="64.8624"/>
-  <object id="69" x="942.388" y="515.115" width="141.518" height="89.9228"/>
+  <object id="69" x="939.063" y="451.94" width="204.693" height="143.123"/>
   <object id="143" x="224" y="1344" width="128" height="64"/>
  </objectgroup>
 </map>

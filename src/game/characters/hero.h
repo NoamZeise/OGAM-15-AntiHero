@@ -6,7 +6,7 @@
 #include "gamehelper.h"
 #include "../animation.h"
 #include "glm/ext/scalar_constants.hpp"
-#include <map>s
+#include <map>
 
 const float WAIT_TIME = 1200.0f;
 const float FOOTSTEP_SFX_DELAY = 600.0f;

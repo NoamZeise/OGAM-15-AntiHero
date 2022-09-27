@@ -204,6 +204,7 @@ void GameLogic::Update(glm::vec4 camRect, Timer &timer, Input &input, Camera::Ro
   }
     else
   {
+
       defaultCursor.rect.x = mousePos.x + camRect.x;
       defaultCursor.rect.y = mousePos.y + camRect.y;
       defaultCursor.UpdateMatrix(camRect);

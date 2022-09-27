@@ -10,6 +10,10 @@
 
 #include <map>
 
+#ifndef _MSC_VER
+#include <cmath>
+#endif
+
 namespace
 {    
     const float DISTRACTION_RANGE = 250.0f;
@@ -164,9 +168,13 @@ class Enemy : public Character
 	search.spriteColour = glm::vec4(0.9f, 0.2f, 0.2f, 0.2f);
 
 	float rot = atan2(direction.y, direction.x);
-
+	#ifdef _MSC_VER
 	if(isnan(rot))
 	    rot = 0;
+	#else
+	if(std::isnan(rot))
+	    rot = 0;
+	#endif
        
 	if(rot < 3.1415/2.0 && rot > -3.1415/2.0)
 	    distracted.texOffset = glm::vec4(0, 0, -1, 1);

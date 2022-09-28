@@ -1,5 +1,15 @@
 # Submission to One Game A month Jam #16 for September 2022
 
+[itch page](https://noamzeise.itch.io/robyn-hood)
+
+## credits
+
+* Mick Cooke - MakeFire Music   -> Music and Sound Effects  https://youtube.com/channel/UCs75GjfGdtTS-CekMJOGICA
+
+* Thanos Gramosis  -> Art   https://www.artstation.com/tha-com-nos
+
+* Noam Zeise -> Programming  https://noamzeise.com/
+
 
 # building from source
 

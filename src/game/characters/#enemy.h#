@@ -225,7 +225,10 @@ class Enemy : public Character
 	    //std::cout << angle << std::endl;
 	    //std::cout << search.rotate << std::endl;
 	    float angle_diff = abs(angle - search.rotate);
-	    if(angle_diff < ENEMY_POV_ANGLE || angle_diff > 360.0f - ENEMY_POV_ANGLE || distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS || currentState == EnemyState::Chase)
+	    if(angle_diff < ENEMY_POV_ANGLE ||
+	       angle_diff > 360.0f - ENEMY_POV_ANGLE ||
+	       distToPlayer < PLAYER_CHASE_OUT_OF_VIEW_RADIUS ||
+	       currentState == EnemyState::Chase)
 		currentState = EnemyState::Chase;
 	    isChasing = true;
 	}

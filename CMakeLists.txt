@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 
 #customize
 if(GFX_ENV_VULKAN)
-  set(ProjectName "Vulkan-Environment")
+  set(ProjectName "Robyn-Hood")
   add_definitions(-DGFX_ENV_VULKAN)
 elseif(GFX_ENV_OPENGL)
-  set(ProjectName "OpenGL-Environment")
+  set(ProjectName "Robyn-Hood-ogl-ver")
   add_definitions(-DGFX_ENV_OPENGL)
 endif()
 #windows only

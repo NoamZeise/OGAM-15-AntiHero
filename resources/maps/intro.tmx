@@ -94,7 +94,7 @@
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#bca1a1">The legendary theif Robyn Hood is stalking the streets of the baron's bountiful town</text>
   </object>
   <object id="166" x="782.167" y="212.167" width="511.333" height="28.3333">
-   <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#caa49e">As her Spirit Guardian you must assist her using your magic</text>
+   <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#caa49e">As her Spirit Guardian, you must assist her using your magic</text>
   </object>
   <object id="167" x="355.834" y="106.833" width="714.333" height="28.3333">
    <text fontfamily="MS Shell Dlg 2" pixelsize="19" wrap="1" color="#bca1a1">She is looking to plunder the riches of this opulent place to help her starving village</text>
@@ -104,8 +104,8 @@
   <properties>
    <property name="hero" type="bool" value="true"/>
   </properties>
-  <object id="152" x="-96" y="121.333">
-   <polyline points="0,0 1705.33,0"/>
+  <object id="152" x="-276.333" y="121.333">
+   <polyline points="0,0 1885.66,0"/>
   </object>
  </objectgroup>
  <objectgroup id="12" name="gold">

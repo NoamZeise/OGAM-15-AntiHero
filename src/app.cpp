@@ -67,6 +67,7 @@ App::~App() {
 void App::loadAssets() {
     gameLogic = GameLogic(mRender, &cam2d, &audioManager);
     endScreenFont = mRender->LoadFont("textures/MedievalSharp-Regular.ttf");
+    endScreen = mRender->LoadTexture("textures/end-screen.png");
     cursor = Sprite(mRender->LoadTexture("textures/UI/cursor/default.png"));
     cursor.depth = 3.0f;
     cursor.rect.z *= 0.3f;
@@ -74,6 +75,7 @@ void App::loadAssets() {
     pixel = mRender->LoadTexture("textures/pixel.png");
     audioManager.Play(game_music::Menu, true, GAME_MUSIC_VOLUME);
     audioManager.Pause(game_music::Menu);
+    
     mRender->EndResourceLoad();
 }
 
@@ -103,8 +105,7 @@ void App::update() {
   if(timer.FrameElapsed() > 500.0f)
       timer.Update();
 
-  if(gameLogic.getLevel() == 0)
-      timeSinceStart += timer.FrameElapsed();
+  timeSinceStart += timer.FrameElapsed();
 
   if (input.Keys[GLFW_KEY_F] && !previousInput.Keys[GLFW_KEY_F]) {
     if (glfwGetWindowMonitor(mWindow) == nullptr) {
@@ -129,6 +130,7 @@ void App::update() {
       cam2d.setScale(1.0f);
       if(!playingEndMusic)
       {
+	  timeSinceStart = 0.0f;
 	  playingEndMusic = true;
 	  audioManager.StopAll();
 	  audioManager.Play(game_music::Victory, false, GAME_MUSIC_VOLUME);
@@ -290,8 +292,11 @@ glm::vec2 App::correctedPos(glm::vec2 pos)
 
 void App::drawEndScreen()
 {
-    mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(glm::vec4(0, 0, settings::TARGET_WIDTH, settings::TARGET_HEIGHT), 0.0f, 0.0f),
-			      glm::vec4(0.2f, 0.1f, 0.0f, 1.0f));
+    auto cam = glm::vec4(0, 0, settings::TARGET_WIDTH, settings::TARGET_HEIGHT);
+    float fade = (timeSinceStart / FADE_START);
+
+    mRender->DrawQuad(endScreen, glmhelper::calcMatFromRect(cam, 0.0f, 0.0f),
+			      glm::vec4(0.7f, 0.6f, 0.6f, 1.0f));
     
     mRender->DrawString(endScreenFont, "Thanks for playing!",
 			glm::vec2(250.0f, 100.0f), 70, 1.0f, glm::vec4(1.0f));
@@ -315,6 +320,9 @@ void App::drawEndScreen()
     
     mRender->DrawString(endScreenFont, "Press Esc To Exit",
 			glm::vec2(1500.0f, 1000.0f), 50, 1.0f, glm::vec4(1.0f));
+
+    mRender->DrawQuad(pixel, glmhelper::calcMatFromRect(cam, 0.0f, 8.0f),
+		      glm::vec4(0.0f, 0.0f, 0.0f, 1.2f - fade));
 }
 
 glm::vec2 App::appToScreen(glm::vec2 pos)

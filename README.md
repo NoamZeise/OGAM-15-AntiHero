@@ -1,4 +1,4 @@
-# Work in progress submission to One Game A month Jam #16 for September 2022
+# Submission to One Game A month Jam #16 for September 2022
 
 
 # building from source
